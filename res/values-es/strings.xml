@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WheresApp</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="search">Buscar</string>
+    <string name="new_chat">Nuevo chat</string>
+    <string name="title_activity_contact_map">Contacto</string>
+
+</resources>
