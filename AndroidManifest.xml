@@ -9,10 +9,10 @@
         android:targetSdkVersion="21" />
 
     <permission
-        android:name="com.example.wheresapp.permission.MAPS_RECEIVE"
+        android:name="com.wheresapp.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.example.wheresapp.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.wheresapp.permission.MAPS_RECEIVE" />
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -46,7 +46,7 @@
         
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCgjHAtmO20Vueg5GZt4b_pS_ubkCW65es" />
+            android:value="@string/google_maps_api_key" />
         
         <meta-data
             android:name="com.google.android.gms.version"

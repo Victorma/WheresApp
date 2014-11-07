@@ -1,13 +1,11 @@
 package com.wheresapp;
 
-import android.location.Location;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -21,34 +19,33 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class ContactMap extends FragmentActivity implements
 OnMarkerClickListener, OnMarkerDragListener {
-
-	private static final LatLng WALL_STREET = new LatLng(40.7064, -74.0094);
-	private static LatLng fromPosition = null;
+	
+	private static final LatLng GRAN_VIA = new LatLng(40.420276, -3.705709);
+	private static LatLng fromPosition = new LatLng(40.440260, -3.716165);
 	private static LatLng toPosition = null;
 	private GoogleMap map;
-
-	Button btnFusedLocation;
-    TextView tvLocation;
-    FusedLocationService fusedLocationService;
+	FusedLocationService fusedLocationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_map);
-        map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-        
+        if (map == null) {
+        	map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+        }
         //show error dialog if GoolglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
         fusedLocationService = new FusedLocationService(this);
 
-        findMe();
+        //findMe();
 		addGoogleMap();
-		// addLines();
+		addLines();
 		addMarkers();
     }
     
@@ -81,17 +78,17 @@ OnMarkerClickListener, OnMarkerDragListener {
         }
     }
     
-    private void findMe(){
+    /*private void findMe(){
     	Location location = fusedLocationService.getLocation();
     	if (null != location) {
     		double latitude = location.getLatitude();
     		double longitude = location.getLongitude();
     		fromPosition = new LatLng(latitude, longitude);
        } else {
-    	   Toast.makeText(getApplicationContext(),
-    			   "Location Not Available!", Toast.LENGTH_LONG).show();
+    	   Toast.makeText(this, "Location Not Available!", Toast.LENGTH_LONG).show();
+           finish();
        }
-    }
+    }*/
     
     private void addGoogleMap() {
 		// check if we have got the googleMap already
@@ -113,23 +110,23 @@ OnMarkerClickListener, OnMarkerDragListener {
 
 			// a draggable marker with title and snippet
 			// marker using custom image
-			map.addMarker(new MarkerOptions().position(WALL_STREET).title("First Pit Stop")
+			map.addMarker(new MarkerOptions().position(GRAN_VIA).title("First Pit Stop")
 					.icon(BitmapDescriptorFactory.fromResource(R.drawable.flag))
 					.snippet("Best Time: 6 Secs").draggable(true));
 
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(WALL_STREET, 13));
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(GRAN_VIA, 13));
 
 		}
 	}
 
-	/*private void addLines() {
+	private void addLines() {
 		if (map != null) {
-			map.addPolyline((new PolylineOptions()).add(WALL_STREET, fromPosition)
+			map.addPolyline((new PolylineOptions()).add(GRAN_VIA, fromPosition)
 					.width(5).color(Color.BLUE).geodesic(true));
 			// move camera to zoom on map
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(WALL_STREET, 13));
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(GRAN_VIA, 13));
 		}
-	}*/
+	}
 
 	@Override
 	public boolean onMarkerClick(Marker marker) {

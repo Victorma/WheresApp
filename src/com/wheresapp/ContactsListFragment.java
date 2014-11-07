@@ -141,8 +141,7 @@ AdapterView.OnItemClickListener {
         AdapterView<?> parent, View item, int position, long rowID) {
         // Get the Cursor
     	   Intent intent = new Intent(getActivity(), ContactMap.class);
-    	      
-           startActivity(intent);
+    	   startActivity(intent);
     	
     /*    Cursor cursor = ((CursorAdapter) parent.getAdapter()).getCursor();
         // Move to the selected contact

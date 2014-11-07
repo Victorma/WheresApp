@@ -9,6 +9,6 @@ package com.wheresapp;
 
 public final class Manifest {
     public static final class permission {
-        public static final String MAPS_RECEIVE="com.example.wheresapp.permission.MAPS_RECEIVE";
+        public static final String MAPS_RECEIVE="com.wheresapp.permission.MAPS_RECEIVE";
     }
 }
