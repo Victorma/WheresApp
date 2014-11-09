@@ -6,10 +6,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
 public class MainActivity extends FragmentActivity {
 
-	public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -40,7 +39,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.chats_fragment, menu);
         return true;
     }
 
@@ -49,33 +48,33 @@ public class MainActivity extends FragmentActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-    	switch (item.getItemId()) {
-		case R.id.action_settings:
+        switch (item.getItemId()) {
+        case R.id.action_settings:
             return true;
-		case R.id.action_search:
-			searchChat();
-			return true;
-		case R.id.action_new_chat:
-			seeContacts();
-			return true;
-		}
-    	return super.onOptionsItemSelected(item);
+        case R.id.action_search:
+            searchChat();
+            return true;
+        case R.id.action_new_chat:
+            seeContacts();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
     
     private void searchChat() {
-    	
+        
     }
     
     private void seeContacts() {
-    	ContactsListFragment newFragment = new ContactsListFragment();
-    	FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        ContactsListFragment newFragment = new ContactsListFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-    	// Replace whatever is in the fragment_container view with this fragment,
-    	// and add the transaction to the back stack so the user can navigate back
-    	transaction.replace(R.id.fragment_container, newFragment);
-    	transaction.addToBackStack(null);
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
 
-    	// Commit the transaction
-    	transaction.commit();
+        // Commit the transaction
+        transaction.commit();
     }
 }

@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.wheresapp.ContactMap" >
 
+    <item android:id="@+id/action_search"
+        android:showAsAction="ifRoom"
+        android:title="@string/search"
+        android:icon="@drawable/ic_action_search" />
+    
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

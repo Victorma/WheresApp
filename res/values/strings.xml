@@ -2,11 +2,13 @@
 <resources>
 
     <string name="app_name">WheresApp</string>
+    <string name="google_maps_api_key">AIzaSyDsKw86Qno2pNHxvW_Ct9MlX33UU8dr8wA</string>
+    <string name="title_activity_contact_map">Contact</string>
     <string name="action_settings">Settings</string>
     <string name="map">Map</string>
     <string name="search">Search</string>
     <string name="new_chat">New chat</string>
-    <string name="title_activity_contact_map">Contact</string>
-    <string name="google_maps_api_key"></string>
+    <string name="my_location">My location</string>
+    <string name="goal">Goal</string>
 
 </resources>

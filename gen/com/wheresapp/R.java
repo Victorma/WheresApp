@@ -415,9 +415,9 @@ containing a value of this type.
         public static final int powered_by_google_light=0x7f020025;
     }
     public static final class id {
-        public static final int action_new_chat=0x7f070019;
-        public static final int action_search=0x7f070018;
-        public static final int action_settings=0x7f070017;
+        public static final int action_new_chat=0x7f070018;
+        public static final int action_search=0x7f070017;
+        public static final int action_settings=0x7f070019;
         public static final int book_now=0x7f070010;
         public static final int buyButton=0x7f07000a;
         public static final int buy_now=0x7f07000f;
@@ -452,12 +452,13 @@ containing a value of this type.
         public static final int contacts_list_view=0x7f030003;
     }
     public static final class menu {
-        public static final int contact_map=0x7f0a0000;
-        public static final int main=0x7f0a0001;
+        public static final int chats_fragment=0x7f0a0000;
+        public static final int contact_map=0x7f0a0001;
+        public static final int contacts_list_fragment=0x7f0a0002;
     }
     public static final class string {
         public static final int accept=0x7f050002;
-        public static final int action_settings=0x7f050024;
+        public static final int action_settings=0x7f050026;
         public static final int app_name=0x7f050023;
         /**   Text for notification shown when the Android Wear apps needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] 
          */
@@ -561,13 +562,15 @@ containing a value of this type.
         public static final int create_calendar_message=0x7f050005;
         public static final int create_calendar_title=0x7f050004;
         public static final int decline=0x7f050003;
-        public static final int google_maps_api_key=0x7f050029;
-        public static final int map=0x7f050025;
-        public static final int new_chat=0x7f050027;
-        public static final int search=0x7f050026;
+        public static final int goal=0x7f05002b;
+        public static final int google_maps_api_key=0x7f050024;
+        public static final int map=0x7f050027;
+        public static final int my_location=0x7f05002a;
+        public static final int new_chat=0x7f050029;
+        public static final int search=0x7f050028;
         public static final int store_picture_message=0x7f050001;
         public static final int store_picture_title=0x7f050000;
-        public static final int title_activity_contact_map=0x7f050028;
+        public static final int title_activity_contact_map=0x7f050025;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */
