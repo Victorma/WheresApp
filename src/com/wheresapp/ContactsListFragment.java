@@ -1,157 +1,147 @@
 package com.wheresapp;
 
-import android.annotation.SuppressLint;
+import android.app.ActionBar.LayoutParams;
+import android.app.ListFragment; //android.support.v4.app.ListFragment;
+import android.app.LoaderManager; //android.support.v4.app.LoaderManager;
+import android.content.CursorLoader; //android.support.v4.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader; //android.support.v4.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract.Contacts;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.LayoutInflater;
+import android.provider.ContactsContract.Contacts; //
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.SearchView; //android.support.v7.widget.SearchView
+import android.widget.SearchView.OnQueryTextListener; //android.support.v7.widget.SearchView.OnQueryTextListener
+import android.widget.SimpleCursorAdapter; //android.support.v4.widget.SimpleCursorAdapter;
 
-public class ContactsListFragment extends Fragment implements
-    LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public class ContactsListFragment extends ListFragment
+implements OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    // Defines an array that contains column names to move from
-    // the Cursor to the ListView.    
-    @SuppressLint("InlinedApi")
-    private final static String[] FROM_COLUMNS = {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-        Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME };
-    
-    // Defines an array that contains resource ids for the layout views
-    // that get the Cursor column contents. The id is pre-defined in
-    // the Android framework, so it is prefaced with "android.R.id"
-    private final static int[] TO_IDS = {android.R.id.text1};
-    
-    // Define global mutable variables
-    // Define a ListView object
-    ListView mContactsList;
-    // Define variables for the contact the user selects
-    // The contact's _ID value
-    long mContactId;
-    // The contact's LOOKUP_KEY
-    String mContactKey;
-    // A content URI for the selected contact
-    Uri mContactUri;
-    // An adapter that binds the result Cursor to the ListView
-    private SimpleCursorAdapter mCursorAdapter;
+	// This is the Adapter being used to display the list's data.
+	SimpleCursorAdapter mAdapter;
 
-    public ContactsListFragment() {}
-    
-    // A UI Fragment must inflate its View
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        // Inflate the fragment layout
-        return inflater.inflate(R.layout.contacts_list_view,
-            container, false);
-    }
-    
-    public void onActivityCreated(Bundle savedInstanceState) {
-        // Always call the super method first
-        super.onActivityCreated(savedInstanceState);        
-        setHasOptionsMenu(true);
+	// If non-null, this is the current filter the user has provided.
+	String mCurFilter;
+
+	@Override public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		// Create a progress bar to display while the list loads
+        ProgressBar progressBar = new ProgressBar(getActivity());
+        progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        progressBar.setIndeterminate(true);
+        getListView().setEmptyView(progressBar);
+
+        // Must add the progress bar to the root of the layout
+        ViewGroup root = (ViewGroup) getActivity().findViewById(android.R.id.content);
+        root.addView(progressBar);
         
-        // Gets the ListView from the View list of the parent activity
-        mContactsList =
-            (ListView) getActivity().findViewById(R.id.contacts_list);
-        // Gets a CursorAdapter
-        mCursorAdapter = new SimpleCursorAdapter(getActivity(),
-            R.layout.contacts_list_item, null, FROM_COLUMNS, TO_IDS, 0);
-        // Sets the adapter for the ListView
-        mContactsList.setAdapter(mCursorAdapter);
-        // Set the item click listener to be the current fragment.
-        mContactsList.setOnItemClickListener(this);
-        // Initializes the loader
-        getLoaderManager().initLoader(0, null, this);
-    }
-    
-    @SuppressLint("InlinedApi")
-    private static final String[] PROJECTION = {
-        Contacts._ID, Contacts.LOOKUP_KEY, Build.VERSION.SDK_INT
-        >= Build.VERSION_CODES.HONEYCOMB ? Contacts.DISPLAY_NAME_PRIMARY :
-            Contacts.DISPLAY_NAME };
+        // Give some text to display if there is no data.  In a real
+		// application this would come from a resource.
+		//setEmptyText("No phone numbers");
 
- // Defines the text expression
-    @SuppressLint("InlinedApi")
-    private static String SELECTION =
-            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-            Contacts.DISPLAY_NAME_PRIMARY + " IS NOT NULL" :
-            Contacts.DISPLAY_NAME + " IS NOT NULL") + " AND " + 
-            Contacts.HAS_PHONE_NUMBER + " LIKE 1";
-    // Defines a variable for the search string
-    //private String mSearchString;
-    // Defines the array to hold values that replace the ?
-    //private String[] mSelectionArgs = { mSearchString };
-    // Defines a string that specifies a sort order
-    private static final String SORT_ORDER =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-            Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME;
-    
-    @Override
-    public void onItemClick(AdapterView<?> parent, View item, int position, long rowID) {
-        // Get the Cursor
-        Intent intent = new Intent(getActivity(), ContactMap.class);
-        startActivity(intent);
-    }
-    
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-        
-        // Makes search string into pattern and
-        // stores it in the selection array
-        //mSelectionArgs[0] = "%" + mSearchString + "%";
-        // Starts the query
-        return new CursorLoader(getActivity(), Contacts.CONTENT_URI,
-                PROJECTION, SELECTION, null, SORT_ORDER);
-    }
-    
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        // Put the result Cursor in the adapter for the ListView
-        mCursorAdapter.swapCursor(cursor);
-    }
+		// We have a menu item to show in action bar.
+		setHasOptionsMenu(true);
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        // Delete the reference to the existing Cursor
-        mCursorAdapter.swapCursor(null);
-        
-    }
-    
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.removeItem(R.id.action_new_chat);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-        case R.id.action_settings:
-            return true;
-        case R.id.action_search:
-            searchChat();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    
-    private void searchChat() { }
+		// Create an empty adapter we will use to display the loaded data.
+		mAdapter = new SimpleCursorAdapter(getActivity(), 
+				R.layout.contacts_list_item, null,
+				new String[] {Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+						Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME },
+						new int[] { android.R.id.text1 }, 0);
+		setListAdapter(mAdapter);
+
+		// Prepare the loader.  Either re-connect with an existing one,
+		// or start a new one.
+		getLoaderManager().initLoader(0, null, this);
+	}
+
+	@Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		menu.removeItem(R.id.action_new_chat);
+		// Place an action bar item for searching.
+		MenuItem item = menu.findItem(R.id.action_search);
+		SearchView sv = new SearchView(getActivity());
+		sv.setOnQueryTextListener(this);
+		item.setActionView(sv);
+	}
+
+	public boolean onQueryTextChange(String newText) {
+		// Called when the action bar search text has changed.  Update
+		// the search filter, and restart the loader to do a new query
+		// with this filter.
+		mCurFilter = !TextUtils.isEmpty(newText) ? newText : null;
+		getLoaderManager().restartLoader(0, null, this);
+		return true;
+	}
+
+	@Override public boolean onQueryTextSubmit(String query) {
+		// Don't care about this.
+		return true;
+	}
+
+	@Override public void onListItemClick(ListView l, View v, int position, long id) {
+		// Insert desired behavior here.
+		Intent intent = new Intent(getActivity(), ContactMap.class);
+		startActivity(intent);
+	}
+
+	// These are the Contacts rows that we will retrieve.
+	private static final String[] PROJECTION = new String[] {
+		Contacts._ID, Contacts.LOOKUP_KEY, Build.VERSION.SDK_INT
+		>= Build.VERSION_CODES.HONEYCOMB ? Contacts.DISPLAY_NAME_PRIMARY :
+			Contacts.DISPLAY_NAME };
+
+	private static String SELECTION = "((" +
+			Contacts.HAS_PHONE_NUMBER + "=1) AND (" +
+			(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+					Contacts.DISPLAY_NAME_PRIMARY + " NOTNULL) AND (" +
+					Contacts.DISPLAY_NAME_PRIMARY + " != '' ))" :
+						Contacts.DISPLAY_NAME + " NOTNULL) AND (" +
+						Contacts.DISPLAY_NAME + " != '' ))");
+
+	// Defines a string that specifies a sort order
+	private static final String SORT_ORDER =
+			(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+					Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME)
+					+ " COLLATE LOCALIZED ASC";
+
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// This is called when a new Loader needs to be created.  This
+		// sample only has one Loader, so we don't care about the ID.
+		// First, pick the base URI to use depending on whether we are
+		// currently filtering.
+		Uri baseUri;
+		if (mCurFilter != null) {
+			baseUri = Uri.withAppendedPath(Contacts.CONTENT_FILTER_URI,
+					Uri.encode(mCurFilter));
+		} else {
+			baseUri = Contacts.CONTENT_URI;
+		}
+
+		return new CursorLoader(getActivity(), baseUri,
+				PROJECTION, SELECTION, null, SORT_ORDER);
+	}
+
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		// Swap the new cursor in.  (The framework will take care of closing the
+		// old cursor once we return.)
+		mAdapter.swapCursor(data);
+	}
+
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// This is called when the last Cursor provided to onLoadFinished()
+		// above is about to be closed.  We need to make sure we are no
+		// longer using it.
+		mAdapter.swapCursor(null);
+	}
 }

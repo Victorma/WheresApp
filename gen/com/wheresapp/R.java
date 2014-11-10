@@ -562,15 +562,16 @@ containing a value of this type.
         public static final int create_calendar_message=0x7f050005;
         public static final int create_calendar_title=0x7f050004;
         public static final int decline=0x7f050003;
-        public static final int goal=0x7f05002b;
+        public static final int goal=0x7f05002c;
         public static final int google_maps_api_key=0x7f050024;
         public static final int map=0x7f050027;
-        public static final int my_location=0x7f05002a;
+        public static final int my_location=0x7f05002b;
         public static final int new_chat=0x7f050029;
         public static final int search=0x7f050028;
         public static final int store_picture_message=0x7f050001;
         public static final int store_picture_title=0x7f050000;
         public static final int title_activity_contact_map=0x7f050025;
+        public static final int waiting_location=0x7f05002a;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */

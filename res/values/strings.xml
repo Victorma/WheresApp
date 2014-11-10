@@ -8,6 +8,7 @@
     <string name="map">Map</string>
     <string name="search">Search</string>
     <string name="new_chat">New chat</string>
+    <string name="waiting_location">Waiting location</string>
     <string name="my_location">My location</string>
     <string name="goal">Goal</string>
 
