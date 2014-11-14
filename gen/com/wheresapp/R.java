@@ -327,6 +327,9 @@ containing a value of this type.
         public static final int zOrderOnTop=0x7f010010;
     }
     public static final class color {
+        public static final int Black=0x7f060019;
+        public static final int BrightBlue=0x7f060017;
+        public static final int White=0x7f060018;
         public static final int common_action_bar_splitter=0x7f060009;
         /**  Sign-in Button Colors 
          */
@@ -339,8 +342,8 @@ containing a value of this type.
         public static final int common_signin_btn_light_text_disabled=0x7f060006;
         public static final int common_signin_btn_light_text_focused=0x7f060007;
         public static final int common_signin_btn_light_text_pressed=0x7f060005;
-        public static final int common_signin_btn_text_dark=0x7f060017;
-        public static final int common_signin_btn_text_light=0x7f060018;
+        public static final int common_signin_btn_text_dark=0x7f06001a;
+        public static final int common_signin_btn_text_light=0x7f06001b;
         public static final int wallet_bright_foreground_disabled_holo_light=0x7f06000f;
         /** 
          Wallet colors to support consistent Wallet fragment holo dark UI in client application
@@ -359,8 +362,8 @@ containing a value of this type.
         public static final int wallet_hint_foreground_holo_light=0x7f060011;
         public static final int wallet_holo_blue_light=0x7f060015;
         public static final int wallet_link_text_light=0x7f060016;
-        public static final int wallet_primary_text_holo_light=0x7f060019;
-        public static final int wallet_secondary_text_holo_dark=0x7f06001a;
+        public static final int wallet_primary_text_holo_light=0x7f06001c;
+        public static final int wallet_secondary_text_holo_dark=0x7f06001d;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -405,31 +408,36 @@ containing a value of this type.
         public static final int ic_action_map=0x7f02001b;
         public static final int ic_action_new_event=0x7f02001c;
         public static final int ic_action_person=0x7f02001d;
-        public static final int ic_action_search=0x7f02001e;
-        public static final int ic_launcher=0x7f02001f;
-        public static final int ic_plusone_medium_off_client=0x7f020020;
-        public static final int ic_plusone_small_off_client=0x7f020021;
-        public static final int ic_plusone_standard_off_client=0x7f020022;
-        public static final int ic_plusone_tall_off_client=0x7f020023;
-        public static final int powered_by_google_dark=0x7f020024;
-        public static final int powered_by_google_light=0x7f020025;
+        public static final int ic_action_refresh=0x7f02001e;
+        public static final int ic_action_search=0x7f02001f;
+        public static final int ic_launcher=0x7f020020;
+        public static final int ic_plusone_medium_off_client=0x7f020021;
+        public static final int ic_plusone_small_off_client=0x7f020022;
+        public static final int ic_plusone_standard_off_client=0x7f020023;
+        public static final int ic_plusone_tall_off_client=0x7f020024;
+        public static final int ic_stat_gcm=0x7f020025;
+        public static final int powered_by_google_dark=0x7f020026;
+        public static final int powered_by_google_light=0x7f020027;
     }
     public static final class id {
-        public static final int action_new_chat=0x7f070018;
-        public static final int action_search=0x7f070017;
-        public static final int action_settings=0x7f070019;
+        public static final int action_new_chat=0x7f07001d;
+        public static final int action_refresh=0x7f07001a;
+        public static final int action_search=0x7f070019;
+        public static final int action_settings=0x7f07001b;
         public static final int book_now=0x7f070010;
+        public static final int buttonLogin=0x7f070018;
+        public static final int buttonSignUp=0x7f070016;
         public static final int buyButton=0x7f07000a;
         public static final int buy_now=0x7f07000f;
         public static final int buy_with_google=0x7f07000e;
         public static final int classic=0x7f070011;
-        public static final int contacts_list=0x7f070016;
-        public static final int fragment_container=0x7f070015;
+        public static final int contacts_list=0x7f07001c;
+        public static final int fragment_container=0x7f070014;
         public static final int grayscale=0x7f070012;
         public static final int holo_dark=0x7f070005;
         public static final int holo_light=0x7f070006;
         public static final int hybrid=0x7f070004;
-        public static final int map=0x7f070014;
+        public static final int map=0x7f070015;
         public static final int match_parent=0x7f07000c;
         public static final int monochrome=0x7f070013;
         public static final int none=0x7f070000;
@@ -440,26 +448,40 @@ containing a value of this type.
         public static final int selectionDetails=0x7f07000b;
         public static final int strict_sandbox=0x7f070009;
         public static final int terrain=0x7f070003;
+        public static final int userName=0x7f070017;
         public static final int wrap_content=0x7f07000d;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f080000;
     }
     public static final class layout {
-        public static final int activity_contact_map=0x7f030000;
-        public static final int activity_main=0x7f030001;
-        public static final int contacts_list_item=0x7f030002;
-        public static final int contacts_list_view=0x7f030003;
+        public static final int activity_chats=0x7f030000;
+        public static final int activity_map=0x7f030001;
+        public static final int activity_send_position=0x7f030002;
+        public static final int activity_sign_up=0x7f030003;
+        public static final int contacts_list=0x7f030004;
+        public static final int contacts_list_item=0x7f030005;
+        public static final int contacts_list_view=0x7f030006;
     }
     public static final class menu {
-        public static final int chats_fragment=0x7f0a0000;
-        public static final int contact_map=0x7f0a0001;
-        public static final int contacts_list_fragment=0x7f0a0002;
+        public static final int chats=0x7f0a0000;
+        public static final int contacts_list=0x7f0a0001;
+        public static final int map=0x7f0a0002;
+        public static final int send_position=0x7f0a0003;
+        public static final int sign_up=0x7f0a0004;
     }
     public static final class string {
+        public static final int IO_Exception_getFromLocation=0x7f050053;
         public static final int accept=0x7f050002;
-        public static final int action_settings=0x7f050026;
-        public static final int app_name=0x7f050023;
+        public static final int action_new_chat=0x7f05003a;
+        public static final int action_refresh=0x7f050039;
+        public static final int action_search=0x7f050038;
+        public static final int action_settings=0x7f050037;
+        /**  User interface labels and strings 
+ Address format 
+         */
+        public static final int address_output_string=0x7f050048;
+        public static final int app_name=0x7f050031;
         /**   Text for notification shown when the Android Wear apps needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] 
          */
         public static final int common_android_wear_notification_needs_update_text=0x7f050009;
@@ -559,19 +581,78 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f050020;
+        /**  Messages 
+         */
+        public static final int connected=0x7f05004a;
+        public static final int connection_error_code=0x7f050023;
+        public static final int connection_error_code_unknown=0x7f05004b;
+        public static final int connection_error_disabled=0x7f050024;
+        public static final int connection_error_internal=0x7f050025;
+        public static final int connection_error_invalid=0x7f050026;
+        public static final int connection_error_invalid_account=0x7f050027;
+        public static final int connection_error_license_check_failed=0x7f050028;
+        public static final int connection_error_message=0x7f050029;
+        public static final int connection_error_misconfigured=0x7f05002a;
+        public static final int connection_error_missing=0x7f05002b;
+        public static final int connection_error_needs_resolution=0x7f05002c;
+        public static final int connection_error_network=0x7f05002d;
+        public static final int connection_error_outdated=0x7f05002e;
+        public static final int connection_error_sign_in_required=0x7f05002f;
+        public static final int connection_error_unknown=0x7f050030;
+        public static final int connection_failed=0x7f05004c;
         public static final int create_calendar_message=0x7f050005;
         public static final int create_calendar_title=0x7f050004;
         public static final int decline=0x7f050003;
-        public static final int goal=0x7f05002c;
-        public static final int google_maps_api_key=0x7f050024;
-        public static final int map=0x7f050027;
-        public static final int my_location=0x7f05002b;
-        public static final int new_chat=0x7f050029;
-        public static final int search=0x7f050028;
+        public static final int denied=0x7f050046;
+        public static final int disconnected=0x7f05004d;
+        public static final int get_address=0x7f05004e;
+        public static final int get_location=0x7f05004f;
+        public static final int goal=0x7f050042;
+        public static final int google_maps_api_key=0x7f050032;
+        public static final int granted=0x7f050045;
+        public static final int illegal_argument_exception=0x7f050050;
+        public static final int invalid_action=0x7f050051;
+        public static final int invalid_integer_id=0x7f050052;
+        /**  Latitude, longitude format 
+         */
+        public static final int latitude_longitude=0x7f050049;
+        public static final int loading=0x7f050043;
+        public static final int location_requested=0x7f050054;
+        public static final int location_update_error=0x7f050056;
+        public static final int location_update_error_detail=0x7f050057;
+        public static final int location_update_missing_update=0x7f050058;
+        public static final int location_updated=0x7f050055;
+        public static final int location_updates_stopped=0x7f050059;
+        public static final int log_new_location=0x7f05005a;
+        public static final int login=0x7f05003d;
+        public static final int logo_description=0x7f050033;
+        public static final int map=0x7f05003f;
+        public static final int my_location=0x7f050041;
+        public static final int no_address_found=0x7f05005b;
+        public static final int no_connection=0x7f05005c;
+        public static final int no_geocoder_available=0x7f05005d;
+        public static final int no_gp_services=0x7f05005e;
+        public static final int no_location_available=0x7f05005f;
+        public static final int no_resolution=0x7f050061;
+        public static final int password=0x7f05003c;
+        public static final int periodic_update_stop=0x7f050062;
+        public static final int play_services_available=0x7f050063;
+        public static final int request=0x7f050044;
+        public static final int request_location_updates_in_progress=0x7f050064;
+        public static final int resolved=0x7f050060;
+        public static final int send=0x7f050047;
+        public static final int signup=0x7f05003e;
+        public static final int start_updates=0x7f050065;
+        public static final int stop_updates=0x7f050066;
         public static final int store_picture_message=0x7f050001;
         public static final int store_picture_title=0x7f050000;
-        public static final int title_activity_contact_map=0x7f050025;
-        public static final int waiting_location=0x7f05002a;
+        public static final int title_activity_chats=0x7f050036;
+        public static final int title_activity_contacts_list=0x7f050035;
+        public static final int title_activity_map=0x7f050034;
+        public static final int unknown=0x7f050067;
+        public static final int unknown_activity_request_code=0x7f050068;
+        public static final int username=0x7f05003b;
+        public static final int waiting_location=0x7f050040;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */
@@ -604,6 +685,7 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f040006;
+        public static final int AppThemeNoTitle=0x7f040007;
         public static final int Theme_IAPTheme=0x7f040000;
         public static final int WalletFragmentDefaultButtonTextAppearance=0x7f040003;
         public static final int WalletFragmentDefaultDetailsHeaderTextAppearance=0x7f040002;

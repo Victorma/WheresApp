@@ -1,13 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.wheresapp.MainActivity" >
+    tools:context="com.wheresapp.SendPositionActivity" >
 
-    <item android:id="@+id/action_search"
-        android:showAsAction="ifRoom"
-        android:title="@string/search"
-        android:icon="@drawable/ic_action_search" />
-    
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
