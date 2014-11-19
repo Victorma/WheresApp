@@ -1,0 +1,57 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/blueActionBar</item>
+    </style>
+
+    <style name="blueActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/brightBlue</item>
+    </style>
+
+    <style name="screen">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+    <style name="activity" parent="@style/screen">
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
+        <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
+    </style>
+    <style name="button">
+        <item name="android:layout_width">@dimen/signup_button_width</item>
+        <item name="android:layout_height">@dimen/signup_button_height</item>
+        <item name="android:layout_margin">@dimen/signup_margin</item>
+        <item name="android:background">@color/brightBlue</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="textView">
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="signUpText" parent="@style/textView">
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_marginBottom">@dimen/signup_margin</item>
+    </style>
+    <style name="itemText" parent="@style/textView">
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignWithParentIfMissing">true</item>
+        <item name="android:paddingLeft">@dimen/padding</item>
+        <item name="android:paddingRight">@dimen/padding</item>
+    </style>
+    <style name="itemIcon">
+        <item name="android:layout_width">?android:attr/listPreferredItemHeight</item>
+        <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
+
+</resources>

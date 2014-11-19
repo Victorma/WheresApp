@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/screen">
+
+    <QuickContactBadge
+        style="@style/itemIcon"
+        android:id="@android:id/icon" />
+
+    <TextView
+        style="@style/itemText"
+        android:id="@android:id/text1"
+        android:layout_above="@android:id/text2"
+        android:layout_toRightOf="@android:id/icon" />
+
+</RelativeLayout>

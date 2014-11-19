@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WheresApp</string>
+    <string name="logo_description">Application Logo</string>
+    <string name="title_activity_map">Map</string>
+    <string name="title_activity_contacts_list">Contacts</string>
+    <string name="title_activity_main">Chats</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="username">Enter phone number</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign up</string>
+    <string name="map">Map</string>
+    <string name="waiting_location">Waiting location</string>
+    <string name="my_location">My location</string>
+    <string name="goal">Goal</string>
+    <string name="loading">Loading...</string>
+    <string name="request">Do you want to send your position to the next contact?</string>
+    <string name="granted">Your position is being issued to the contact </string>
+    <string name="denied">Location request denied</string>
+    <string name="send">Send request</string>
+    <string name="hello_world">Hello world!</string>
+
+    <!-- Messages -->
+    <string name="no_gp_services">Google Play Services not available.</string>
+
+</resources>

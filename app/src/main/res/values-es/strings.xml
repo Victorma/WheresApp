@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_activity_map">Mapa</string>
+    <string name="title_activity_contacts_list">Contactos</string>
+    <string name="title_activity_main">Chats</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_search">Buscar</string>
+    <string name="action_refresh">Refrescar</string>
+    <string name="username">Introduzca número de teléfono</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="signup">Registrar</string>
+    <string name="map">Mapa</string>
+    <string name="waiting_location">Esperando localización</string>
+    <string name="my_location">Mi ubicación</string>
+    <string name="goal">Meta</string>
+    <string name="loading">Cargando...</string>
+    <string name="request">¿Desea enviar su posición al siguiente contacto?</string>
+    <string name="granted">Se está emitiendo su posición al contacto </string>
+    <string name="denied">Solicitud de localización denegada</string>
+    <string name="send">Solicitud enviada</string>
+
+</resources>
