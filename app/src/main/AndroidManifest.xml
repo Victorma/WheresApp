@@ -13,7 +13,6 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="com.wheresapp.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.wheresapp.permission.MAPS_RECEIVE" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -34,7 +33,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.wheresapp.SignUpActivity"
+            android:name=".SignUpActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,17 +42,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.wheresapp.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_main" >
         </activity>
         <activity
-            android:name="com.wheresapp.MapActivity"
+            android:name=".MapActivity"
             android:label="@string/title_activity_map" >
         </activity>
-        <!--<activity
+        <!--
+        <activity
             android:name="com.wheresapp.SendPositionActivity"
             android:label="@string/app_name" >
-        </activity>-->
+        </activity>
+        -->
 
         <receiver
             android:name=".GcmBroadcastReceiver"
@@ -68,7 +69,6 @@
 
         <service android:name=".GcmIntentService" />
 
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -76,5 +76,11 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
     </application>
+
+    <permission
+        android:name="com.example.gcm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
 
 </manifest>
