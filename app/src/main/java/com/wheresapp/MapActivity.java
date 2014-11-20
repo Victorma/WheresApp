@@ -10,8 +10,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -36,7 +34,6 @@ public class MapActivity extends FragmentActivity implements
     private static LatLng toPosition = GRAN_VIA;
     private GoogleMap map;
     GoogleCloudMessaging gcm;
-    Intent intent;
     private String toUserName;
     MessageSender messageSender;
 
