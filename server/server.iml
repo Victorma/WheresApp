@@ -10,9 +10,9 @@
       <configuration>
         <option name="HTTP_ADDRESS" value="localhost" />
         <option name="HTTP_PORT" value="8080" />
-        <option name="WAR_DIR" value="C:\Repo\WheresAppV1\WheresApp\server\build\exploded-app" />
-        <option name="WEB_APP_DIR" value="C:\Repo\WheresAppV1\WheresApp\server\src\main\webapp" />
-        <option name="APPENGINE_SDKROOT" value="C:\Users\Sergio\.gradle\appengine-sdk\appengine-java-sdk-1.9.6" />
+        <option name="WAR_DIR" value="C:\Users\Victorma\Documents\GitHub\WheresApp\server\build\exploded-app" />
+        <option name="WEB_APP_DIR" value="C:\Users\Victorma\Documents\GitHub\WheresApp\server\src\main\webapp" />
+        <option name="APPENGINE_SDKROOT" value="C:\Users\Victorma\.gradle\appengine-sdk\appengine-java-sdk-1.9.6" />
       </configuration>
     </facet>
     <facet type="java-gradle" name="Java-Gradle">
@@ -39,6 +39,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="domain" exported="" />
     <orderEntry type="library" exported="" name="appengine-endpoints-1.9.6" level="project" />
     <orderEntry type="library" exported="" name="appengine-endpoints-deps-1.9.6" level="project" />
     <orderEntry type="library" exported="" name="servlet-api-2.5" level="project" />

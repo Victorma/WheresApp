@@ -1,0 +1,11 @@
+package com.wheresapp.integration.calls;
+
+import com.wheresapp.integration.DAO;
+import com.wheresapp.modelTEMP.Call;
+
+/**
+ * Created by Victorma on 25/11/2014.
+ */
+public interface DAOCalls extends DAO<Call> {
+
+}
