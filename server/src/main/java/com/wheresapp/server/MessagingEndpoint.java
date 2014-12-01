@@ -47,8 +47,8 @@ public class MessagingEndpoint {
         }
         Sender sender = new Sender(API_KEY);
         Message msg = new Message.Builder().addData("message", message).build();
-        List<RegistrationRecord> records = ofy().load().type(RegistrationRecord.class).limit(10).list();
-        for(RegistrationRecord record : records) {
+        List<UserRegistration> records = ofy().load().type(UserRegistration.class).limit(10).list();
+        for(UserRegistration record : records) {
             Result result = sender.send(msg, record.getRegId(), 5);
             if (result.getMessageId() != null) {
                 log.info("Message sent to " + record.getRegId());
