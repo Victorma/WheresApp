@@ -5,13 +5,23 @@
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
             <param-name>services</param-name>
-            <param-value>com.wheresapp.server.RegistrationEndpoint, com.wheresapp.server.MessagingEndpoint</param-value>
+            <param-value>com.wheresapp.server.RegistrationEndpoint, com.wheresapp.server.CallEndpoint, com.wheresapp.server.UserEndpoint, com.wheresapp.server.CronEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>SystemServiceServlet</servlet-name>
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>cron</web-resource-name>
+            <url-pattern>/cron/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
