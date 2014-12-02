@@ -13,7 +13,6 @@ import java.util.List;
 public class DAOContactsImp implements DAOContacts {
     @Override
     public boolean create(Contact contact) {
-        contact.save();
         return contact.save() != 0;
     }
 
@@ -54,7 +53,7 @@ public class DAOContactsImp implements DAOContacts {
     }
 
     @Override
-    public List<Contact> discover(Contact contact) {
+    public List<Contact> discover(Contact contact, int limit, int page) {
 
         From f = new Select().from(Contact.class);
 
@@ -77,7 +76,17 @@ public class DAOContactsImp implements DAOContacts {
             f.where("LastSeen = "+contact.getLastSeen()+"");
 
         f.orderBy("Name DESC");
+        if(limit>0) {
+            f.limit(limit);
+            if (page >= 0)
+                f.offset(limit * page);
+        }
 
         return f.execute();
+    }
+
+    @Override
+    public List<Contact> discover(Contact contact) {
+        return discover(contact,-1,-1);
     }
 }
