@@ -12,7 +12,9 @@ import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.appengine.repackaged.com.google.api.client.util.DateTime;
-import com.wheresapp.domain.CallState;
+import com.wheresapp.server.domain.CallServer;
+import com.wheresapp.server.domain.CallStateServer;
+import com.wheresapp.server.domain.UserRegistrationServer;
 
 import java.io.IOException;
 
@@ -21,16 +23,16 @@ import static com.wheresapp.server.OfyService.ofy;
 /**
  * Created by Sergio on 01/12/2014.
  */
-@Api(name = "call",  version = "v1", namespace = @ApiNamespace(ownerDomain = "server.wheresapp.com", ownerName = "server.wheresapp.com", packagePath=""))
+@Api(name = "callApi",  version = "v1", namespace = @ApiNamespace(ownerDomain = "server.wheresapp.com", ownerName = "server.wheresapp.com", packagePath=""))
 public class CallEndpoint {
 
     /** Api Keys can be obtained from the google cloud console */
     private static final String API_KEY = System.getProperty("gcm.api.key");
 
     @ApiMethod(name = "createCall", path = "{fromId}/call/{toId}")
-    public Call createCall(@Named("fromId")String from,@Named("toId")String to) throws NotFoundException, InternalServerErrorException {
-        Call newCall = new Call();
-        UserRegistration record = findUser(to);
+    public CallServer createCall(@Named("fromId")String from,@Named("toId")String to) throws NotFoundException, InternalServerErrorException {
+        CallServer newCall = new CallServer();
+        UserRegistrationServer record = findUser(to);
         if(record == null) {
             throw new NotFoundException("User " + to + " not registered.");
         }
@@ -46,10 +48,10 @@ public class CallEndpoint {
     }
 
     @ApiMethod(name = "accept", path = "{callId}/accept")
-    public Call accept(@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
-        Call call = ofy().load().type(Call.class).filterKey(callId).first().now();
-        if (call.getState().equals(CallState.WAIT)) {
-            call.setState(CallState.ACCEPT);
+    public CallServer accept(@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
+        CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
+        if (call.getState().equals(CallStateServer.WAIT)) {
+            call.setState(CallStateServer.ACCEPT);
             try {
                 sendCall(call);
             } catch (IOException e) {
@@ -62,10 +64,10 @@ public class CallEndpoint {
     }
 
     @ApiMethod(name = "deny", path = "{callId}/deny")
-    public Call deny(@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
-        Call call = ofy().load().type(Call.class).filterKey(callId).first().now();
-        if (call.getState().equals(CallState.WAIT)) {
-            call.setState(CallState.DENY);
+    public CallServer deny(@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
+        CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
+        if (call.getState().equals(CallStateServer.WAIT)) {
+            call.setState(CallStateServer.DENY);
             try {
                 sendCall(call);
             } catch (IOException e) {
@@ -78,10 +80,10 @@ public class CallEndpoint {
     }
 
     @ApiMethod(name = "end", path = "{callId}/end")
-    public Call end(@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
-        Call call = ofy().load().type(Call.class).filterKey(callId).first().now();
-        if (call.getState().equals(CallState.TRANSMIT)) {
-            call.setState(CallState.END);
+    public CallServer end(@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
+        CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
+        if (call.getState().equals(CallStateServer.TRANSMIT)) {
+            call.setState(CallStateServer.END);
             call.setDateEnd(new DateTime(System.currentTimeMillis()));
             try {
                 sendCall(call);
@@ -95,9 +97,9 @@ public class CallEndpoint {
     }
 
     @ApiMethod(name = "transmit", path = "{callId}/transmit/{position}")
-    public Call transmit(@Named("callId")String callId,@Named("position")String position) throws BadRequestException, InternalServerErrorException {
-        Call call = ofy().load().type(Call.class).filterKey(callId).first().now();
-        if (call.getState().equals(CallState.TRANSMIT)) {
+    public CallServer transmit(@Named("callId")String callId,@Named("position")String position) throws BadRequestException, InternalServerErrorException {
+        CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
+        if (call.getState().equals(CallStateServer.TRANSMIT)) {
             call.setPosition(position);
             try {
                 sendCall(call);
@@ -112,13 +114,13 @@ public class CallEndpoint {
 
 
 
-    private void sendCall(Call call) throws IOException {
-        if (call.getState().equals(CallState.RECEIVE))
-            call.setState(CallState.WAIT);
+    private void sendCall(CallServer call) throws IOException {
+        if (call.getState().equals(CallStateServer.RECEIVE))
+            call.setState(CallStateServer.WAIT);
         Sender sender = new Sender(API_KEY);
         Message msg = new Message.Builder().setData(call.toMap()).build();
-        UserRegistration toUser = findUser(call.getTo());
-        UserRegistration fromUser = findUser(call.getFrom());
+        UserRegistrationServer toUser = findUser(call.getTo());
+        UserRegistrationServer fromUser = findUser(call.getFrom());
         Result resultTo = sender.send(msg, toUser.getRegId(), 5);
         Result resultFrom = sender.send(msg, fromUser.getRegId(), 5);
         //Enviar llamada al receptor
@@ -154,10 +156,10 @@ public class CallEndpoint {
     }
 
     private boolean existRecord(String phone) {
-        return ofy().load().type(UserRegistration.class).filter("phone", phone).first().now()!=null;
+        return ofy().load().type(UserRegistrationServer.class).filter("phone", phone).first().now()!=null;
     }
 
-    private UserRegistration findUser(String userId) {
-        return ofy().load().type(UserRegistration.class).filter("id", userId).first().now();
+    private UserRegistrationServer findUser(String userId) {
+        return ofy().load().type(UserRegistrationServer.class).filter("id", userId).first().now();
     }
 }

@@ -27,6 +27,7 @@
 
     <!-- Messages -->
     <string name="no_gp_services">Google Play Services not available.</string>
+    <string name="ACCOUNT_TYPE">com.wheresapp.ACCOUNT</string>
 
     <array name="tab_names">
         <item>Favourites</item>

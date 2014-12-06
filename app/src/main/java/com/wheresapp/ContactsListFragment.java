@@ -1,18 +1,25 @@
 package com.wheresapp;
 
+import android.accounts.Account;
 import android.app.ActionBar.LayoutParams;
 import android.support.v4.app.ListFragment; //android.app.ListFragment;
 import android.support.v4.app.LoaderManager; //android.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.CursorLoader; //android.content.CursorLoader;
+import android.content.CursorLoader; //android.support.v4.content.CursorLoader;
+import android.content.Entity;
 import android.content.Intent;
 import android.support.v4.content.Loader; //android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.BaseColumns;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts; //
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +34,19 @@ import android.widget.SearchView.OnCloseListener;
 import android.widget.SearchView.OnQueryTextListener; //android.support.v7.widget.SearchView.OnQueryTextListener
 import android.support.v4.widget.SimpleCursorAdapter; //android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.wheresapp.server.registration.model.UserRegistration;
+import com.wheresapp.server.user.User;
+import com.wheresapp.server.user.model.ContactClient;
+import com.wheresapp.server.user.model.ContactList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 public class ContactsListFragment extends ListFragment
@@ -40,6 +60,8 @@ public class ContactsListFragment extends ListFragment
 
     // If non-null, this is the current filter the user has provided.
     String mCurFilter;
+
+    private static String COLUMN_ID = ContactsContract.RawContacts.SYNC1;
 
     /*private static final String TAG = "UserListActivity";
     private Intent intent;
@@ -93,10 +115,16 @@ public class ContactsListFragment extends ListFragment
         /*Resources resources = this.getResources();
         int iconId = R.drawable.ic_action_person;
          */// Create an empty adapter we will use to display the loaded data.
-        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.contacts_list_item, null,
-                new String[] { Contacts.PHOTO_URI,
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                                Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME },
+        Account account = AppConstants.getAccount(getActivity());
+        Uri rawContactUri = ContactsContract.RawContacts.CONTENT_URI.buildUpon().appendPath(ContactsContract.RawContacts.Data.CONTENT_DIRECTORY).appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, account.name).appendQueryParameter(
+                ContactsContract.RawContacts.ACCOUNT_TYPE, account.type).build();
+        Cursor c1 = getActivity().getContentResolver().query(rawContactUri, null, null, null, null);
+        String[] columnas;
+        while (c1.moveToNext()) {
+            columnas = c1.getColumnNames();
+        }
+        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.contacts_list_item, c1,
+                null,
                 new int[] {android.R.id.icon, android.R.id.text1 }, 0);
         mAdapter.setViewBinder(new CustomViewBinder());
         setListAdapter(mAdapter);
@@ -105,6 +133,7 @@ public class ContactsListFragment extends ListFragment
         // or start a new one.
         getLoaderManager().initLoader(0, null, this);
     }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -212,7 +241,7 @@ public class ContactsListFragment extends ListFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Swap the new cursor in.  (The framework will take care of closing the
         // old cursor once we return.)
-        mAdapter.swapCursor(data);
+        //mAdapter.swapCursor(data);
 
         // The list should now be shown.
         if (isResumed()) {

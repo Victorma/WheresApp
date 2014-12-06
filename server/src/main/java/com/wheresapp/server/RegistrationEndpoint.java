@@ -6,6 +6,7 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.NotFoundException;
+import com.wheresapp.server.domain.UserRegistrationServer;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,7 +24,7 @@ import static com.wheresapp.server.OfyService.ofy;
  * authentication! If this app is deployed, anyone can access this endpoint! If
  * you'd like to add authentication, take a look at the documentation.
  */
-@Api(name = "registration",  version = "v1", namespace = @ApiNamespace(ownerDomain = "server.wheresapp.com", ownerName = "server.wheresapp.com", packagePath=""))
+@Api(name = "registrationApi",  version = "v1", namespace = @ApiNamespace(ownerDomain = "server.wheresapp.com", ownerName = "server.wheresapp.com", packagePath=""))
 public class RegistrationEndpoint {
 
     private static final Logger log = Logger.getLogger(RegistrationEndpoint.class.getName());
@@ -34,10 +35,10 @@ public class RegistrationEndpoint {
      * @param me The Google Cloud Messaging registration Id to add
      */
     @ApiMethod(name = "register")
-    public UserRegistration registerDevice(UserRegistration me) throws ConflictException {
-        UserRegistration record = findRecord(me.getPhone());
+    public UserRegistrationServer registerDevice(UserRegistrationServer me) throws ConflictException {
+        UserRegistrationServer record = findRecord(me.getPhone());
         if(record == null) {
-            record = new UserRegistration();
+            record = new UserRegistrationServer();
             record.setPhone(me.getPhone());
             record.setName(me.getName());
         }
@@ -54,7 +55,7 @@ public class RegistrationEndpoint {
      */
     @ApiMethod(name = "unregister")
     public void unregisterDevice(@Named("regId") String regId) throws NotFoundException {
-        UserRegistration record = findRecord(regId);
+        UserRegistrationServer record = findRecord(regId);
         if(record == null) {
             log.info("Device " + regId + " not registered, skipping unregister");
             throw new NotFoundException("Device " + regId + " not registered, skipping unregister");
@@ -71,13 +72,13 @@ public class RegistrationEndpoint {
      * @return a list of Google Cloud Messaging registration Ids
      */
     @ApiMethod(name = "listDevices")
-    public CollectionResponse<UserRegistration> listDevices(@Named("count") int count) {
-        List<UserRegistration> records = ofy().load().type(UserRegistration.class).limit(count).list();
-        return CollectionResponse.<UserRegistration>builder().setItems(records).build();
+    public CollectionResponse<UserRegistrationServer> listDevices(@Named("count") int count) {
+        List<UserRegistrationServer> records = ofy().load().type(UserRegistrationServer.class).limit(count).list();
+        return CollectionResponse.<UserRegistrationServer>builder().setItems(records).build();
     }
 
-    private UserRegistration findRecord(String phone) {
-        return ofy().load().type(UserRegistration.class).filter("phone", phone).first().now();
+    private UserRegistrationServer findRecord(String phone) {
+        return ofy().load().type(UserRegistrationServer.class).filter("phone", phone).first().now();
     }
 
 

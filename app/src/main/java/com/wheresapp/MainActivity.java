@@ -3,11 +3,16 @@ package com.wheresapp;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
+import android.accounts.OperationCanceledException;
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.wheresapp.sync.SyncContacts;
 
 
 public class MainActivity extends FragmentActivity implements
@@ -67,6 +72,17 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_refresh:
+                syncContactInBackground();
+                return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -83,5 +99,20 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onTabReselected(Tab tab, FragmentTransaction ft) {
 
+    }
+
+    private void syncContactInBackground() {
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                SyncContacts syncContacts = new SyncContacts(MainActivity.this);
+                try {
+                    syncContacts.performSync();
+                } catch (OperationCanceledException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+        }.execute(null, null, null);
     }
 }

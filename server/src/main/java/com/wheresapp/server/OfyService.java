@@ -3,6 +3,7 @@ package com.wheresapp.server;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
+import com.wheresapp.server.domain.UserRegistrationServer;
 
 /**
  * Objectify service wrapper so we can statically register our persistence classes
@@ -12,7 +13,7 @@ import com.googlecode.objectify.ObjectifyService;
 public class OfyService {
 
     static {
-        ObjectifyService.register(UserRegistration.class);
+        ObjectifyService.register(UserRegistrationServer.class);
     }
 
     public static Objectify ofy() {

@@ -4,3 +4,11 @@
 /.idea/libraries
 .DS_Store
 /build
+server/build
+app/build
+*.log
+*.jar
+*.iml
+*.iml
+*.jar
+*.class

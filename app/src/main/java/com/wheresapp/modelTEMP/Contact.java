@@ -12,6 +12,9 @@ import com.google.api.client.util.DateTime;
 @Table(name = "Contacts")
 public class Contact extends Model{
 
+    @Column(name = "ServerId")
+    private String serverid;
+
     @Column(name = "Telephone")
     private String telephone;
 
@@ -29,6 +32,11 @@ public class Contact extends Model{
 
     @Column(name = "Favourite")
     private Boolean favourite;
+
+    @Column(name = "Image")
+    private String imageURI;
+
+    private String gcmId;
 
     public String getTelephone() {
         return telephone;
@@ -76,5 +84,29 @@ public class Contact extends Model{
 
     public void setFavourite(Boolean favourite) {
         this.favourite = favourite;
+    }
+
+    public String getServerid() {
+        return serverid;
+    }
+
+    public void setServerid(String serverid) {
+        this.serverid = serverid;
+    }
+
+    public String getGcmId() {
+        return gcmId;
+    }
+
+    public void setGcmId(String gcmId) {
+        this.gcmId = gcmId;
+    }
+
+    public String getImageURI() {
+        return imageURI;
+    }
+
+    public void setImageURI(String imageURI) {
+        this.imageURI = imageURI;
     }
 }

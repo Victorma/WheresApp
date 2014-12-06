@@ -17,8 +17,17 @@ public class Call extends Model{
     @Column(name = "End")
     private DateTime end;
 
+    @Column(name = "Update")
+    private DateTime update;
+
+    @Column(name = "Sender")
+    private String sender;
+
     @Column(name = "Receiver")
     private String receiver;
+
+    @Column(name = "Position")
+    private DateTime position;
 
     @Column(name = "State")
     private Integer state;
@@ -53,5 +62,29 @@ public class Call extends Model{
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public DateTime getUpdate() {
+        return update;
+    }
+
+    public void setUpdate(DateTime update) {
+        this.update = update;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public DateTime getPosition() {
+        return position;
+    }
+
+    public void setPosition(DateTime position) {
+        this.position = position;
     }
 }
