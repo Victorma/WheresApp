@@ -20,4 +20,13 @@
     <string name="denied">Solicitud de localización denegada</string>
     <string name="send">Solicitud enviada</string>
 
+    <!-- Messages -->
+    <string name="no_gp_services">Google Play Services no disponible.</string>
+
+    <array name="tab_names">
+        <item>Favoritos</item>
+        <item>Recientes</item>
+        <item>Contactos</item>
+    </array>
+
 </resources>

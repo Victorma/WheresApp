@@ -21,9 +21,14 @@
     <string name="granted">Your position is being issued to the contact </string>
     <string name="denied">Location request denied</string>
     <string name="send">Send request</string>
-    <string name="hello_world">Hello world!</string>
 
     <!-- Messages -->
     <string name="no_gp_services">Google Play Services not available.</string>
+
+    <array name="tab_names">
+        <item>Favourites</item>
+        <item>Recent</item>
+        <item>Contacts</item>
+    </array>
 
 </resources>

@@ -1,12 +1,12 @@
 package com.wheresapp;
 
 import android.app.ActionBar.LayoutParams;
-import android.app.ListFragment; //android.support.v4.app.ListFragment;
-import android.app.LoaderManager; //android.support.v4.app.LoaderManager;
+import android.support.v4.app.ListFragment; //android.app.ListFragment;
+import android.support.v4.app.LoaderManager; //android.app.LoaderManager;
 import android.content.Context;
-import android.content.CursorLoader; //android.support.v4.content.CursorLoader;
+import android.support.v4.content.CursorLoader; //android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader; //android.support.v4.content.Loader;
+import android.support.v4.content.Loader; //android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -19,14 +19,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView; //android.support.v7.widget.SearchView
 import android.widget.SearchView.OnCloseListener;
 import android.widget.SearchView.OnQueryTextListener; //android.support.v7.widget.SearchView.OnQueryTextListener
-import android.widget.SimpleCursorAdapter; //android.support.v4.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+import android.support.v4.widget.SimpleCursorAdapter; //android.widget.SimpleCursorAdapter;
 
 
 public class ContactsListFragment extends ListFragment
@@ -45,27 +43,7 @@ public class ContactsListFragment extends ListFragment
     private Intent intent;
     MessageSender messageSender;
     GoogleCloudMessaging gcm;*/
-    String userNumber;
-
-    private class CustomViewBinder implements SimpleCursorAdapter.ViewBinder {
-
-        @Override
-        public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-            if (columnIndex == cursor.getColumnIndex(Contacts.PHOTO_URI)) {
-                String src = cursor.getString(columnIndex);
-                ImageView im = (ImageView) view.findViewById(android.R.id.icon);
-                if (src != null) {
-                    im.setImageURI(Uri.parse(src));
-                } else {
-                    im.setImageResource(R.drawable.ic_action_person);
-                }
-                return true;
-            }
-            // For others, we simply return false so that the default binding
-            // happens.
-            return false;
-        }
-    }
+    String tabNumber, userNumber;
 
     public static class MySearchView extends SearchView {
         public MySearchView(Context context) {
@@ -85,7 +63,11 @@ public class ContactsListFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
+        //Ahora se hace asi porque aún no hay un Fragment para cada lista
         Intent i = getActivity().getIntent();
+        tabNumber = getResources().getStringArray(R.array.tab_names)[i.getIntExtra("TAB", 0)];
+
         userNumber = i.getStringExtra("NUMBER");
 
         // We have a menu item to show in action bar.
