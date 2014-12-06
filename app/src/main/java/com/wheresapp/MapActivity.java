@@ -48,6 +48,7 @@ public class MapActivity extends FragmentActivity implements
         }
         Intent i = getIntent();
         toUserName = i.getStringExtra("TOUSER");
+        this.setTitle(toUserName);
         setContentView(R.layout.activity_map);
 
         /*intent = new Intent(this, GcmIntentService.class);

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="title_activity_map">Mapa</string>
-    <string name="title_activity_contacts_list">Contactos</string>
     <string name="title_activity_main">Chats</string>
+    <string name="title_activity_contacts_list">Contactos</string>
+    <string name="title_activity_contact_data">Contacto</string>
+    <string name="title_activity_map">Mapa</string>
     <string name="action_settings">Ajustes</string>
     <string name="action_search">Buscar</string>
     <string name="action_refresh">Refrescar</string>
+    <string name="action_call">Llamar</string>
+    <string name="action_important">Favorito</string>
     <string name="username">Introduzca número de teléfono</string>
     <string name="login">Iniciar sesión</string>
     <string name="signup">Registrar</string>

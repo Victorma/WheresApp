@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.wheresapp.ContactDataActivity">
+    <item android:id="@+id/action_call"
+        android:title="@string/action_call"
+        android:icon="@drawable/ic_action_call"
+        android:showAsAction="ifRoom" />
+    <item android:id="@+id/action_important"
+        android:title="@string/action_important"
+        android:icon="@drawable/ic_action_not_important"
+        android:showAsAction="ifRoom" />
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+</menu>

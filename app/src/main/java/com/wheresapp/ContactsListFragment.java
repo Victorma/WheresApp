@@ -21,10 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SearchView; //android.support.v7.widget.SearchView
 import android.widget.SearchView.OnCloseListener;
 import android.widget.SearchView.OnQueryTextListener; //android.support.v7.widget.SearchView.OnQueryTextListener
 import android.support.v4.widget.SimpleCursorAdapter; //android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 
 public class ContactsListFragment extends ListFragment
@@ -149,10 +151,22 @@ public class ContactsListFragment extends ListFragment
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // When the user clicks REFRESH
+            case R.id.action_refresh:
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override public void onListItemClick(ListView l, View v, int position, long id) {
         // Insert desired behavior here.
-        Intent intent = new Intent(getActivity(), MapActivity.class);
-        intent.putExtra("TOUSER", id);
+        Intent intent = new Intent(getActivity(), ContactDataActivity.class);
+        // El hijo 0 es la imagen del contacto y el 1 el textview del que obtenemos el nombre
+        String toUser = ((TextView) ((RelativeLayout) v).getChildAt(1)).getText().toString();
+        intent.putExtra("TOUSER", toUser);
         startActivity(intent);
     }
 
