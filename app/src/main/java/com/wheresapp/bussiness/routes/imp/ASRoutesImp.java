@@ -9,11 +9,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.location.Location;
 import android.os.AsyncTask;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.wheresapp.bussiness.routes.Ruta;
-import com.wheresapp.bussiness.routes.ServiceHandler;
+import com.wheresapp.modelTEMP.Ruta;
+import com.wheresapp.modelTEMP.ServiceHandler;
 /**
  * Created by Victorma on 26/11/2014.
  */
@@ -38,16 +39,38 @@ public class ASRoutesImp implements ASRoutes {
         tarea.execute(url,lista);
         try {
             ruta = tarea.get();
+            ruta.setInicio(from);
+            ruta.setFin(to);
         }catch (Exception e){
             e.printStackTrace();
         }
+        ruta.setInicio(from);
+        ruta.setFin(to);
         return ruta;
     }
 
     @Override
     public Ruta updateDestinoRuta(Ruta ruta, LatLng to) {
-        // TODO Auto-generated method stub
-        return null;
+        Ruta newRuta = null;
+        // Si el destino no se ha movido más de 30 metros no actualizamos la ruta
+        float [] distancias = new float[1];
+        try{
+            Location.distanceBetween(ruta.getFin().latitude, ruta.getFin().longitude,
+                    to.latitude, to.longitude, distancias );
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if (distancias[0] < 30){
+            //Misma ruta
+            newRuta = ruta;
+        }else{
+            //Calculamos nueva ruta
+            newRuta = getRuta(ruta.getInicio(),to);
+        }
+
+
+
+        return newRuta;
     }
     /**
      * Recibe la url a descargar

@@ -1,4 +1,4 @@
-package com.wheresapp.bussiness.routes;
+package com.wheresapp.modelTEMP;
 
 /**
  * Created by jesusmartin92 on 3/12/14.
