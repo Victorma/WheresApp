@@ -7,6 +7,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,10 +17,9 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.wheresapp.R;
+import com.wheresapp.SignUpActivity;
 import com.wheresapp.modelTEMP.Contact;
 import com.wheresapp.server.ServerAPI;
-import com.wheresapp.server.user.model.ContactClient;
-import com.wheresapp.server.user.model.ContactList;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,12 +38,14 @@ public class SyncContacts {
     private static String COLUMN_ID = ContactsContract.RawContacts.SYNC1;
     private static String COLUMN_NAME = ContactsContract.RawContacts.SYNC2;
     private static String COLUMN_IMAGE = ContactsContract.RawContacts.SYNC3;
+    private String myId;
 
     public SyncContacts(Context context) {
         this.context = context;
         Account[] accounts = AccountManager.get(context).getAccountsByType(context.getString(R.string.ACCOUNT_TYPE));
         account = accounts[0];
         authority = "com.android.contacts";
+        myId = getUserId();
     }
 
     private static class SyncEntry {
@@ -86,7 +88,7 @@ public class SyncContacts {
         List<Contact> contactResult = null;
         try {
             while(contactResult==null) {
-                contactResult = ServerAPI.getInstance().getContactosRegistrados(listTemp);
+                contactResult = ServerAPI.getInstance().getContactosRegistrados(myId, listTemp);
                 intento++;
                 if(intento>5)
                     break;
@@ -113,7 +115,7 @@ public class SyncContacts {
         try {
 
             for (Contact c : contactResult) {
-                if (!localContacts.containsKey(c.getId().toString())) {
+                if (!localContacts.containsKey(c.getServerid().toString())) {
                     addContact(account,c);
                 }
             }
@@ -156,5 +158,17 @@ public class SyncContacts {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    private String getUserId() {
+        String userId = null;
+        final SharedPreferences prefs = context.getSharedPreferences(
+                SignUpActivity.class.getSimpleName(), Context.MODE_PRIVATE);
+        userId = prefs.getString(SignUpActivity.PROPERTY_USER_ID,"");
+        if (userId=="") {
+            Log.i(TAG, "Registration not found.");
+            return null;
+        }
+        return userId;
     }
 }

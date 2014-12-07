@@ -8,14 +8,20 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.util.DateTime;
 import com.wheresapp.R;
+import com.wheresapp.modelTEMP.Call;
+import com.wheresapp.modelTEMP.CallState;
 import com.wheresapp.modelTEMP.Contact;
-import com.wheresapp.server.call.Call;
-import com.wheresapp.server.registration.Registration;
-import com.wheresapp.server.registration.model.UserRegistration;
-import com.wheresapp.server.user.User;
-import com.wheresapp.server.user.model.ContactClient;
-import com.wheresapp.server.user.model.ContactList;
+import com.wheresapp.modelTEMP.Message;
+import com.wheresapp.server.callApi.CallApi;
+import com.wheresapp.server.callApi.model.CallServer;
+import com.wheresapp.server.callApi.model.MessageServer;
+import com.wheresapp.server.registrationApi.RegistrationApi;
+import com.wheresapp.server.registrationApi.model.UserRegistrationServer;
+import com.wheresapp.server.userApi.UserApi;
+import com.wheresapp.server.userApi.model.ContactListServer;
+import com.wheresapp.server.userApi.model.ContactServer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,27 +52,26 @@ public class ServerAPI {
 
     public Contact registrarUsuario(String telefono, String gcmId) throws IOException {
         Contact contact = new Contact();
-        UserRegistration user = new UserRegistration().setPhone(telefono).setRegId(gcmId);
-        user = getApiRegistrationServiceHandle().register(user).execute();;
+        UserRegistrationServer user = new UserRegistrationServer().setPhone(telefono).setRegId(gcmId);
+        user = getApiRegistrationServiceHandle().register(user).execute();
         contact.setGcmId(user.getRegId());
         contact.setTelephone(user.getPhone());
         contact.setServerid(user.getId().toString());
-        contact.setName(user.getName());
         return contact;
     }
 
-    public List<Contact> getContactosRegistrados(List<Contact> listaContacto) throws IOException {
-        ContactList contactList = new ContactList();
-        ContactList contactListResult;
-        List<ContactClient> contactClients = new ArrayList<ContactClient>();
+    public List<Contact> getContactosRegistrados(String fromId, List<Contact> listaContacto) throws IOException {
+        ContactListServer contactList = new ContactListServer();
+        ContactListServer contactListResult;
+        List<ContactServer> contactClients = new ArrayList<ContactServer>();
         List<Contact> contactosRegistrados = new ArrayList<Contact>();
         for (Contact c : listaContacto) {
-            contactClients.add(new ContactClient().setName(c.getName())
+            contactClients.add(new ContactServer().setName(c.getName())
             .setPhone(c.getTelephone()));
         }
-        contactList.setContactClientList(contactClients);
-        contactListResult = getApiUserServiceHandle().contactList("",contactList).execute();
-        for (ContactClient c : contactListResult.getContactClientList()) {
+        contactList.setContactServerList(contactClients);
+        contactListResult = getApiUserServiceHandle().contactList(fromId,contactList).execute();
+        for (ContactServer c : contactListResult.getContactServerList()) {
             Contact contact = new Contact();
             contact.setName(c.getName());
             contact.setTelephone(c.getPhone());
@@ -76,40 +81,89 @@ public class ServerAPI {
         return contactosRegistrados;
     }
 
-    public com.wheresapp.modelTEMP.Call crearLlamada(com.wheresapp.modelTEMP.Call call) throws IOException {
-        com.wheresapp.server.call.model.Call llamadaCreadaServidor = getCallUserServiceHandle().createCall(call.getSender(),call.getReceiver()).execute();
-        com.wheresapp.modelTEMP.Call llamadaCreada = new com.wheresapp.modelTEMP.Call();
+    public Call crearLlamada(String fromId, String toId) throws IOException {
+        CallServer llamadaCreadaServidor = getCallUserServiceHandle().createCall(fromId,toId).execute();
+        Call llamadaCreada = new Call();
         llamadaCreada.setReceiver(llamadaCreadaServidor.getTo());
         llamadaCreada.setSender(llamadaCreadaServidor.getFrom());
-        llamadaCreadaServidor.setDateStart(llamadaCreadaServidor.getDateStart());
-        llamadaCreadaServidor.setDateUpdate(llamadaCreadaServidor.getDateUpdate());
+        llamadaCreada.setState(CallState.valueOf(llamadaCreadaServidor.getState()));
+        llamadaCreada.setStart(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
+        llamadaCreada.setUpdate(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
         return llamadaCreada;
+    }
+
+    public Call aceptarLlamada(String fromId, String callId) throws IOException {
+        CallServer llamadaCreadaServidor = getCallUserServiceHandle().accept(fromId, callId).execute();
+        Call llamadaCreada = new Call();
+        llamadaCreada.setReceiver(llamadaCreadaServidor.getTo());
+        llamadaCreada.setSender(llamadaCreadaServidor.getFrom());
+        llamadaCreada.setState(CallState.valueOf(llamadaCreadaServidor.getState()));
+        llamadaCreada.setStart(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
+        llamadaCreada.setUpdate(new DateTime(System.currentTimeMillis()));
+        return llamadaCreada;
+    }
+
+    public Call rechazarLlamada(String fromId, String callId) throws IOException {
+        CallServer llamadaCreadaServidor = getCallUserServiceHandle().deny(fromId, callId).execute();
+        Call llamadaCreada = new Call();
+        llamadaCreada.setReceiver(llamadaCreadaServidor.getTo());
+        llamadaCreada.setSender(llamadaCreadaServidor.getFrom());
+        llamadaCreada.setState(CallState.valueOf(llamadaCreadaServidor.getState()));
+        llamadaCreada.setStart(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
+        llamadaCreada.setUpdate(new DateTime(llamadaCreadaServidor.getDateEnd().getValue()));
+        llamadaCreada.setEnd(new DateTime(llamadaCreadaServidor.getDateEnd().getValue()));
+        return llamadaCreada;
+    }
+
+    public Call finalizarLlamada(String fromId, String callId) throws IOException {
+        CallServer llamadaCreadaServidor = getCallUserServiceHandle().end(fromId, callId).execute();
+        Call llamadaCreada = new Call();
+        llamadaCreada.setReceiver(llamadaCreadaServidor.getTo());
+        llamadaCreada.setSender(llamadaCreadaServidor.getFrom());
+        llamadaCreada.setState(CallState.valueOf(llamadaCreadaServidor.getState()));
+        llamadaCreada.setStart(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
+        llamadaCreada.setUpdate(new DateTime(llamadaCreadaServidor.getDateEnd().getValue()));
+        llamadaCreada.setEnd(new DateTime(llamadaCreadaServidor.getDateEnd().getValue()));
+        return llamadaCreada;
+    }
+
+    public Message enviarPosicion(String fromId, String callId, String position) throws  IOException {
+        MessageServer messageServer = getCallUserServiceHandle().transmit(fromId,callId,position).execute();
+        Message message = new Message();
+        if (message.getMessage()=="")
+            return null;
+        message.setMessage(messageServer.getMessage());
+        message.setToId(messageServer.getToId());
+        message.setFromId(messageServer.getFromId());
+        message.setCallId(messageServer.getCallId());
+        message.setDate(new DateTime(messageServer.getDate().getValue()));
+        return  message;
     }
 
     /**
      * Retrieve a Registration api service handle to access the API.
      */
-    private static Registration getApiRegistrationServiceHandle() {
+    private static RegistrationApi getApiRegistrationServiceHandle() {
         // Use a builder to help formulate the API request.
-        Registration.Builder registrationEndpoint = new Registration.Builder(HTTP_TRANSPORT, JSON_FACTORY,null);
+        RegistrationApi.Builder registrationEndpoint = new RegistrationApi.Builder(HTTP_TRANSPORT, JSON_FACTORY,null);
 
         //registrationEndpoint.setRootUrl("http://localhost:8080/_ah/api");
 
         return registrationEndpoint.build();
     }
 
-    private static User getApiUserServiceHandle() {
+    private static UserApi getApiUserServiceHandle() {
         // Use a builder to help formulate the API request.
-        User.Builder userEndpoint = new User.Builder(HTTP_TRANSPORT, JSON_FACTORY,null);
+        UserApi.Builder userEndpoint = new UserApi.Builder(HTTP_TRANSPORT, JSON_FACTORY,null);
 
         //userEndpoint.setRootUrl("http://localhost:8080/_ah/api");
 
         return userEndpoint.build();
     }
 
-    private static Call getCallUserServiceHandle() {
+    private static CallApi getCallUserServiceHandle() {
         // Use a builder to help formulate the API request.
-        Call.Builder callEndpoint = new Call.Builder(HTTP_TRANSPORT, JSON_FACTORY,null);
+        CallApi.Builder callEndpoint = new CallApi.Builder(HTTP_TRANSPORT, JSON_FACTORY,null);
 
         //userEndpoint.setRootUrl("http://localhost:8080/_ah/api");
 

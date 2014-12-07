@@ -14,30 +14,18 @@ import java.util.TreeMap;
 @Entity
 public class CallServer {
     @Id
-    private long id;
+    private String id;
     @Index
     private String to;
     @Index
     private String from;
     @Index
     private CallStateServer state;
-    private String position;
     private DateTime dateStart;
     private DateTime dateEnd;
-    private DateTime dateUpdate;
 
     public CallServer() {
 
-    }
-
-    public CallServer(Map<String,String> mapa) {
-        to = mapa.get("to");
-        from = mapa.get("from");
-        dateStart = new DateTime(mapa.get("dateStart"));
-        dateEnd = new DateTime(mapa.get("dateEnd"));
-        state = CallStateServer.valueOf(mapa.get("state"));
-        position = mapa.get("position");
-        dateUpdate = new DateTime(mapa.get("dateUpdate"));
     }
 
     public void init() {
@@ -46,7 +34,6 @@ public class CallServer {
         dateEnd = new DateTime(0);
         to = "";
         from = "";
-        position = "";
     }
 
     public String getTo() {
@@ -74,15 +61,6 @@ public class CallServer {
         new DateTime(System.currentTimeMillis());
     }
 
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-        new DateTime(System.currentTimeMillis());
-    }
-
     public DateTime getDateStart() {
         return dateStart;
     }
@@ -100,25 +78,22 @@ public class CallServer {
         new DateTime(System.currentTimeMillis());
     }
 
-    public DateTime getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(DateTime dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
     public Map<String,String> toMap() {
         Map<String, String> mapa = new TreeMap<String, String>();
         mapa.put("to",to);
         mapa.put("from",from);
         mapa.put("dateStart",dateStart.toString());
         mapa.put("dateEnd",dateEnd.toString());
-        mapa.put("dateUpdate",dateUpdate.toString());
         mapa.put("state",state.toString());
-        mapa.put("position",position);
 
         return mapa;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

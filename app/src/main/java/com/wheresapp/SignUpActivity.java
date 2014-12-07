@@ -23,7 +23,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.wheresapp.modelTEMP.Contact;
 import com.wheresapp.server.ServerAPI;
-import com.wheresapp.server.registration.model.UserRegistration;
 import com.wheresapp.sync.SyncContacts;
 
 import java.io.IOException;
@@ -34,7 +33,7 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String PROPERTY_USER_NUMBER = "userNumber";
-    private static final String PROPERTY_USER_ID = "userId";
+    public static final String PROPERTY_USER_ID = "userId";
     private static final String TAG = "SignUpActivity";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private ProgressDialog progressBar;
@@ -131,7 +130,7 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
         final SharedPreferences prefs = getSharedPreferences(
                 SignUpActivity.class.getSimpleName(), Context.MODE_PRIVATE);
         user.setServerid(prefs.getString(PROPERTY_USER_ID,""));
-        if (user.getId()==0) {
+        if (user.getServerid()=="") {
             Log.i(TAG, "Registration not found.");
             return null;
         }
@@ -166,6 +165,7 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
                     }
                     regId = gcm.register(ProjectID.SENDER_ID);
                     user = ServerAPI.getInstance().registrarUsuario(userNumber,regId);
+                    storeRegistration(user);
                     Bundle result = null;
                     Account account = new Account(user.getTelephone(), context.getString(R.string.ACCOUNT_TYPE));
                     AccountManager am = AccountManager.get(context);
@@ -191,8 +191,7 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
 
             @Override
             protected void onPostExecute(String msg) {
-                if(user.getId()!=null && user.getId()!=0) {
-                    storeRegistration(user);
+                if(user.getServerid()!=null && user.getServerid()!="") {
                     Toast.makeText(context,
                             "Register complete!",
                             Toast.LENGTH_LONG).show();
@@ -218,9 +217,8 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
         editor.putString(PROPERTY_REG_ID, user.getGcmId());
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.putString(PROPERTY_USER_NUMBER, user.getTelephone());
-        editor.putLong(PROPERTY_USER_ID, user.getId());
+        editor.putString(PROPERTY_USER_ID, user.getServerid());
         editor.commit();
-        Toast.makeText(context, "Sign Up Complete!", Toast.LENGTH_LONG).show();
     }
 
     @Override

@@ -36,7 +36,11 @@ public class Contact extends Model{
     @Column(name = "Image")
     private String imageURI;
 
+    @Column(name = "GcmId")
     private String gcmId;
+
+    public Contact() {
+    }
 
     public String getTelephone() {
         return telephone;

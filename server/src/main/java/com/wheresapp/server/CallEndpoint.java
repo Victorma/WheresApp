@@ -14,9 +14,11 @@ import com.google.api.server.spi.response.NotFoundException;
 import com.google.appengine.repackaged.com.google.api.client.util.DateTime;
 import com.wheresapp.server.domain.CallServer;
 import com.wheresapp.server.domain.CallStateServer;
+import com.wheresapp.server.domain.MessageServer;
 import com.wheresapp.server.domain.UserRegistrationServer;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.wheresapp.server.OfyService.ofy;
 
@@ -47,8 +49,8 @@ public class CallEndpoint {
         return newCall;
     }
 
-    @ApiMethod(name = "accept", path = "{callId}/accept")
-    public CallServer accept(@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
+    @ApiMethod(name = "accept", path = "{fromId}/accept/{callId}")
+    public CallServer accept(@Named("fromId")String fromId,@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
         CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
         if (call.getState().equals(CallStateServer.WAIT)) {
             call.setState(CallStateServer.ACCEPT);
@@ -63,8 +65,8 @@ public class CallEndpoint {
         throw new BadRequestException("La llamada esta finalizada");
     }
 
-    @ApiMethod(name = "deny", path = "{callId}/deny")
-    public CallServer deny(@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
+    @ApiMethod(name = "deny", path = "{fromId}/deny/{callId}")
+    public CallServer deny(@Named("fromId")String fromId,@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
         CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
         if (call.getState().equals(CallStateServer.WAIT)) {
             call.setState(CallStateServer.DENY);
@@ -79,8 +81,8 @@ public class CallEndpoint {
         throw new BadRequestException("La llamada esta finalizada");
     }
 
-    @ApiMethod(name = "end", path = "{callId}/end")
-    public CallServer end(@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
+    @ApiMethod(name = "end", path = "{fromId}/end/{callId}")
+    public CallServer end(@Named("fromId")String fromId,@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
         CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
         if (call.getState().equals(CallStateServer.TRANSMIT)) {
             call.setState(CallStateServer.END);
@@ -96,18 +98,24 @@ public class CallEndpoint {
         throw new BadRequestException("La llamada esta finalizada");
     }
 
-    @ApiMethod(name = "transmit", path = "{callId}/transmit/{position}")
-    public CallServer transmit(@Named("callId")String callId,@Named("position")String position) throws BadRequestException, InternalServerErrorException {
+    @ApiMethod(name = "transmit", path = "{callId}/{fromId}/transmit/{position}")
+    public MessageServer transmit(@Named("fromId") String fromId, @Named("callId")String callId, @Named("position")String position) throws BadRequestException, InternalServerErrorException {
         CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
         if (call.getState().equals(CallStateServer.TRANSMIT)) {
-            call.setPosition(position);
-            try {
-                sendCall(call);
-            } catch (IOException e) {
-                throw new InternalServerErrorException("No se ha podido realizar la llamada");
+            MessageServer message = new MessageServer();
+            message.setFromId(fromId);
+            message.setMessage(position);
+            if (call.getFrom()==fromId)
+                message.setToId(call.getTo());
+            else
+                message.setToId(call.getFrom());
+            ofy().save().entity(message).now();
+            MessageServer messageServer = ofy().load().type(MessageServer.class).filter("callId",call.getId()).filter("toId",fromId).order("-date").first().now();
+            if (messageServer==null) {
+                messageServer = new MessageServer();
+                messageServer.setMessage("WAIT");
             }
-            ofy().save().entity(call).now();
-            return call;
+            return messageServer;
         }
         throw new BadRequestException("La llamada esta finalizada");
     }

@@ -26,17 +26,14 @@ public class Call extends Model{
     @Column(name = "Receiver")
     private String receiver;
 
-    @Column(name = "Position")
-    private DateTime position;
-
     @Column(name = "State")
-    private Integer state;
+    private CallState state;
 
     public DateTime getStart() {
         return start;
     }
 
-    public void setStart(DateTime lastSeen) {
+    public void setStart(DateTime start) {
         this.start = start;
     }
 
@@ -56,11 +53,11 @@ public class Call extends Model{
         this.receiver = receiver;
     }
 
-    public Integer getState() {
+    public CallState getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(CallState state) {
         this.state = state;
     }
 
@@ -78,13 +75,5 @@ public class Call extends Model{
 
     public void setSender(String sender) {
         this.sender = sender;
-    }
-
-    public DateTime getPosition() {
-        return position;
-    }
-
-    public void setPosition(DateTime position) {
-        this.position = position;
     }
 }
