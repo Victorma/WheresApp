@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.wheresapp.SignUpActivity;
@@ -107,6 +108,14 @@ public class AccountAuthenticatorService extends Service {
         @Override
         public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) {
             return null;
+        }
+
+        @NonNull
+        @Override
+        public Bundle getAccountRemovalAllowed(AccountAuthenticatorResponse response, Account account) throws NetworkErrorException {
+            final Bundle result = new Bundle();
+            result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
+            return result;
         }
     }
 }

@@ -100,12 +100,12 @@ public class SyncContacts {
         // Load the local contacts
         Uri rawContactUri = ContactsContract.RawContacts.CONTENT_URI.buildUpon().appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, account.name).appendQueryParameter(
                 ContactsContract.RawContacts.ACCOUNT_TYPE, account.type).build();
-        Cursor c1 = mContentResolver.query(rawContactUri, new String[] { BaseColumns._ID, COLUMN_ID  }, null, null, null);
+        Cursor c1 = mContentResolver.query(rawContactUri, new String[] { BaseColumns._ID, ContactsContract.RawContacts.SYNC1  }, null, null, null);
         while (c1.moveToNext()) {
             SyncEntry entry = new SyncEntry();
-            entry.raw_id = c1.getLong(c1.getColumnIndex(BaseColumns._ID));
-            entry.user_id = c1.getLong(c1.getColumnIndex(COLUMN_ID));
-            localContacts.put(c1.getString(c1.getColumnIndex(COLUMN_ID)), entry);
+            entry.raw_id = c1.getLong(0);
+            entry.user_id = c1.getLong(1);
+            localContacts.put(entry.user_id.toString(), entry);
         }
         Log.i(TAG, "size localContacts: " + localContacts.size());
         ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
@@ -115,7 +115,7 @@ public class SyncContacts {
         try {
 
             for (Contact c : contactResult) {
-                if (!localContacts.containsKey(c.getServerid().toString())) {
+                if (!localContacts.containsKey(c.getServerid())) {
                     addContact(account,c);
                 }
             }
@@ -134,7 +134,7 @@ public class SyncContacts {
         ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI);
         builder.withValue(ContactsContract.RawContacts.ACCOUNT_NAME, account.name);
         builder.withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, account.type);
-        builder.withValue(ContactsContract.RawContacts.SYNC1, contact.getId());
+        builder.withValue(ContactsContract.RawContacts.SYNC1, contact.getServerid());
         builder.withValue(ContactsContract.RawContacts.SYNC2, false);
         builder.withValue(ContactsContract.RawContacts.SYNC3, false);
         operationList.add(builder.build());
