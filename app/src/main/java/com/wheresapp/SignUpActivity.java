@@ -21,6 +21,8 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.wheresapp.bussiness.contacts.ASContacts;
+import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
 import com.wheresapp.modelTEMP.Contact;
 import com.wheresapp.server.ServerAPI;
 import com.wheresapp.sync.SyncContacts;
@@ -30,11 +32,8 @@ import java.io.IOException;
 
 public class SignUpActivity extends AccountAuthenticatorActivity {
 
-    public static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
-    private static final String PROPERTY_USER_NUMBER = "userNumber";
-    public static final String PROPERTY_USER_ID = "userId";
     private static final String TAG = "SignUpActivity";
+
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private ProgressDialog progressBar;
     Button buttonSignUp;
@@ -44,6 +43,8 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
     Context context;
     EditText mUserName;
 
+    private ASContacts asContacts;
+
     GoogleCloudMessaging gcm;
 
     @Override
@@ -51,14 +52,15 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         context = getApplicationContext();
-        user = getUserRegistered();
 
         // Check device for Play Services APK.
         //If check succeeds, proceed with GCM registration.
         if (checkPlayServices()) {
-            gcm = GoogleCloudMessaging.getInstance(this);
-
-            if (user==null) {
+            asContacts = ASContactsFactory.getInstance().getInstanceASContacts(context);
+            if (asContacts.isRegistered()) {
+                lanzaApp();
+            } else {
+                gcm = GoogleCloudMessaging.getInstance(this);
                 // Puede ser que no encuentre en preferencias o que no este registrado
                 mUserName = (EditText) findViewById(R.id.userName);
                 buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
@@ -75,9 +77,6 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
                         }
                     }
                 });
-
-            } else {
-                lanzaApp();
             }
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
@@ -99,19 +98,14 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
         return true;
     }
 
-    private int getAppVersion() {
-        try {
-            PackageInfo packageInfo;
-            packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionCode;
-        } catch (NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
-    }
+
 
     private void lanzaApp() {
+
+        user = asContacts.getUserRegistered();
+
+        //TODO no veo necesario pasar el telefono por aquí, mejor lo recogemos usando el SA
+
         Intent i = new Intent(context, MainActivity.class);
         i.putExtra("NUMBER", user.getTelephone());
         i.putExtra("USERID",user.getId());
@@ -125,72 +119,20 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
         Log.d(TAG, "onClick of Login: After finish.");
     }
 
-    private Contact getUserRegistered() {
-        user = new Contact();
-        final SharedPreferences prefs = getSharedPreferences(
-                SignUpActivity.class.getSimpleName(), Context.MODE_PRIVATE);
-        user.setServerid(prefs.getString(PROPERTY_USER_ID,""));
-        if (user.getServerid()=="") {
-            Log.i(TAG, "Registration not found.");
-            return null;
-        }
-        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = getAppVersion();
-        if (registeredVersion != currentVersion) {
-            Log.i(TAG, "App version changed.");
-            return null;
-        }
-        user.setTelephone(prefs.getString(PROPERTY_USER_NUMBER, ""));
-        if (user.getTelephone().isEmpty()) {
-            Log.i(TAG, "Phone number not found.");
-            return null;
-        }
-        user.setGcmId(prefs.getString(PROPERTY_REG_ID, ""));
-        if (user.getGcmId().isEmpty()) {
-            Log.i(TAG, "GCM id not found.");
-            return null;
-        }
-        return user;
-    }
-
     //step 1: register with Google GCM server
     private void registerInBackground() {
-        new AsyncTask<Void, Void, String>() {
+        new AsyncTask<Void, Void, Bundle>() {
             @Override
-            protected String doInBackground(Void... params) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(context);
-                    }
-                    regId = gcm.register(ProjectID.SENDER_ID);
-                    user = ServerAPI.getInstance().registrarUsuario(userNumber,regId);
-                    storeRegistration(user);
-                    Bundle result = null;
-                    Account account = new Account(user.getTelephone(), context.getString(R.string.ACCOUNT_TYPE));
-                    AccountManager am = AccountManager.get(context);
-                    if (am.addAccountExplicitly(account, null, null)) {
-                        result = new Bundle();
-                        result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
-                        result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
-                        setAccountAuthenticatorResult(result);
-                    }
-
-                    SyncContacts syncContacts = new SyncContacts(SignUpActivity.this);
-                    syncContacts.performSync();
-
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-                    Log.d(TAG, "Error: " + msg);
-                } catch (OperationCanceledException e) {
-                    msg = "Error :" + e.getMessage();
-                    Log.d(TAG, "Error: " + msg);
-                }
-                return msg;
+            protected Bundle doInBackground(Void... params) {
+                return asContacts.register(userNumber);
             }
 
             @Override
-            protected void onPostExecute(String msg) {
+            protected void onPostExecute(Bundle bundle) {
+
+                if(bundle.containsKey("ERROR_MSG")){
+                    // Tengo que entender esto aún...
+                }
                 if(user.getServerid()!=null && user.getServerid()!="") {
                     Toast.makeText(context,
                             "Register complete!",
@@ -208,18 +150,7 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
         }.execute(null, null, null);
     }
 
-    private void storeRegistration(Contact user) {
-        final SharedPreferences prefs = getSharedPreferences(
-                SignUpActivity.class.getSimpleName(), Context.MODE_PRIVATE);
-        int appVersion = getAppVersion();
-        Log.i(TAG, "Saving regId on app version " + appVersion);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PROPERTY_REG_ID, user.getGcmId());
-        editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        editor.putString(PROPERTY_USER_NUMBER, user.getTelephone());
-        editor.putString(PROPERTY_USER_ID, user.getServerid());
-        editor.commit();
-    }
+
 
     @Override
     protected void onResume() {

@@ -1,5 +1,7 @@
 package com.wheresapp.bussiness.contacts.factory;
 
+import android.content.Context;
+
 import com.wheresapp.bussiness.contacts.ASContacts;
 import com.wheresapp.bussiness.contacts.factory.imp.ASContactsFactoryImp;
 
@@ -13,6 +15,6 @@ public abstract class ASContactsFactory {
             instance = new ASContactsFactoryImp();
         return instance;
     }
-    public abstract ASContacts getInstanceASContacts();
+    public abstract ASContacts getInstanceASContacts(Context context);
 
 }

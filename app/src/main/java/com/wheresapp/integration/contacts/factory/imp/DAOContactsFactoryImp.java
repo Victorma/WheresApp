@@ -1,5 +1,8 @@
 package com.wheresapp.integration.contacts.factory.imp;
 
+import android.accounts.Account;
+import android.content.Context;
+
 import com.wheresapp.integration.contacts.DAOContacts;
 import com.wheresapp.integration.contacts.factory.DAOContactsFactory;
 import com.wheresapp.integration.contacts.imp.DAOContactsImp;
@@ -10,7 +13,7 @@ import com.wheresapp.integration.contacts.imp.DAOContactsImp;
 public class DAOContactsFactoryImp extends DAOContactsFactory {
 
     @Override
-    public DAOContacts getInstanceDAOContacts() {
-        return new DAOContactsImp();
+    public DAOContacts getInstanceDAOContacts(Context c, Account a) {
+        return new DAOContactsImp(c,a);
     }
 }

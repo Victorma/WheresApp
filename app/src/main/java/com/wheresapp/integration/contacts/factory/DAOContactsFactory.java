@@ -1,5 +1,8 @@
 package com.wheresapp.integration.contacts.factory;
 
+import android.accounts.Account;
+import android.content.Context;
+
 import com.wheresapp.integration.contacts.DAOContacts;
 import com.wheresapp.integration.contacts.factory.imp.DAOContactsFactoryImp;
 
@@ -16,6 +19,6 @@ public abstract class DAOContactsFactory {
         return instance;
     }
 
-    public abstract DAOContacts getInstanceDAOContacts();
+    public abstract DAOContacts getInstanceDAOContacts(Context context, Account account);
 
 }
