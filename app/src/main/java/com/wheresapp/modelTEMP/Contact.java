@@ -6,11 +6,13 @@ import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.google.api.client.util.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by Victorma on 25/11/2014.
  */
 @Table(name = "Contacts")
-public class Contact extends Model{
+public class Contact extends Model implements Serializable{
 
     @Column(name = "ServerId")
     private String serverid;
@@ -31,7 +33,7 @@ public class Contact extends Model{
     private DateTime lastSeen;
 
     @Column(name = "Favourite")
-    private Boolean favourite;
+    private Boolean favourite = false;
 
     @Column(name = "Image")
     private String imageURI;
@@ -112,5 +114,9 @@ public class Contact extends Model{
 
     public void setImageURI(String imageURI) {
         this.imageURI = imageURI;
+    }
+
+    public String toString() {
+        return this.name;
     }
 }

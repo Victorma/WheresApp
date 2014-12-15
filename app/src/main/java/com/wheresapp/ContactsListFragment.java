@@ -16,7 +16,9 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts; //
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,26 +33,48 @@ import android.widget.SearchView.OnQueryTextListener; //android.support.v7.widge
 import android.support.v4.widget.SimpleCursorAdapter; //android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.wheresapp.adapter.ContactAdapter;
+import com.wheresapp.loader.ContactListLoader;
+import com.wheresapp.modelTEMP.Contact;
+
+import java.util.List;
+
 
 public class ContactsListFragment extends ListFragment
-        implements OnQueryTextListener, OnCloseListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements OnQueryTextListener, OnCloseListener, LoaderManager.LoaderCallbacks<List<Contact>> {
 
     // This is the Adapter being used to display the list's data.
-    SimpleCursorAdapter mAdapter;
+    ContactAdapter mAdapter;
 
     // The SearchView for doing filtering.
     SearchView mSearchView;
+
+    private Boolean favourite=false;
+    private Boolean recent=false;
 
     // If non-null, this is the current filter the user has provided.
     String mCurFilter;
 
     private static String COLUMN_ID = ContactsContract.RawContacts.SYNC1;
 
-    /*private static final String TAG = "UserListActivity";
-    private Intent intent;
-    MessageSender messageSender;
-    GoogleCloudMessaging gcm;*/
-    String tabNumber, userNumber;
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+
+        // handle fragment arguments
+        Bundle arguments = getArguments();
+
+        if (arguments.containsKey("TAB")) {
+            Integer tab = arguments.getInt("TAB");
+            if (tab == 2)
+                this.favourite = true;
+            else if (tab == 1)
+                this.recent = true;
+        }
+
+
+
+    }
 
     public static class MySearchView extends SearchView {
         public MySearchView(Context context) {
@@ -69,48 +93,26 @@ public class ContactsListFragment extends ListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        if (favourite)
+            setEmptyText("No favourite contacts");
+        else if (recent)
+            setEmptyText("No recent calls");
+        else
+            setEmptyText("No contacts");
 
         //Ahora se hace asi porque aún no hay un Fragment para cada lista
         Intent i = getActivity().getIntent();
-        tabNumber = getResources().getStringArray(R.array.tab_names)[i.getIntExtra("TAB", 0)];
-
-        userNumber = i.getStringExtra("NUMBER");
 
         // We have a menu item to show in action bar.
         setHasOptionsMenu(true);
 
-        // Create a progress bar to display while the list loads
-        ProgressBar progressBar = new ProgressBar(getActivity());
-        progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-        progressBar.setIndeterminate(true);
-        getListView().setEmptyView(progressBar);
-
-        // Must add the progress bar to the root of the layout
-        ViewGroup root = (ViewGroup) getActivity().findViewById(android.R.id.content);
-        root.addView(progressBar);
-
-        /*intent = new Intent(this, GCMNotificationIntentService.class);
-        registerReceiver(broadcastReceiver, new IntentFilter("com.wheresapp.contactslist"));
-        messageSender = new MessageSender();
-        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());*/
-
-        /*Resources resources = this.getResources();
-        int iconId = R.drawable.ic_action_person;
-         */// Create an empty adapter we will use to display the loaded data.
-        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.contacts_list_item, null,
-                new String[] { Contacts.PHOTO_URI,
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                                Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME },
-                new int[] {android.R.id.icon, android.R.id.text1 }, 0);
-        mAdapter.setViewBinder(new CustomViewBinder());
+        mAdapter =  new ContactAdapter(getActivity());
         setListAdapter(mAdapter);
 
-        // Prepare the loader.  Either re-connect with an existing one,
-        // or start a new one.
+        setListShown(false);
+
         getLoaderManager().initLoader(0, null, this);
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -127,24 +129,15 @@ public class ContactsListFragment extends ListFragment
     }
 
     public boolean onQueryTextChange(String newText) {
-        // Called when the action bar search text has changed.  Update
-        // the search filter, and restart the loader to do a new query
-        // with this filter.
-        String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-        // Don't do anything if the filter hasn't actually changed.
-        // Prevents restarting the loader when restoring state.
-        if (mCurFilter == null && newFilter == null) {
-            return true;
-        }
-        if (mCurFilter != null && mCurFilter.equals(newFilter)) {
-            return true;
-        }
-        mCurFilter = newFilter;
-        getLoaderManager().restartLoader(0, null, this);
+        // Called when the action bar search text has changed.  Since this
+        // is a simple array adapter, we can just have it do the filtering.
+        mCurFilter = !TextUtils.isEmpty(newText) ? newText : null;
+        mAdapter.getFilter().filter(mCurFilter);
         return true;
     }
 
-    @Override public boolean onQueryTextSubmit(String query) {
+    @Override
+    public boolean onQueryTextSubmit(String query) {
         // Don't care about this.
         return true;
     }
@@ -167,58 +160,27 @@ public class ContactsListFragment extends ListFragment
         return super.onOptionsItemSelected(item);
     }
 
-    @Override public void onListItemClick(ListView l, View v, int position, long id) {
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
         // Insert desired behavior here.
-        Intent intent = new Intent(getActivity(), ContactDataActivity.class);
-        // El hijo 0 es la imagen del contacto y el 1 el textview del que obtenemos el nombre
-        String toUser = ((TextView) ((RelativeLayout) v).getChildAt(1)).getText().toString();
-        intent.putExtra("TOUSER", toUser);
+        Log.i("LoaderCustom", "Item clicked: " + id);
+        Intent intent = new Intent(getActivity(),ContactDataActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("USER",mAdapter.getItem(position));
+        intent.putExtra("USER",bundle);
         startActivity(intent);
     }
 
-    // These are the Contacts rows that we will retrieve.
-    private static final String[] PROJECTION = new String[] {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                    Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME, Contacts._ID,
-            Contacts.LOOKUP_KEY, Contacts.PHOTO_FILE_ID, Contacts.PHOTO_URI};
-
-    private static String SELECTION = "((" +
-            Contacts.HAS_PHONE_NUMBER + "=1) AND (" +
-            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                    Contacts.DISPLAY_NAME_PRIMARY + " NOTNULL) AND (" +
-                            Contacts.DISPLAY_NAME_PRIMARY + " != '' ))" :
-                    Contacts.DISPLAY_NAME + " NOTNULL) AND (" +
-                            Contacts.DISPLAY_NAME + " != '' ))");
-
-    // Defines a string that specifies a sort order
-    private static final String SORT_ORDER =
-            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                    Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME)
-                    + " COLLATE LOCALIZED ASC";
-
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // This is called when a new Loader needs to be created.  This
-        // sample only has one Loader, so we don't care about the ID.
-        // First, pick the base URI to use depending on whether we are
-        // currently filtering.
-        Uri baseUri;
-        if (mCurFilter != null) {
-            baseUri = Uri.withAppendedPath(Contacts.CONTENT_FILTER_URI,
-                    Uri.encode(mCurFilter));
-        } else {
-            baseUri = Contacts.CONTENT_URI;
-        }
-
-        // Now create and return a CursorLoader that will take care of
-        // creating a Cursor for the data being displayed.
-        return new CursorLoader(getActivity(), baseUri,
-                PROJECTION, SELECTION, null, SORT_ORDER);
+    @Override
+    public Loader<List<Contact>> onCreateLoader(int id, Bundle args) {
+        return new ContactListLoader(getActivity(),favourite,recent);
     }
 
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    @Override
+    public void onLoadFinished(Loader<List<Contact>> loader, List<Contact> data) {
         // Swap the new cursor in.  (The framework will take care of closing the
         // old cursor once we return.)
-        mAdapter.swapCursor(data);
+        mAdapter.setData(data);
 
         // The list should now be shown.
         if (isResumed()) {
@@ -228,10 +190,9 @@ public class ContactsListFragment extends ListFragment
         }
     }
 
-    public void onLoaderReset(Loader<Cursor> loader) {
-        // This is called when the last Cursor provided to onLoadFinished()
-        // above is about to be closed.  We need to make sure we are no
-        // longer using it.
-        mAdapter.swapCursor(null);
+    @Override
+    public void onLoaderReset(Loader<List<Contact>> loader) {
+        // Clear the data in the adapter.
+        mAdapter.setData(null);
     }
 }

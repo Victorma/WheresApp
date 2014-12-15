@@ -1,8 +1,10 @@
 package com.wheresapp.integration.contacts.imp;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,6 +14,7 @@ import android.util.Log;
 
 import com.activeandroid.query.From;
 import com.activeandroid.query.Select;
+import com.wheresapp.R;
 import com.wheresapp.integration.contacts.DAOContacts;
 import com.wheresapp.modelTEMP.Contact;
 
@@ -36,6 +39,16 @@ public class DAOContactsImp implements DAOContacts {
     public DAOContactsImp(Context context, Account account){
         this.context = context;
         mContentResolver = context.getContentResolver();
+        account = getAccount();
+    }
+
+    private Account getAccount() {
+        if (account==null) {
+            Account[] accounts = AccountManager.get(context).getAccountsByType(context.getString(R.string.ACCOUNT_TYPE));
+            if (accounts.length > 0)
+                account = accounts[0];
+        }
+        return account;
     }
 
     @Override
@@ -48,8 +61,8 @@ public class DAOContactsImp implements DAOContacts {
         builder.withValue(ContactsContract.RawContacts.ACCOUNT_NAME, account.name);
         builder.withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, account.type);
         builder.withValue(ContactsContract.RawContacts.SYNC1, contact.getServerid());
-        builder.withValue(ContactsContract.RawContacts.SYNC2, false);
-        builder.withValue(ContactsContract.RawContacts.SYNC3, false);
+        builder.withValue(ContactsContract.RawContacts.SYNC2, false); //Marca si es favorito
+        builder.withValue(ContactsContract.RawContacts.SYNC3, false); //Marca si tiene actividad reciente (por si queremos poder borrarlo de la lista de recientes)
         operationList.add(builder.build());
 
         builder = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI);
@@ -114,7 +127,7 @@ public class DAOContactsImp implements DAOContacts {
 
     @Override
     public List<Contact> discover(Contact contact, int limit, int page) {
-
+        getAccount();
         List<Contact> contacts = new ArrayList<Contact>();
 
 
@@ -125,10 +138,16 @@ public class DAOContactsImp implements DAOContacts {
         // TODO HACER LA PROYECCION
         String[] myProjection = new String[]{
                 BaseColumns._ID,
-                ContactsContract.RawContacts.SYNC1
+                ContactsContract.RawContacts.CONTACT_ID,
+                ContactsContract.RawContacts.SYNC1,
+                ContactsContract.RawContacts.SYNC2
         };
 
-        Cursor c1 = mContentResolver.query(rawContactUri, myProjection, null, null, null);
+        String selection = null;
+        if (contact.getFavourite())
+            selection = ContactsContract.RawContacts.SYNC2 + " LIKE 'true'";
+
+        Cursor c1 = mContentResolver.query(rawContactUri, myProjection, selection, null, null);
         while (c1.moveToNext())
             contacts.add(extractContactFromCursor(c1));
 
@@ -138,17 +157,19 @@ public class DAOContactsImp implements DAOContacts {
     }
 
     private Contact extractContactFromCursor(Cursor c){
+        Contact contact = new Contact();
+        contact.setServerid(c.getString(2));
 
-        //TODO Hacer la extracción
+        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, c.getLong(1)).buildUpon().build();
 
-        /*
-        SyncEntry entry = new SyncEntry();
-        entry.raw_id = c1.getLong(0);
-        entry.user_id = c1.getLong(1);
-        localContacts.put(entry.user_id.toString(), entry);
-        */
-
-        return null;
+        Cursor cContact = mContentResolver.query(contactUri, new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,}, null, null, null);
+        if (cContact.moveToFirst()) {
+            contact.setName(cContact.getString(0));
+            contact.setImageURI(cContact.getString(1));
+        }
+        cContact.close();
+        return contact;
     }
 
     @Override

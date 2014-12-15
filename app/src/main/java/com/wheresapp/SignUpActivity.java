@@ -107,8 +107,6 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
         //TODO no veo necesario pasar el telefono por aquí, mejor lo recogemos usando el SA
 
         Intent i = new Intent(context, MainActivity.class);
-        i.putExtra("NUMBER", user.getTelephone());
-        i.putExtra("USERID",user.getId());
         Log.d(TAG, "onClick of login: Before starting userlist activity.");
         if (progressBar != null)
             if (progressBar.isShowing()) {

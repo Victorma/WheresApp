@@ -16,7 +16,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
         ContactsListFragment contacts = new ContactsListFragment();
         Bundle bundle = new Bundle();
         switch (index) {
-            case 0:
+            case 2:
                 bundle.putInt("TAB", 0);
                 contacts.setArguments(bundle);
                 return contacts;
@@ -24,12 +24,12 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
                 bundle.putInt("TAB", 1);
                 contacts.setArguments(bundle);
                 return contacts;
-            case 2:
+            case 0:
                 bundle.putInt("TAB", 2);
                 contacts.setArguments(bundle);
                 return contacts;
         }
-        return null;
+        return contacts;
     }
 
     @Override

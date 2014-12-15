@@ -51,7 +51,8 @@ public class ASContactsImp implements ASContacts {
     public ASContactsImp(Context context){
         this.context  = context;
         Account[] accounts = AccountManager.get(context).getAccountsByType(context.getString(R.string.ACCOUNT_TYPE));
-        account = accounts[0];
+        if (accounts.length>0)
+            account = accounts[0];
     }
 
     @Override
@@ -159,7 +160,7 @@ public class ASContactsImp implements ASContacts {
         List<Contact> contacts = new ArrayList<Contact>();
         boolean stop = false;
         int page = 0;
-        while(!stop || contacts.size()<15){
+        while(!stop && contacts.size()<1){
             List<Call> calls = daoCalls.discover(new Call(),20,page);
             if(calls == null || calls.size() == 0)
                 stop = true;
@@ -193,11 +194,6 @@ public class ASContactsImp implements ASContacts {
     public List<Contact> getContactList() {
         DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context,account);
         return daoContacts.discover(new Contact());
-    }
-
-    private static class SyncEntry {
-        public Long raw_id = 0L;
-        public Long user_id = null;
     }
 
     @Override

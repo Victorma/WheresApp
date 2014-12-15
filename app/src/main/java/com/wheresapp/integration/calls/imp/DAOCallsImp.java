@@ -51,7 +51,7 @@ public class DAOCallsImp implements DAOCalls {
         if(call.getEnd()!=null)
             f.where("End LIKE '"+call.getEnd().toString()+"'");
 
-        f.orderBy("End DESC");
+        //f.orderBy("End DESC");
         if(limit>0) {
             f.limit(limit);
             if (page >= 0)

@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.wheresapp.modelTEMP.Contact;
+
 
 public class ContactDataActivity extends Activity {
 
-    private String toUserName;
     boolean favourite = false;
+    private Contact contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,8 +20,14 @@ public class ContactDataActivity extends Activity {
         setContentView(R.layout.activity_contact_data);
 
         Intent i = getIntent();
-        toUserName = i.getStringExtra("TOUSER");
-        this.setTitle(toUserName);
+        Bundle bundle = i.getBundleExtra("USER");
+        contact = (Contact) bundle.getSerializable("USER");
+        this.favourite = contact.getFavourite();
+        if (this.favourite) {
+            MenuItem item = (MenuItem) findViewById(R.id.action_important);
+            item.setIcon(R.drawable.ic_action_important);
+        }
+        this.setTitle(contact.getName());
     }
 
 
@@ -39,7 +47,7 @@ public class ContactDataActivity extends Activity {
             // When the user clicks REFRESH
             case R.id.action_call:
                 Intent intent = new Intent(this, MapActivity.class);
-                intent.putExtra("TOUSER", toUserName);
+                intent.putExtra("TOUSER", contact.getServerid());
                 startActivity(intent);
                 finish();
                 return true;

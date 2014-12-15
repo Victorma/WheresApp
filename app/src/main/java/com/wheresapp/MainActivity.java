@@ -23,18 +23,12 @@ public class MainActivity extends FragmentActivity implements
     private TabPagerAdapter tabPagerAdapter;
 
     // Declare Tab Variable
-    ContactsListFragment fragmentTabs[] = new ContactsListFragment[3];
     String[] nameTabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Habrá que variar las opciones según reciente, favoritos o todos los contactos
-        fragmentTabs[0] = new ContactsListFragment();
-        fragmentTabs[1] = new ContactsListFragment();
-        fragmentTabs[2] = new ContactsListFragment();
         nameTabs = getResources().getStringArray(R.array.tab_names);
 
         viewPager = (ViewPager) findViewById(R.id.pager);

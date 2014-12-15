@@ -36,7 +36,6 @@ public class SyncContacts {
     private Account account;
     private Context context;
 
-
     public SyncContacts(Context context) {
         this.context = context;
 
