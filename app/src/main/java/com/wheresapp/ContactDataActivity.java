@@ -65,9 +65,8 @@ public class ContactDataActivity extends Activity {
             // When the user clicks REFRESH
             case R.id.action_call:
                 Intent intent = new Intent(this, MapActivity.class);
-                intent.putExtra("TOUSER", contact.getServerid());
+                intent.putExtra("TOUSER", contact);
                 startActivity(intent);
-                finish();
                 return true;
             // When the user clicks REFRESH
             case R.id.action_important:

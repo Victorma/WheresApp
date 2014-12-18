@@ -3,6 +3,7 @@ package com.wheresapp;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,6 +11,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -24,6 +27,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.wheresapp.modelTEMP.Contact;
 
 public class MapActivity extends FragmentActivity implements
         OnMarkerClickListener, OnMarkerDragListener, LocationListener {
@@ -32,24 +37,33 @@ public class MapActivity extends FragmentActivity implements
     private static final LatLng GRAN_VIA = new LatLng(40.420276, -3.705709);
     private static LatLng fromPosition = null;
     private static LatLng toPosition = GRAN_VIA;
+    private ImageButton btDisconnect;
+    private static Contact toContact;
     private GoogleMap map;
     GoogleCloudMessaging gcm;
-    private String toUserName;
     MessageSender messageSender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_map);
         //show error dialog if GoolglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             Toast.makeText(getApplicationContext(), getString(R.string.no_gp_services), Toast.LENGTH_LONG).show();
             finish();
         }
+
+        btDisconnect = (ImageButton) findViewById(R.id.btDisconnect);
+        btDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         Intent i = getIntent();
-        toUserName = i.getStringExtra("TOUSER");
-        this.setTitle(toUserName);
-        setContentView(R.layout.activity_map);
+        toContact = (Contact) i.getSerializableExtra("TOUSER");
+        this.setTitle("Llamando a "+toContact.getName());
+
 
         /*intent = new Intent(this, GcmIntentService.class);
         registerReceiver(broadcastReceiver, new IntentFilter("com.wheresapp.request"));
@@ -81,7 +95,6 @@ public class MapActivity extends FragmentActivity implements
         //sending gcm message to the paired device
         Bundle dataBundle = new Bundle();
         dataBundle.putString("ACTION", "REQUEST");
-        dataBundle.putString("TOUSER", toUserName);
         messageSender.sendMessage(dataBundle,gcm);
 
         return true;
@@ -102,6 +115,7 @@ public class MapActivity extends FragmentActivity implements
         double longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
         addMarkers();
+        addLines();
         map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         map.animateCamera(CameraUpdateFactory.zoomTo(15));
     }
@@ -163,7 +177,7 @@ public class MapActivity extends FragmentActivity implements
         }
     }
 
-    /*private void addLines() {
+    private void addLines() {
         if (map != null) {
             map.addPolyline((new PolylineOptions()).add(GRAN_VIA, fromPosition)
                     .width(5).color(Color.BLUE).geodesic(true));
@@ -171,7 +185,6 @@ public class MapActivity extends FragmentActivity implements
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(GRAN_VIA, 13));
         }
     }
-     */
 
     @Override
     public boolean onMarkerClick(Marker marker) {
