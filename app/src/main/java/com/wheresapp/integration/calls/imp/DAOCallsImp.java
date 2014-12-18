@@ -1,5 +1,7 @@
 package com.wheresapp.integration.calls.imp;
 
+import android.content.Context;
+
 import com.activeandroid.query.From;
 import com.activeandroid.query.Select;
 import com.wheresapp.integration.calls.DAOCalls;
@@ -11,6 +13,12 @@ import java.util.List;
  * Created by Victorma on 25/11/2014.
  */
 public class DAOCallsImp implements DAOCalls {
+
+    private Context context;
+
+    public DAOCallsImp(Context context) {
+        this.context = context;
+    }
 
     @Override
     public boolean create(Call call) {

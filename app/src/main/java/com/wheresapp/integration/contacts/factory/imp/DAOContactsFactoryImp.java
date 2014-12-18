@@ -13,7 +13,7 @@ import com.wheresapp.integration.contacts.imp.DAOContactsImp;
 public class DAOContactsFactoryImp extends DAOContactsFactory {
 
     @Override
-    public DAOContacts getInstanceDAOContacts(Context c, Account a) {
-        return new DAOContactsImp(c,a);
+    public DAOContacts getInstanceDAOContacts(Context c) {
+        return new DAOContactsImp(c);
     }
 }

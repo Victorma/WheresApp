@@ -85,6 +85,7 @@ public class CallServer {
         mapa.put("dateStart",dateStart.toString());
         mapa.put("dateEnd",dateEnd.toString());
         mapa.put("state",state.toString());
+        mapa.put("serverId",id);
 
         return mapa;
     }

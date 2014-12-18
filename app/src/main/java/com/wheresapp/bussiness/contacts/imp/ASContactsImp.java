@@ -118,7 +118,7 @@ public class ASContactsImp implements ASContacts {
                 r.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
                 r.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
             }
-
+            r.putSerializable("USER",user);
             SyncContacts syncContacts = new SyncContacts(context);
             syncContacts.performSync();
 
@@ -154,8 +154,8 @@ public class ASContactsImp implements ASContacts {
     @Override
     public List<Contact> getRecentContactList() {
 
-        DAOCalls daoCalls = DAOCallsFactory.getInstance().getInstanceDAOCalls();
-        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context,account);
+        DAOCalls daoCalls = DAOCallsFactory.getInstance().getInstanceDAOCalls(context);
+        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context);
 
         List<Contact> contacts = new ArrayList<Contact>();
         boolean stop = false;
@@ -182,7 +182,7 @@ public class ASContactsImp implements ASContacts {
     @Override
     public List<Contact> getFavouriteContactsList() {
 
-        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context,account);
+        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context);
 
         Contact pattern = new Contact();
         pattern.setFavourite(true);
@@ -192,7 +192,7 @@ public class ASContactsImp implements ASContacts {
 
     @Override
     public List<Contact> getContactList() {
-        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context,account);
+        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context);
         return daoContacts.discover(new Contact());
     }
 
@@ -201,7 +201,7 @@ public class ASContactsImp implements ASContacts {
 
         Contact user = getUserRegistered();
 
-        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context, account);
+        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context);
 
         HashMap<String, Contact> localContacts = new HashMap<String, Contact>();
         Log.i("SyncContacts", "performSync: " + account.toString());
@@ -236,7 +236,6 @@ public class ASContactsImp implements ASContacts {
                 contact.setTelephone(cursor.getString(cursor.getColumnIndex(projection[3])));
                 contact.setName(cursor.getString(cursor.getColumnIndex(projection[1])));
                 contact.setImageURI(cursor.getString(cursor.getColumnIndex(projection[2])));
-                boolean wasInApp = false;
 
                 if(!localContacts.containsKey(contact.getTelephone()))
                     listTemp.add(contact);
@@ -259,8 +258,10 @@ public class ASContactsImp implements ASContacts {
 
         // Todos los nuevos, pa dentro a través del dao
 
-        for (Contact c : contactResult)
-            daoContacts.create(c);
+        for (Contact c : contactResult) {
+            if (!localContacts.containsKey(c.getTelephone()))
+                daoContacts.create(c);
+        }
 
         return true;
     }
@@ -268,7 +269,7 @@ public class ASContactsImp implements ASContacts {
     @Override
     public Contact getContact(Contact contact) {
 
-        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context,account);
+        DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context);
         Contact r = null;
         if(contact.getTelephone()!=null)
             r = daoContacts.read(contact);

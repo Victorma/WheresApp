@@ -2,12 +2,16 @@ package com.wheresapp.integration.contacts.imp;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -36,7 +40,7 @@ public class DAOContactsImp implements DAOContacts {
     private Context context;
     private Account account;
 
-    public DAOContactsImp(Context context, Account account){
+    public DAOContactsImp(Context context){
         this.context = context;
         mContentResolver = context.getContentResolver();
         account = getAccount();
@@ -61,8 +65,7 @@ public class DAOContactsImp implements DAOContacts {
         builder.withValue(ContactsContract.RawContacts.ACCOUNT_NAME, account.name);
         builder.withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, account.type);
         builder.withValue(ContactsContract.RawContacts.SYNC1, contact.getServerid());
-        builder.withValue(ContactsContract.RawContacts.SYNC2, false); //Marca si es favorito
-        builder.withValue(ContactsContract.RawContacts.SYNC3, false); //Marca si tiene actividad reciente (por si queremos poder borrarlo de la lista de recientes)
+        builder.withValue(ContactsContract.RawContacts.SYNC2, 1); //Marca si es favorito
         operationList.add(builder.build());
 
         builder = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI);
@@ -74,7 +77,7 @@ public class DAOContactsImp implements DAOContacts {
         builder = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI);
         builder.withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0);
         builder.withValue(ContactsContract.Data.MIMETYPE, "vnd.android.cursor.item/vnd.com.wheresapp.profile");
-        builder.withValue(ContactsContract.Data.DATA1, contact.getGcmId());
+        builder.withValue(ContactsContract.Data.DATA1, contact.getTelephone());
         builder.withValue(ContactsContract.Data.DATA2, contact.getTelephone());
         operationList.add(builder.build());
 
@@ -84,45 +87,41 @@ public class DAOContactsImp implements DAOContacts {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-
-        return contact.save() != 0;
+        return true;
     }
 
     @Override
     public Contact read(Contact contact) {
-        List<Contact> c = new Select()
-                .from(Contact.class)
-                .where("telephone LIKE '"+contact.getTelephone()+"'")
-                .limit(1).execute();
-        return (c.size() > 0)? c.get(0): null;
+        //TODO
+        return new Contact();
     }
 
     @Override
     public boolean update(Contact contact) {
 
-        Contact c = this.read(contact);
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
-        c.setName(contact.getName());
-        c.setFavourite(contact.getFavourite());
-        c.setLastSeen(contact.getLastSeen());
-        c.setState(contact.getState());
-        c.setNickname(contact.getNickname());
+        Uri rawContactUri = ContentUris.withAppendedId(ContactsContract.RawContacts.CONTENT_URI, contact.getRaw_Id());
 
-        Long id = c.save();
+        if (contact.getFavourite()!=null) {
+            ops.add(ContentProviderOperation.newUpdate(rawContactUri).withValue(ContactsContract.RawContacts.SYNC2, contact.getFavouriteNum()).build());
+            ContentProviderResult[] result = null;
+            try {
+                result = context.getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+                return true;
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            } catch (OperationApplicationException e) {
+                e.printStackTrace();
+            }
+        }
 
-        return id != 0;
+        return false;
     }
 
     @Override
     public boolean delete(Contact contact) {
-        boolean r = false;
-        Contact c = this.read(contact);
-        if(c!=null){
-            c.delete();
-            r = true;
-        }
-        return r;
+        return false;
     }
 
     @Override
@@ -144,8 +143,10 @@ public class DAOContactsImp implements DAOContacts {
         };
 
         String selection = null;
-        if (contact.getFavourite())
-            selection = ContactsContract.RawContacts.SYNC2 + " LIKE 'true'";
+        if (contact.getFavourite() != null)
+            selection = ContactsContract.RawContacts.SYNC2 + "='" + contact.getFavouriteNum()  + "'";
+        else
+            selection = null;
 
         Cursor c1 = mContentResolver.query(rawContactUri, myProjection, selection, null, null);
         while (c1.moveToNext())
@@ -158,7 +159,12 @@ public class DAOContactsImp implements DAOContacts {
 
     private Contact extractContactFromCursor(Cursor c){
         Contact contact = new Contact();
+        contact.setRaw_Id(c.getLong(0));
         contact.setServerid(c.getString(2));
+        if (c.getInt(3)==1)
+            contact.setFavourite(true);
+        else
+            contact.setFavourite(false);
 
         Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, c.getLong(1)).buildUpon().build();
 

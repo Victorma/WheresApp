@@ -126,7 +126,7 @@ public class CallEndpoint {
         if (call.getState().equals(CallStateServer.RECEIVE))
             call.setState(CallStateServer.WAIT);
         Sender sender = new Sender(API_KEY);
-        Message msg = new Message.Builder().setData(call.toMap()).build();
+        Message msg = new Message.Builder().setData(call.toMap()).addData("type","call").build();
         UserRegistrationServer toUser = findUser(call.getTo());
         UserRegistrationServer fromUser = findUser(call.getFrom());
         Result resultTo = sender.send(msg, toUser.getRegId(), 5);

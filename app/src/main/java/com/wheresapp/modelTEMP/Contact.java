@@ -11,34 +11,26 @@ import java.io.Serializable;
 /**
  * Created by Victorma on 25/11/2014.
  */
-@Table(name = "Contacts")
-public class Contact extends Model implements Serializable{
+public class Contact implements Serializable{
 
-    @Column(name = "ServerId")
+    private Long raw_Id;
+
     private String serverid;
 
-    @Column(name = "Telephone")
     private String telephone;
 
-    @Column(name = "Nickname")
     private String nickname;
 
-    @Column(name = "Name")
     private String name;
 
-    @Column(name = "State")
     private Integer state;
 
-    @Column(name = "LastSeen")
     private DateTime lastSeen;
 
-    @Column(name = "Favourite")
-    private Boolean favourite = false;
+    private Boolean favourite;
 
-    @Column(name = "Image")
     private String imageURI;
 
-    @Column(name = "GcmId")
     private String gcmId;
 
     public Contact() {
@@ -112,11 +104,24 @@ public class Contact extends Model implements Serializable{
         return imageURI;
     }
 
+
     public void setImageURI(String imageURI) {
         this.imageURI = imageURI;
     }
 
+    public Long getRaw_Id() {
+        return raw_Id;
+    }
+
+    public void setRaw_Id(Long raw_Id) {
+        this.raw_Id = raw_Id;
+    }
+
     public String toString() {
         return this.name;
+    }
+
+    public Integer getFavouriteNum() {
+        return favourite?1:0;
     }
 }

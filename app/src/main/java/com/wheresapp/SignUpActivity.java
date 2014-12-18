@@ -1,15 +1,9 @@
 package com.wheresapp;
 
-import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
-import android.accounts.AccountManager;
-import android.accounts.OperationCanceledException;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +18,6 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.wheresapp.bussiness.contacts.ASContacts;
 import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
 import com.wheresapp.modelTEMP.Contact;
-import com.wheresapp.server.ServerAPI;
-import com.wheresapp.sync.SyncContacts;
-
-import java.io.IOException;
 
 
 public class SignUpActivity extends AccountAuthenticatorActivity {
@@ -37,7 +27,6 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private ProgressDialog progressBar;
     Button buttonSignUp;
-    String regId;
     String userNumber;
     Contact user;
     Context context;
@@ -68,7 +57,7 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
                     @Override
                     public void onClick(View arg0) {
                         userNumber = "+34" + mUserName.getText().toString();
-                        if (userNumber != null && userNumber != "") {
+                        if (!userNumber.equals("")) {
                             progressBar = ProgressDialog.show(SignUpActivity.this, null, getString(R.string.loading));
                             registerInBackground();
                         } else {
@@ -101,11 +90,6 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
 
 
     private void lanzaApp() {
-
-        user = asContacts.getUserRegistered();
-
-        //TODO no veo necesario pasar el telefono por aquí, mejor lo recogemos usando el SA
-
         Intent i = new Intent(context, MainActivity.class);
         Log.d(TAG, "onClick of login: Before starting userlist activity.");
         if (progressBar != null)
@@ -130,8 +114,10 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
 
                 if(bundle.containsKey("ERROR_MSG")){
                     // Tengo que entender esto aún...
+                } else if (bundle.containsKey("USER")) {
+                    user = (Contact) bundle.getSerializable("USER");
                 }
-                if(user.getServerid()!=null && user.getServerid()!="") {
+                if(user.getServerid()!=null && !user.getServerid().equals("")) {
                     Toast.makeText(context,
                             "Register complete!",
                             Toast.LENGTH_LONG).show();

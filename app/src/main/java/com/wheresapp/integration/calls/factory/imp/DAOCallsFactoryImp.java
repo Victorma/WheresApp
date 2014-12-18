@@ -1,5 +1,7 @@
 package com.wheresapp.integration.calls.factory.imp;
 
+import android.content.Context;
+
 import com.wheresapp.integration.calls.DAOCalls;
 import com.wheresapp.integration.calls.factory.DAOCallsFactory;
 import com.wheresapp.integration.calls.imp.DAOCallsImp;
@@ -10,7 +12,7 @@ import com.wheresapp.integration.calls.imp.DAOCallsImp;
 public class DAOCallsFactoryImp extends DAOCallsFactory {
 
     @Override
-    public DAOCalls getInstanceDAOCalls() {
-        return new DAOCallsImp();
+    public DAOCalls getInstanceDAOCalls(Context context) {
+        return new DAOCallsImp(context);
     }
 }

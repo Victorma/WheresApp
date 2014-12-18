@@ -1,5 +1,7 @@
 package com.wheresapp.bussiness.calls.factory.imp;
 
+import android.content.Context;
+
 import com.wheresapp.bussiness.calls.ASCalls;
 import com.wheresapp.bussiness.calls.factory.ASCallsFactory;
 import com.wheresapp.bussiness.calls.imp.ASCallsImp;
@@ -9,7 +11,7 @@ import com.wheresapp.bussiness.calls.imp.ASCallsImp;
  */
 public class ASCallsFactoryImp extends ASCallsFactory {
     @Override
-    public ASCalls getInstanceASCalls() {
-        return new ASCallsImp();
+    public ASCalls getInstanceASCalls(Context context) {
+        return new ASCallsImp(context);
     }
 }

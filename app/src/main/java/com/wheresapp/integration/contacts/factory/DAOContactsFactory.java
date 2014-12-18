@@ -19,6 +19,6 @@ public abstract class DAOContactsFactory {
         return instance;
     }
 
-    public abstract DAOContacts getInstanceDAOContacts(Context context, Account account);
+    public abstract DAOContacts getInstanceDAOContacts(Context context);
 
 }

@@ -55,6 +55,11 @@ public class MainActivity extends FragmentActivity implements
             @Override
             public void onPageScrollStateChanged(int arg0) { }
         });
+
+            if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            actionBar.setSelectedNavigationItem(savedInstanceState.getInt("curChoice", 2));
+        }
     }
 
     @Override
@@ -108,5 +113,12 @@ public class MainActivity extends FragmentActivity implements
                 return true;
             }
         }.execute(null, null, null);
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("tabChoice", actionBar.getSelectedNavigationIndex());
+        super.onSaveInstanceState(outState);
     }
 }

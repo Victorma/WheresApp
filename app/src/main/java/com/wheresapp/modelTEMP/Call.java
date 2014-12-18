@@ -1,15 +1,23 @@
 package com.wheresapp.modelTEMP;
 
+import android.os.Bundle;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.google.api.client.util.DateTime;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Victorma on 25/11/2014.
  */
 @Table(name = "Calls")
 public class Call extends Model{
+
+    @Column(name = "ServerId")
+    private String serverId;
 
     @Column(name = "Start")
     private DateTime start;
@@ -75,5 +83,27 @@ public class Call extends Model{
 
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
+    }
+
+    public static Call fromMap(Bundle map) {
+        Call call = new Call();
+        call.setReceiver(map.getString("to"));
+        call.setSender(map.getString("from"));
+        //TODO
+        //call.setEnd(map.get("dateEnd"));
+        //TODO
+        //call.setStart(map.get("dateStart"));
+        call.setState(CallState.valueOf(map.getString("state")));
+        call.setServerId(map.getString("serverId"));
+
+        return call;
     }
 }

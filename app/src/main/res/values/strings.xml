@@ -35,4 +35,7 @@
         <item>Contacts</item>
     </array>
 
+    <string name="title_activity_actitivity_incoming_call">Llamada Recibida</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>

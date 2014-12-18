@@ -10,7 +10,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.6'
+        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.17'
     }
 }
 
@@ -32,8 +32,6 @@ dependencies {
   compile 'javax.servlet:servlet-api:2.5'
   compile 'com.googlecode.objectify:objectify:4.0b3'
   compile 'com.ganyo:gcm-server:1.0.2'
-  def domainLayer = project(':domain')
-  compile domainLayer
 }
 
 appengine {

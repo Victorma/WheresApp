@@ -1,5 +1,7 @@
 package com.wheresapp.integration.calls.factory;
 
+import android.content.Context;
+
 import com.wheresapp.integration.calls.DAOCalls;
 import com.wheresapp.integration.calls.factory.imp.DAOCallsFactoryImp;
 
@@ -16,6 +18,6 @@ public abstract class DAOCallsFactory {
         return instance;
     }
 
-    public abstract DAOCalls getInstanceDAOCalls();
+    public abstract DAOCalls getInstanceDAOCalls(Context context);
 
 }
