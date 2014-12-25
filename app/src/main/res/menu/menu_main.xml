@@ -9,4 +9,12 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    <item android:id="@+id/action_clean"
+        android:title="@string/action_clean"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    <item android:id="@+id/action_sugerencia"
+        android:title="@string/action_sugerencia"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
 </menu>

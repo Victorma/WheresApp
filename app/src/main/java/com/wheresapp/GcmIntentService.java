@@ -11,9 +11,12 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.Gson;
 import com.wheresapp.bussiness.calls.factory.ASCallsFactory;
+import com.wheresapp.integration.contacts.factory.DAOContactsFactory;
 import com.wheresapp.modelTEMP.Call;
 import com.wheresapp.modelTEMP.CallState;
+import com.wheresapp.modelTEMP.Contact;
 
 /**
  * This {@code IntentService} does the actual handling of the GCM message.
@@ -23,6 +26,7 @@ import com.wheresapp.modelTEMP.CallState;
  * wake lock.
  */
 public class GcmIntentService extends IntentService {
+    private Gson gson = new Gson();
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
@@ -47,10 +51,7 @@ public class GcmIntentService extends IntentService {
                 String type = extras.getString("type");
                 switch(type) {
                     case "call": {
-                        Call call = Call.fromMap(extras);
-                        if (CallState.WAIT.equals(call.getState())) {
-                            ASCallsFactory.getInstance().getInstanceASCalls(this).receiveCall(call);
-                        }
+
                     }break;
                     default: {
 
@@ -59,7 +60,6 @@ public class GcmIntentService extends IntentService {
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
-        GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     // Put the message into a notification and post it.

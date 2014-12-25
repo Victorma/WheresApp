@@ -1,84 +1,57 @@
 package com.wheresapp.loader;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.BaseColumns;
-import android.provider.ContactsContract;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.wheresapp.R;
-import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
-import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.modelTEMP.Message;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Sergio on 13/12/2014.
+ * Created by Sergio on 18/12/2014.
  */
-public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
+public class PositionLoader extends AsyncTaskLoader<List<Message>> {
 
-    private List<Contact> mContacts;
+    private List<Message> messages;
 
-    private Boolean favorito = false;
-    private Boolean reciente = false;
-
-    public ContactListLoader(Context context, Boolean favorito, Boolean reciente) {
-
+    public PositionLoader(Context context) {
         super(context);
-
-        this.favorito = favorito;
-
-        this.reciente = reciente;
+        messages = new ArrayList<>();
     }
 
     @Override
-    public List<Contact> loadInBackground() {
-
-        List<Contact> listContact = new ArrayList<Contact>();
-
-        if (favorito)
-            listContact = ASContactsFactory.getInstance().getInstanceASContacts(getContext()).getFavouriteContactsList();
-        else if (reciente)
-            listContact = ASContactsFactory.getInstance().getInstanceASContacts(getContext()).getRecentContactList();
-        else
-            listContact = ASContactsFactory.getInstance().getInstanceASContacts(getContext()).getContactList();
-
-        return listContact;
+    public List<Message> loadInBackground() {
+        return null;
     }
+
     /**
      * Called when there is new data to deliver to the client.  The
      * super class will take care of delivering it; the implementation
      * here just adds a little more logic.
      */
-    @Override public void deliverResult(List<Contact> contacts) {
+    @Override public void deliverResult(List<Message> messages) {
         if (isReset()) {
             // An async query came in while the loader is stopped.  We
             // don't need the result.
-            if (contacts != null) {
-                onReleaseResources(contacts);
+            if (messages != null) {
+                onReleaseResources(messages);
             }
         }
-        List<Contact> oldApps = mContacts;
-        mContacts = contacts;
+        List<Message> oldMessages = this.messages;
+        this.messages = messages;
 
         if (isStarted()) {
             // If the Loader is currently started, we can immediately
             // deliver its results.
-            super.deliverResult(contacts);
+            super.deliverResult(messages);
         }
 
         // At this point we can release the resources associated with
         // 'oldApps' if needed; now that the new result is delivered we
         // know that it is no longer in use.
-        if (oldApps != null) {
-            onReleaseResources(oldApps);
+        if (oldMessages != null) {
+            onReleaseResources(oldMessages);
         }
     }
 
@@ -86,13 +59,13 @@ public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
      * Handles a request to start the Loader.
      */
     @Override protected void onStartLoading() {
-        if (mContacts != null) {
+        if (messages != null) {
             // If we currently have a result available, deliver it
             // immediately.
-            deliverResult(mContacts);
+            deliverResult(messages);
         }
 
-        if (mContacts == null) {
+        if (messages == null) {
             // If the data has changed since the last time it was loaded
             // or is not currently available, start a load.
             forceLoad();
@@ -110,12 +83,12 @@ public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(List<Contact> contacts) {
-        super.onCanceled(contacts);
+    @Override public void onCanceled(List<Message> messages) {
+        super.onCanceled(messages);
 
         // At this point we can release the resources associated with 'apps'
         // if needed.
-        onReleaseResources(contacts);
+        onReleaseResources(messages);
     }
 
     /**
@@ -129,9 +102,9 @@ public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
 
         // At this point we can release the resources associated with 'apps'
         // if needed.
-        if (mContacts != null) {
-            onReleaseResources(mContacts);
-            mContacts = null;
+        if (messages != null) {
+            onReleaseResources(messages);
+            messages = null;
         }
     }
 
@@ -139,7 +112,7 @@ public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(List<Contact> contacts) {
+    protected void onReleaseResources(List<Message> contacts) {
         // For a simple List<> there is nothing to do.  For something
         // like a Cursor, we would close it here.
     }

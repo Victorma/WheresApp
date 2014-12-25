@@ -5,6 +5,8 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.util.Date;
+
 /**
  * Created by Sergio on 07/12/2014.
  */
@@ -14,16 +16,15 @@ public class MessageServer {
     private String id;
     @Index
     private String callId;
-    @Index
     private String fromId;
     @Index
     private String toId;
     @Index
-    private DateTime date;
+    private Date dateSend;
     private String message;
 
     public MessageServer() {
-        this.date = new DateTime(System.currentTimeMillis());
+        this.dateSend = new Date(System.currentTimeMillis());
     }
 
     public String getId() {
@@ -50,12 +51,12 @@ public class MessageServer {
         this.toId = toId;
     }
 
-    public DateTime getDate() {
-        return date;
+    public Date getDate() {
+        return dateSend;
     }
 
-    public void setDate(DateTime date) {
-        this.date = date;
+    public void setDate(Date date) {
+        this.dateSend = date;
     }
 
     public String getMessage() {

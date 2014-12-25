@@ -10,6 +10,7 @@ public interface DAO<T> {
     public T read(T t);
     public boolean update(T t);
     public boolean delete(T t);
+    public boolean deleteAll();
     public List<T> discover(T t);
     public List<T> discover(T t, int limit, int page);
 }

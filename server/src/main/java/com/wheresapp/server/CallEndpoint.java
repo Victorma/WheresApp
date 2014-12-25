@@ -12,12 +12,14 @@ import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.appengine.repackaged.com.google.api.client.util.DateTime;
+import com.google.gson.Gson;
 import com.wheresapp.server.domain.CallServer;
 import com.wheresapp.server.domain.CallStateServer;
 import com.wheresapp.server.domain.MessageServer;
 import com.wheresapp.server.domain.UserRegistrationServer;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import static com.wheresapp.server.OfyService.ofy;
@@ -28,38 +30,58 @@ import static com.wheresapp.server.OfyService.ofy;
 @Api(name = "callApi",  version = "v1", namespace = @ApiNamespace(ownerDomain = "server.wheresapp.com", ownerName = "server.wheresapp.com", packagePath=""))
 public class CallEndpoint {
 
+    private Gson gson = new Gson();
+
     /** Api Keys can be obtained from the google cloud console */
     private static final String API_KEY = System.getProperty("gcm.api.key");
+
+    @ApiMethod(name = "testCall", path = "{fromId}/testcall")
+    public CallServer test(@Named("fromId") String fromId) throws BadRequestException, InternalServerErrorException {
+        CallServer newCall = new CallServer();
+        newCall.setSender("5732568548769792");
+        newCall.setReceiver("5732568548769792");
+        newCall.setState(CallStateServer.WAIT);
+        newCall.setStart(new Date(System.currentTimeMillis()));
+        ofy().save().entity(newCall).now();
+        try {
+            sendCall(newCall,fromId);
+        } catch (IOException e) {
+            throw new InternalServerErrorException("No se ha podido realizar la llamada");
+        }
+        return newCall;
+    }
+
 
     @ApiMethod(name = "createCall", path = "{fromId}/call/{toId}")
     public CallServer createCall(@Named("fromId")String from,@Named("toId")String to) throws NotFoundException, InternalServerErrorException {
         CallServer newCall = new CallServer();
-        UserRegistrationServer record = findUser(to);
+        UserRegistrationServer record = findUser(Long.parseLong(to));
         if(record == null) {
             throw new NotFoundException("User " + to + " not registered.");
         }
-        newCall.setFrom(from);
-        newCall.setTo(to);
+        newCall.setSender(from);
+        newCall.setReceiver(to);
+        ofy().save().entity(newCall).now();
         try {
-            sendCall(newCall);
+                sendCall(newCall,record.getRegId());
         } catch (IOException e) {
             throw new InternalServerErrorException("No se ha podido realizar la llamada");
         }
-        ofy().save().entity(newCall).now();
         return newCall;
     }
 
     @ApiMethod(name = "accept", path = "{fromId}/accept/{callId}")
     public CallServer accept(@Named("fromId")String fromId,@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
-        CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
+        CallServer call = ofy().load().type(CallServer.class).id(Long.parseLong(callId)).now();
         if (call.getState().equals(CallStateServer.WAIT)) {
             call.setState(CallStateServer.ACCEPT);
+            call.setUpdate(new Date(System.currentTimeMillis()));
+            ofy().save().entity(call).now();
             try {
-                sendCall(call);
+                sendCall(call,findUser(Long.parseLong(call.getSender())).getRegId());
             } catch (IOException e) {
                 throw new InternalServerErrorException("No se ha podido realizar la llamada");
             }
-            ofy().save().entity(call).now();
             return call;
         }
         throw new BadRequestException("La llamada esta finalizada");
@@ -67,15 +89,17 @@ public class CallEndpoint {
 
     @ApiMethod(name = "deny", path = "{fromId}/deny/{callId}")
     public CallServer deny(@Named("fromId")String fromId,@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
-        CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
+        CallServer call = ofy().load().type(CallServer.class).id(Long.parseLong(callId)).now();
         if (call.getState().equals(CallStateServer.WAIT)) {
-            call.setState(CallStateServer.DENY);
+            call.setState(CallStateServer.END);
+            call.setUpdate(new Date(System.currentTimeMillis()));
+            call.setEnd(new Date(System.currentTimeMillis()));
+            ofy().save().entity(call).now();
             try {
-                sendCall(call);
+                sendCall(call,findUser(Long.parseLong(call.getSender())).getRegId());
             } catch (IOException e) {
                 throw new InternalServerErrorException("No se ha podido realizar la llamada");
             }
-            ofy().save().entity(call).now();
             return call;
         }
         throw new BadRequestException("La llamada esta finalizada");
@@ -83,34 +107,39 @@ public class CallEndpoint {
 
     @ApiMethod(name = "end", path = "{fromId}/end/{callId}")
     public CallServer end(@Named("fromId")String fromId,@Named("callId")String callId) throws BadRequestException, InternalServerErrorException {
-        CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
-        if (call.getState().equals(CallStateServer.TRANSMIT)) {
+        CallServer call = ofy().load().type(CallServer.class).id(Long.parseLong(callId)).now();
+        if (call.getState().equals(CallStateServer.ACCEPT)) {
             call.setState(CallStateServer.END);
-            call.setDateEnd(new DateTime(System.currentTimeMillis()));
+            call.setUpdate(new Date(System.currentTimeMillis()));
+            call.setEnd(new Date(System.currentTimeMillis()));
+            ofy().save().entity(call).now();
             try {
-                sendCall(call);
+                if (call.getSender().equals(fromId))
+                    sendCall(call,findUser(Long.parseLong(call.getReceiver())).getRegId());
+                else
+                    sendCall(call,findUser(Long.parseLong(call.getSender())).getRegId());
             } catch (IOException e) {
                 throw new InternalServerErrorException("No se ha podido realizar la llamada");
             }
-            ofy().save().entity(call).now();
             return call;
         }
         throw new BadRequestException("La llamada esta finalizada");
     }
 
     @ApiMethod(name = "transmit", path = "{callId}/{fromId}/transmit/{position}")
-    public MessageServer transmit(@Named("fromId") String fromId, @Named("callId")String callId, @Named("position")String position) throws BadRequestException, InternalServerErrorException {
-        CallServer call = ofy().load().type(CallServer.class).filterKey(callId).first().now();
-        if (call.getState().equals(CallStateServer.TRANSMIT)) {
+    public MessageServer transmit(@Named("callId")String callId, @Named("fromId") String fromId, @Named("position")String position) throws BadRequestException, InternalServerErrorException {
+        CallServer call = ofy().load().type(CallServer.class).id(Long.parseLong(callId)).now();
+        if (call.getState().equals(CallStateServer.ACCEPT)) {
             MessageServer message = new MessageServer();
+            message.setCallId(callId);
             message.setFromId(fromId);
             message.setMessage(position);
-            if (call.getFrom()==fromId)
-                message.setToId(call.getTo());
+            if (call.getSender().equals(fromId))
+                message.setToId(call.getReceiver());
             else
-                message.setToId(call.getFrom());
+                message.setToId(call.getSender());
             ofy().save().entity(message).now();
-            MessageServer messageServer = ofy().load().type(MessageServer.class).filter("callId",call.getId()).filter("toId",fromId).order("-date").first().now();
+            MessageServer messageServer = ofy().load().type(MessageServer.class).filter("callId",call.getServerId()).filter("toId", fromId).order("-dateSend").first().now();
             if (messageServer==null) {
                 messageServer = new MessageServer();
                 messageServer.setMessage("WAIT");
@@ -120,45 +149,23 @@ public class CallEndpoint {
         throw new BadRequestException("La llamada esta finalizada");
     }
 
-
-
-    private void sendCall(CallServer call) throws IOException {
-        if (call.getState().equals(CallStateServer.RECEIVE))
-            call.setState(CallStateServer.WAIT);
+    private void sendCall(CallServer call, String toId) throws IOException {
         Sender sender = new Sender(API_KEY);
-        Message msg = new Message.Builder().setData(call.toMap()).addData("type","call").build();
-        UserRegistrationServer toUser = findUser(call.getTo());
-        UserRegistrationServer fromUser = findUser(call.getFrom());
-        Result resultTo = sender.send(msg, toUser.getRegId(), 5);
-        Result resultFrom = sender.send(msg, fromUser.getRegId(), 5);
-        //Enviar llamada al receptor
+        Message msg = null;
+        if (call.getState().equals(CallStateServer.WAIT))
+            msg = new Message.Builder().addData("message",gson.toJson(call)).addData("type", "call").addData("new","new").build();
+        else
+            msg = new Message.Builder().addData("message",gson.toJson(call)).addData("type", "call").addData("update","update").build();
+        //Message msg = new Message.Builder().addData("message", "Prueba").build();
+        Result resultTo = sender.send(msg, toId, 5);
+
         if (resultTo.getMessageId() != null) {
             String canonicalRegId = resultTo.getCanonicalRegistrationId();
             if (canonicalRegId != null) {
                 // if the regId changed, we have to update the datastore
+                UserRegistrationServer toUser = findUser(Long.parseLong(toId));
                 toUser.setRegId(canonicalRegId);
                 ofy().save().entity(toUser).now();
-            }
-        } else {
-            String error = resultTo.getErrorCodeName();
-            if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-                // if the device is no longer registered with Gcm, remove it from the datastore
-                ofy().delete().entity(toUser).now();
-            }
-        }
-        //Enviar llamada al emisor
-        if (resultTo.getMessageId() != null) {
-            String canonicalRegId = resultTo.getCanonicalRegistrationId();
-            if (canonicalRegId != null) {
-                // if the regId changed, we have to update the datastore
-                toUser.setRegId(canonicalRegId);
-                ofy().save().entity(toUser).now();
-            }
-        } else {
-            String error = resultTo.getErrorCodeName();
-            if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-                // if the device is no longer registered with Gcm, remove it from the datastore
-                ofy().delete().entity(toUser).now();
             }
         }
     }
@@ -167,7 +174,7 @@ public class CallEndpoint {
         return ofy().load().type(UserRegistrationServer.class).filter("phone", phone).first().now()!=null;
     }
 
-    private UserRegistrationServer findUser(String userId) {
+    private UserRegistrationServer findUser(Long userId) {
         return ofy().load().type(UserRegistrationServer.class).filter("id", userId).first().now();
     }
 }

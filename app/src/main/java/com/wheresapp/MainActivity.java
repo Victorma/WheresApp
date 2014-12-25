@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.wheresapp.integration.calls.factory.DAOCallsFactory;
 import com.wheresapp.sync.SyncContacts;
 
 
@@ -80,9 +81,16 @@ public class MainActivity extends FragmentActivity implements
             case R.id.action_refresh:
                 syncContactInBackground();
                 return true;
+            case R.id.action_clean:
+                eliminarLlamadas();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void eliminarLlamadas() {
+        DAOCallsFactory.getInstance().getInstanceDAOCalls(this).deleteAll();
     }
 
     @Override

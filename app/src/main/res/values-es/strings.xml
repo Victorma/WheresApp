@@ -25,6 +25,8 @@
 
     <!-- Messages -->
     <string name="no_gp_services">Google Play Services no disponible.</string>
+    <string name="action_clean">Vaciar Historial</string>
+    <string name="action_sugerencia">Enviar Feedback</string>
 
     <array name="tab_names">
         <item>Favoritos</item>

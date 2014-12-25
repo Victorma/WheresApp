@@ -8,52 +8,64 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.appengine.repackaged.com.google.api.client.util.DateTime;
+import com.google.gson.Gson;
 import com.wheresapp.server.domain.CallServer;
 import com.wheresapp.server.domain.CallStateServer;
 import com.wheresapp.server.domain.MessageServer;
 import com.wheresapp.server.domain.UserRegistrationServer;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static com.wheresapp.server.OfyService.ofy;
 
 /**
  * Created by Sergio on 01/12/2014.
  */
-@Api(name = "cronApi",  version = "v1", namespace = @ApiNamespace(ownerDomain = "server.wheresapp.com", ownerName = "server.wheresapp.com", packagePath=""))
-public class CronEndpoint {
+public class CronEndpoint extends HttpServlet {
+
+    private Gson gson = new Gson();
 
     /** Api Keys can be obtained from the google cloud console */
     private static final String API_KEY = System.getProperty("gcm.api.key");
 
-    @ApiMethod(name = "check", path = "/check")
-    public void contacList() throws IOException {
-        List<CallServer> queryTransmit = ofy().load().type(CallServer.class).filter("state", CallStateServer.TRANSMIT).list();
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        List<CallServer> queryTransmit = ofy().load().type(CallServer.class).filter("state", CallStateServer.ACCEPT).list();
         for (CallServer call : queryTransmit) {
-            if ((System.currentTimeMillis() - call.getDateStart().getValue()) > 60000 ) {
-                MessageServer messageFrom = ofy().load().type(MessageServer.class).filter("callId", call.getId()).filter("toId", call.getFrom()).order("-date").first().now();
-                MessageServer messageTo = ofy().load().type(MessageServer.class).filter("callId", call.getId()).filter("toId", call.getTo()).order("-date").first().now();
+            Long nowTime = System.currentTimeMillis();
+            Long initTime = call.getStart().getTime();
+            if ((nowTime - initTime) > 60000 ) {
+                MessageServer messageFrom = ofy().load().type(MessageServer.class).filter("callId", call.getServerId()).filter("toId", call.getSender()).order("-date").first().now();
+                MessageServer messageTo = ofy().load().type(MessageServer.class).filter("callId", call.getServerId()).filter("toId", call.getReceiver()).order("-date").first().now();
                 if (messageFrom==null) {
-                    call.setState(CallStateServer.FAILED);
+                    call.setState(CallStateServer.END);
+                    ofy().save().entity(call).now();
+                    call.setUpdate(call.getEnd());
+                    sendCall(call);
+                    continue;
+                } else if ((nowTime - messageFrom.getDate().getTime()) > 60000) {
+                    call.setState(CallStateServer.END);
+                    call.setEnd(new Date(System.currentTimeMillis()));
+                    call.setUpdate(call.getEnd());
                     ofy().save().entity(call).now();
                     sendCall(call);
                     continue;
                 }
                 if (messageTo==null) {
-                    call.setState(CallStateServer.FAILED);
+                    call.setState(CallStateServer.END);
                     ofy().save().entity(call).now();
+                    call.setUpdate(call.getEnd());
                     sendCall(call);
                     continue;
-                }
-                if ((System.currentTimeMillis() - messageFrom.getDate().getValue()) > 60000) {
-                    call.setDateEnd(new DateTime(System.currentTimeMillis()));
-                    ofy().save().entity(call).now();
-                    sendCall(call);
-                    continue;
-                }
-                if ((System.currentTimeMillis() - messageTo.getDate().getValue()) > 60000) {
-                    call.setDateEnd(new DateTime(System.currentTimeMillis()));
+                } else if ((nowTime - messageTo.getDate().getTime()) > 60000) {
+                    call.setState(CallStateServer.END);
+                    call.setEnd(new Date(System.currentTimeMillis()));
+                    call.setUpdate(call.getEnd());
                     ofy().save().entity(call).now();
                     sendCall(call);
                     continue;
@@ -63,9 +75,12 @@ public class CronEndpoint {
 
         List<CallServer> queryWait = ofy().load().type(CallServer.class).filter("state", CallStateServer.WAIT).list();
         for (CallServer call : queryWait) {
-            if ((System.currentTimeMillis() - call.getDateStart().getValue()) > 120000 ) {
-                call.setDateEnd(new DateTime(System.currentTimeMillis()));
-                call.setState(CallStateServer.FAILED);
+            Long init = System.currentTimeMillis();
+            Long end = call.getStart().getTime();
+            if ((init - end) > 60000 ) {
+                call.setEnd(new Date(System.currentTimeMillis()));
+                call.setUpdate(call.getEnd());
+                call.setState(CallStateServer.END);
                 ofy().save().entity(call).now();
                 sendCall(call);
                 continue;
@@ -74,12 +89,10 @@ public class CronEndpoint {
     }
 
     private void sendCall(CallServer call) throws IOException {
-        if (call.getState().equals(CallStateServer.RECEIVE))
-            call.setState(CallStateServer.WAIT);
         Sender sender = new Sender(API_KEY);
-        Message msg = new Message.Builder().setData(call.toMap()).build();
-        UserRegistrationServer toUser = findUser(call.getTo());
-        UserRegistrationServer fromUser = findUser(call.getFrom());
+        Message msg = new Message.Builder().addData("message",gson.toJson(call)).addData("type","call").addData("update","update").build();
+        UserRegistrationServer toUser = findUser(Long.parseLong(call.getReceiver()));
+        UserRegistrationServer fromUser = findUser(Long.parseLong(call.getSender()));
         Result resultTo = sender.send(msg, toUser.getRegId(), 5);
         Result resultFrom = sender.send(msg, fromUser.getRegId(), 5);
         //Enviar llamada al receptor
@@ -114,7 +127,7 @@ public class CronEndpoint {
         }
     }
 
-    private UserRegistrationServer findUser(String userId) {
+    private UserRegistrationServer findUser(Long userId) {
         return ofy().load().type(UserRegistrationServer.class).filter("id", userId).first().now();
     }
 

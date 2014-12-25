@@ -5,6 +5,7 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Id;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -14,42 +15,46 @@ import java.util.TreeMap;
 @Entity
 public class CallServer {
     @Id
-    private String id;
+    Long serverId;
     @Index
-    private String to;
+    private String receiver;
     @Index
-    private String from;
+    private String sender;
     @Index
     private CallStateServer state;
-    private DateTime dateStart;
-    private DateTime dateEnd;
+    private Date start;
+    private Date end;
+    private Date update;
 
     public CallServer() {
-
+        init();
     }
 
     public void init() {
-        state = CallStateServer.RECEIVE;
-        dateStart = new DateTime(System.currentTimeMillis());
-        dateEnd = new DateTime(0);
-        to = "";
-        from = "";
+        state = CallStateServer.WAIT;
+        start = new Date(System.currentTimeMillis());
+        receiver = "";
+        sender = "";
     }
 
-    public String getTo() {
-        return to;
+    public String getServerId() {
+        return serverId.toString();
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public String getReceiver() {
+        return receiver;
     }
 
-    public String getFrom() {
-        return from;
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public CallStateServer getState() {
@@ -58,43 +63,42 @@ public class CallServer {
 
     public void setState(CallStateServer state) {
         this.state = state;
-        new DateTime(System.currentTimeMillis());
     }
 
-    public DateTime getDateStart() {
-        return dateStart;
+    public Date getStart() {
+        return start;
     }
 
-    public void setDateStart(DateTime dateStart) {
-        this.dateStart = dateStart;
+    public void setStart(Date start) {
+        this.start = start;
     }
 
-    public DateTime getDateEnd() {
-        return dateEnd;
+    public Date getEnd() {
+        return end;
     }
 
-    public void setDateEnd(DateTime dateEnd) {
-        this.dateEnd = dateEnd;
-        new DateTime(System.currentTimeMillis());
+    public void setEnd(Date end) {
+        this.end = end;
     }
 
-    public Map<String,String> toMap() {
-        Map<String, String> mapa = new TreeMap<String, String>();
-        mapa.put("to",to);
-        mapa.put("from",from);
-        mapa.put("dateStart",dateStart.toString());
-        mapa.put("dateEnd",dateEnd.toString());
-        mapa.put("state",state.toString());
-        mapa.put("serverId",id);
-
-        return mapa;
+    public Date getUpdate() {
+        return update;
     }
 
-    public String getId() {
-        return id;
+    public void setUpdate(Date update) {
+        this.update = update;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return "CallServer{" +
+                "serverId='" + serverId + '\'' +
+                ", receiver='" + receiver + '\'' +
+                ", sender='" + sender + '\'' +
+                ", state=" + state +
+                ", start=" + start +
+                ", end=" + end +
+                ", update=" + update +
+                '}';
     }
 }

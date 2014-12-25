@@ -1,8 +1,13 @@
 package com.wheresapp;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -10,6 +15,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -28,17 +37,22 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.wheresapp.modelTEMP.Call;
 import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.modelTEMP.Message;
+import com.wheresapp.server.ServerAPI;
+
+import java.util.List;
 
 public class MapActivity extends FragmentActivity implements
-        OnMarkerClickListener, OnMarkerDragListener, LocationListener {
+        OnMarkerClickListener, OnMarkerDragListener {
 
-    private Location location = null;
-    private static final LatLng GRAN_VIA = new LatLng(40.420276, -3.705709);
-    private static LatLng fromPosition = null;
-    private static LatLng toPosition = GRAN_VIA;
+    private LatLng fromPosition = null;
+    private LatLng toPosition = null;
     private ImageButton btDisconnect;
-    private static Contact toContact;
+    private Contact toContact;
+    private Call call;
+    private NotificationManager mNotificationManager;
     private GoogleMap map;
     GoogleCloudMessaging gcm;
     MessageSender messageSender;
@@ -47,92 +61,94 @@ public class MapActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        if (getIntent().hasExtra("KILL")) {
+            finish();
+        }
         //show error dialog if GoolglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             Toast.makeText(getApplicationContext(), getString(R.string.no_gp_services), Toast.LENGTH_LONG).show();
             finish();
         }
 
+        mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         btDisconnect = (ImageButton) findViewById(R.id.btDisconnect);
         btDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent service = new Intent(getApplicationContext(),PositionCommunicationService.class);
+                stopService(service);
+                mNotificationManager.cancelAll();
                 finish();
             }
         });
         Intent i = getIntent();
-        toContact = (Contact) i.getSerializableExtra("TOUSER");
-        this.setTitle("Llamando a "+toContact.getName());
+        if (toContact==null) {
+            toContact = (Contact) i.getSerializableExtra("TOUSER");
+            this.setTitle("Llamando a " + toContact.getName());
+        }
 
-
-        /*intent = new Intent(this, GcmIntentService.class);
-        registerReceiver(broadcastReceiver, new IntentFilter("com.wheresapp.request"));
-
-        messageSender = new MessageSender();
-        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
-
-        sendRequest();*/
 
         if (map == null) {
             map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
         }
         map.setMyLocationEnabled(true);
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String bestProvider = locationManager.getBestProvider(criteria, true);
-        location = locationManager.getLastKnownLocation(bestProvider);
-        if (location != null) {
-            onLocationChanged(location);
+
+        //Iniciamos el servicio que inicia y mantiene la llamada
+        Intent service = new Intent(getApplicationContext(),PositionCommunicationService.class);
+        service.putExtra("CONTACT", toContact);
+        if (i.hasExtra("INCOMING")) {
+            service.putExtra("INCOMING", true);
         }
-        locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+        startService(service);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("Llamada activa")
+                        .setContentText(this.getTitle());
+
+        Intent resultIntent = new Intent(this, MapActivity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        0
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        mBuilder.setOngoing(true);
+        mNotificationManager.notify(1,mBuilder.build());
+
 
         addGoogleMap();
         addMarkers();
         //addLines();
     }
 
-    private boolean sendRequest(){
-        //sending gcm message to the paired device
-        Bundle dataBundle = new Bundle();
-        dataBundle.putString("ACTION", "REQUEST");
-        messageSender.sendMessage(dataBundle,gcm);
-
-        return true;
-    }
-
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            /*Log.d(TAG, "onReceive: " + intent.getStringExtra("CHATMESSAGE"));
-            chatArrayAdapter.add(new ChatMessage(true, intent.getStringExtra("CHATMESSAGE")));*/
+            Double latitude = intent.getDoubleExtra("latitude",0);
+            Double longitude = intent.getDoubleExtra("longitude",0);
+            toPosition = new LatLng(latitude,longitude);
+            Log.d("MapActivity", "onReceive: LATITUDE =" + latitude.toString() + ", LONGITUDE = " + longitude.toString() );
+            addMarkers();
         }
     };
 
     @Override
-    public void onLocationChanged(Location location) {
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-        LatLng latLng = new LatLng(latitude, longitude);
-        addMarkers();
-        addLines();
-        map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        map.animateCamera(CameraUpdateFactory.zoomTo(15));
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter(PositionCommunicationService.BROADCAST_ACTION));
     }
-
     @Override
-    public void onProviderDisabled(String provider) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     private boolean isGooglePlayServicesAvailable() {
@@ -158,31 +174,25 @@ public class MapActivity extends FragmentActivity implements
 
     private void addMarkers() {
         if (map != null) {
-            if (location != null) {
-                fromPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                map.addMarker(new MarkerOptions().position(fromPosition).title(getString(R.string.my_location))
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).alpha(0.4f).draggable(true));
+            if (toPosition!=null) {
+                map.clear();
+                //fromPosition = new LatLng(map.getMyLocation().getLatitude(),map.getMyLocation().getLongitude());
+                map.addMarker(new MarkerOptions().position(toPosition).title(getString(R.string.goal))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag))
+                        .snippet("Best Time: 6 Secs").draggable(true));
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(toPosition, 13));
             } else {
                 Toast.makeText(getApplicationContext(), getString(R.string.waiting_location), Toast.LENGTH_LONG).show();
             }
-
-            // a draggable marker with title and snippet
-            // marker using custom image
-            map.addMarker(new MarkerOptions().position(toPosition).title(getString(R.string.goal))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag))
-                    .snippet("Best Time: 6 Secs").draggable(true));
-
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(toPosition, 13));
         }
     }
 
     private void addLines() {
         if (map != null) {
-            map.addPolyline((new PolylineOptions()).add(GRAN_VIA, fromPosition)
+            map.addPolyline((new PolylineOptions()).add(toPosition, fromPosition)
                     .width(5).color(Color.BLUE).geodesic(true));
             // move camera to zoom on map
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(GRAN_VIA, 13));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(fromPosition, 13));
         }
     }
 
@@ -211,5 +221,40 @@ public class MapActivity extends FragmentActivity implements
     public void onMarkerDragStart(Marker marker) {
         fromPosition = marker.getPosition();
         //Log.d(getClass().getSimpleName(), "Drag start at: " + fromPosition);
+    }
+
+    @Override
+    protected void onDestroy() {
+        Intent service = new Intent(getApplicationContext(),PositionCommunicationService.class);
+        stopService(service);
+        mNotificationManager.cancelAll();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        //No se puede volver hacia atras, para ello hay que cancelar la llamada
+        Toast.makeText(this, "Tienes que colgar para volver atras", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setContentView(R.layout.activity_map);
+
+        } else {
+            setContentView(R.layout.activity_map);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.hasExtra("KILL")) {
+            finish();
+        }
     }
 }

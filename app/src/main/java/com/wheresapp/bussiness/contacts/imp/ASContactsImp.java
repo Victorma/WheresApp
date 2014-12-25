@@ -109,7 +109,7 @@ public class ASContactsImp implements ASContacts {
         try {
             GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
             String regId = gcm.register(ProjectID.SENDER_ID);
-            Contact user = ServerAPI.getInstance().registrarUsuario(telephone,regId);
+            Contact user = ServerAPI.getInstance(context).registrarUsuario(telephone,regId);
             storeRegistration(user);
             Bundle result = null;
             Account account = new Account(user.getTelephone(), context.getString(R.string.ACCOUNT_TYPE));
@@ -160,14 +160,14 @@ public class ASContactsImp implements ASContacts {
         List<Contact> contacts = new ArrayList<Contact>();
         boolean stop = false;
         int page = 0;
-        while(!stop && contacts.size()<1){
+        while(!stop && contacts.size()<15){
             List<Call> calls = daoCalls.discover(new Call(),20,page);
             if(calls == null || calls.size() == 0)
                 stop = true;
             else{
                 for(Call call : calls){
                     Contact search = new Contact();
-                    search.setTelephone(call.getReceiver());
+                    search.setServerid(call.getReceiver());
                     Contact c = daoContacts.read(search);
                     if(!contacts.contains(c))
                         contacts.add(c);
@@ -249,7 +249,7 @@ public class ASContactsImp implements ASContacts {
         List<Contact> contactResult = null;
         try {
             while(contactResult==null && intento <= 5) {
-                contactResult = ServerAPI.getInstance().getContactosRegistrados(user.getGcmId(), listTemp);
+                contactResult = ServerAPI.getInstance(context).getContactosRegistrados(listTemp);
                 intento++;
             }
         } catch (IOException ex) {
@@ -271,7 +271,7 @@ public class ASContactsImp implements ASContacts {
 
         DAOContacts daoContacts = DAOContactsFactory.getInstance().getInstanceDAOContacts(context);
         Contact r = null;
-        if(contact.getTelephone()!=null)
+        if(contact.getServerid()!=null)
             r = daoContacts.read(contact);
 
         return r;

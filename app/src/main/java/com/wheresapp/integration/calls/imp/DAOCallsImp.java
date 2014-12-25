@@ -2,6 +2,7 @@ package com.wheresapp.integration.calls.imp;
 
 import android.content.Context;
 
+import com.activeandroid.query.Delete;
 import com.activeandroid.query.From;
 import com.activeandroid.query.Select;
 import com.wheresapp.integration.calls.DAOCalls;
@@ -27,8 +28,9 @@ public class DAOCallsImp implements DAOCalls {
 
     @Override
     public Call read(Call call) {
-        //Por ahora no lo veo necesario
-        return null;
+        From f = new Select().from(Call.class);
+        f.where("ServerId LIKE '"+call.getServerId()+"'");
+        return f.executeSingle();
     }
 
     @Override
@@ -43,6 +45,11 @@ public class DAOCallsImp implements DAOCalls {
     }
 
     @Override
+    public boolean deleteAll() {
+        return new Delete().from(Call.class).execute()!=null;
+    }
+
+    @Override
     public List<Call> discover(Call call, int limit, int page) {
 
         From f = new Select().from(Call.class);
@@ -51,13 +58,13 @@ public class DAOCallsImp implements DAOCalls {
             f.where("Receiver LIKE '"+call.getReceiver()+"'");
 
         if(call.getState()!=null)
-            f.where("State = "+call.getState()+"");
+            f.where("State LIKE '"+call.getState().toString()+"'");
 
         if(call.getStart()!=null)
-            f.where("Start LIKE '"+call.getStart().toString()+"'");
+            f.where("StartDate LIKE '"+call.getStart().toString()+"'");
 
         if(call.getEnd()!=null)
-            f.where("End LIKE '"+call.getEnd().toString()+"'");
+            f.where("EndDate LIKE '"+call.getEnd().toString()+"'");
 
         //f.orderBy("End DESC");
         if(limit>0) {

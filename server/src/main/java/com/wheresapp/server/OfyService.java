@@ -3,6 +3,8 @@ package com.wheresapp.server;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
+import com.wheresapp.server.domain.CallServer;
+import com.wheresapp.server.domain.MessageServer;
 import com.wheresapp.server.domain.UserRegistrationServer;
 
 /**
@@ -14,6 +16,8 @@ public class OfyService {
 
     static {
         ObjectifyService.register(UserRegistrationServer.class);
+        ObjectifyService.register(CallServer.class);
+        ObjectifyService.register(MessageServer.class);
     }
 
     public static Objectify ofy() {

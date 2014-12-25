@@ -10,6 +10,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.util.DateTime;
 import com.wheresapp.R;
+import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
 import com.wheresapp.modelTEMP.Call;
 import com.wheresapp.modelTEMP.CallState;
 import com.wheresapp.modelTEMP.Contact;
@@ -25,19 +26,31 @@ import com.wheresapp.server.userApi.model.ContactServer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Sergio on 06/12/2014.
  */
 public class ServerAPI {
-    private static ServerAPI ourInstance = new ServerAPI();
+    private static ServerAPI ourInstance;
+    private Contact contact;
+    private Context context;
 
-    public static ServerAPI getInstance() {
+    public static ServerAPI getInstance(Context context) {
+        ourInstance = new ServerAPI(context);
         return ourInstance;
     }
 
-    private ServerAPI() {
+    private ServerAPI(Context context) {
+        this.context = context;
+        this.contact = ASContactsFactory.getInstance().getInstanceASContacts(context).getUserRegistered();
+    }
+
+    private Contact getContact() {
+        if (contact==null)
+            contact = ASContactsFactory.getInstance().getInstanceASContacts(context).getUserRegistered();
+        return contact;
     }
 
     /**
@@ -60,7 +73,7 @@ public class ServerAPI {
         return contact;
     }
 
-    public List<Contact> getContactosRegistrados(String fromId, List<Contact> listaContacto) throws IOException {
+    public List<Contact> getContactosRegistrados(List<Contact> listaContacto) throws IOException {
         ContactListServer contactList = new ContactListServer();
         ContactListServer contactListResult;
         List<ContactServer> contactClients = new ArrayList<ContactServer>();
@@ -70,65 +83,68 @@ public class ServerAPI {
             .setPhone(c.getTelephone()));
         }
         contactList.setContactServerList(contactClients);
-        contactListResult = getApiUserServiceHandle().contactList(fromId,contactList).execute();
-        for (ContactServer c : contactListResult.getContactServerList()) {
-            Contact contact = new Contact();
-            contact.setName(c.getName());
-            contact.setTelephone(c.getPhone());
-            contact.setServerid(c.getId().toString());
-            contactosRegistrados.add(contact);
+        contactListResult = getApiUserServiceHandle().contactList(getContact().getServerid(),contactList).execute();
+        if (contactListResult.containsKey("contactServerList")) {
+            for (ContactServer c : contactListResult.getContactServerList()) {
+                Contact contact = new Contact();
+                contact.setName(c.getName());
+                contact.setTelephone(c.getPhone());
+                contact.setServerid(c.getId().toString());
+                contactosRegistrados.add(contact);
+            }
         }
         return contactosRegistrados;
     }
 
-    public Call crearLlamada(String fromId, String toId) throws IOException {
-        CallServer llamadaCreadaServidor = getCallUserServiceHandle().createCall(fromId,toId).execute();
+    public Call crearLlamada(String toId) throws IOException {
+        CallServer llamadaCreadaServidor = getCallUserServiceHandle().createCall(getContact().getServerid(),toId).execute();
         Call llamadaCreada = new Call();
-        llamadaCreada.setReceiver(llamadaCreadaServidor.getTo());
-        llamadaCreada.setSender(llamadaCreadaServidor.getFrom());
+        llamadaCreada.setServerId(llamadaCreadaServidor.getServerId());
+        llamadaCreada.setReceiver(llamadaCreadaServidor.getReceiver());
+        llamadaCreada.setSender(llamadaCreadaServidor.getSender());
         llamadaCreada.setState(CallState.valueOf(llamadaCreadaServidor.getState()));
-        llamadaCreada.setStart(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
-        llamadaCreada.setUpdate(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
+        llamadaCreada.setStart(new Date(llamadaCreadaServidor.getStart().getValue()));
+        llamadaCreada.setUpdate(new Date(llamadaCreadaServidor.getStart().getValue()));
         return llamadaCreada;
     }
 
-    public Call aceptarLlamada(String fromId, String callId) throws IOException {
-        CallServer llamadaCreadaServidor = getCallUserServiceHandle().accept(fromId, callId).execute();
+    public Call aceptarLlamada(String callId) throws IOException {
+        CallServer llamadaCreadaServidor = getCallUserServiceHandle().accept(getContact().getServerid(), callId).execute();
         Call llamadaCreada = new Call();
-        llamadaCreada.setReceiver(llamadaCreadaServidor.getTo());
-        llamadaCreada.setSender(llamadaCreadaServidor.getFrom());
+        llamadaCreada.setReceiver(llamadaCreadaServidor.getReceiver());
+        llamadaCreada.setSender(llamadaCreadaServidor.getSender());
         llamadaCreada.setState(CallState.valueOf(llamadaCreadaServidor.getState()));
-        llamadaCreada.setStart(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
-        llamadaCreada.setUpdate(new DateTime(System.currentTimeMillis()));
+        llamadaCreada.setStart(new Date(llamadaCreadaServidor.getStart().getValue()));
+        llamadaCreada.setUpdate(new Date(System.currentTimeMillis()));
         return llamadaCreada;
     }
 
-    public Call rechazarLlamada(String fromId, String callId) throws IOException {
-        CallServer llamadaCreadaServidor = getCallUserServiceHandle().deny(fromId, callId).execute();
+    public Call rechazarLlamada(String callId) throws IOException {
+        CallServer llamadaCreadaServidor = getCallUserServiceHandle().deny(getContact().getServerid(), callId).execute();
         Call llamadaCreada = new Call();
-        llamadaCreada.setReceiver(llamadaCreadaServidor.getTo());
-        llamadaCreada.setSender(llamadaCreadaServidor.getFrom());
+        llamadaCreada.setReceiver(llamadaCreadaServidor.getReceiver());
+        llamadaCreada.setSender(llamadaCreadaServidor.getSender());
         llamadaCreada.setState(CallState.valueOf(llamadaCreadaServidor.getState()));
-        llamadaCreada.setStart(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
-        llamadaCreada.setUpdate(new DateTime(llamadaCreadaServidor.getDateEnd().getValue()));
-        llamadaCreada.setEnd(new DateTime(llamadaCreadaServidor.getDateEnd().getValue()));
+        llamadaCreada.setStart(new Date(llamadaCreadaServidor.getStart().getValue()));
+        llamadaCreada.setUpdate(new Date(llamadaCreadaServidor.getEnd().getValue()));
+        llamadaCreada.setEnd(new Date(llamadaCreadaServidor.getEnd().getValue()));
         return llamadaCreada;
     }
 
-    public Call finalizarLlamada(String fromId, String callId) throws IOException {
-        CallServer llamadaCreadaServidor = getCallUserServiceHandle().end(fromId, callId).execute();
+    public Call finalizarLlamada(String callId) throws IOException {
+        CallServer llamadaCreadaServidor = getCallUserServiceHandle().end(getContact().getServerid(), callId).execute();
         Call llamadaCreada = new Call();
-        llamadaCreada.setReceiver(llamadaCreadaServidor.getTo());
-        llamadaCreada.setSender(llamadaCreadaServidor.getFrom());
+        llamadaCreada.setReceiver(llamadaCreadaServidor.getReceiver());
+        llamadaCreada.setSender(llamadaCreadaServidor.getSender());
         llamadaCreada.setState(CallState.valueOf(llamadaCreadaServidor.getState()));
-        llamadaCreada.setStart(new DateTime(llamadaCreadaServidor.getDateStart().getValue()));
-        llamadaCreada.setUpdate(new DateTime(llamadaCreadaServidor.getDateEnd().getValue()));
-        llamadaCreada.setEnd(new DateTime(llamadaCreadaServidor.getDateEnd().getValue()));
+        llamadaCreada.setStart(new Date(llamadaCreadaServidor.getStart().getValue()));
+        llamadaCreada.setUpdate(new Date(llamadaCreadaServidor.getEnd().getValue()));
+        llamadaCreada.setEnd(new Date(llamadaCreadaServidor.getEnd().getValue()));
         return llamadaCreada;
     }
 
-    public Message enviarPosicion(String fromId, String callId, String position) throws  IOException {
-        MessageServer messageServer = getCallUserServiceHandle().transmit(fromId,callId,position).execute();
+    public Message enviarPosicion(String callId, String position) throws  IOException {
+        MessageServer messageServer = getCallUserServiceHandle().transmit(callId,getContact().getServerid(),position).execute();
         Message message = new Message();
         if (message.getMessage()=="")
             return null;
@@ -136,7 +152,7 @@ public class ServerAPI {
         message.setToId(messageServer.getToId());
         message.setFromId(messageServer.getFromId());
         message.setCallId(messageServer.getCallId());
-        message.setDate(new DateTime(messageServer.getDate().getValue()));
+        message.setDate(new Date(messageServer.getDate().getValue()));
         return  message;
     }
 

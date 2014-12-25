@@ -25,6 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.android.support:support-v4:21.0.+'
     compile project(path: ':server', configuration: 'android-endpoints')
-    compile files('libs/ActiveAndroid.jar')
-    compile files('src/main/java/libs/ActiveAndroid.jar')
+    compile 'com.google.code.gson:gson:2.3.1'
 }

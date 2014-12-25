@@ -1,14 +1,10 @@
 package com.wheresapp.modelTEMP;
 
-import android.os.Bundle;
-
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
-import com.google.api.client.util.DateTime;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Date;
 
 /**
  * Created by Victorma on 25/11/2014.
@@ -20,36 +16,36 @@ public class Call extends Model{
     private String serverId;
 
     @Column(name = "Start")
-    private DateTime start;
+    private Date start;
 
     @Column(name = "End")
-    private DateTime end;
+    private Date end;
 
-    @Column(name = "Update")
-    private DateTime update;
+    @Column(name = "UpdateDate")
+    private Date update;
 
-    @Column(name = "Sender")
+    @Column(name = "SenderDate")
     private String sender;
 
-    @Column(name = "Receiver")
+    @Column(name = "ReceiverDate")
     private String receiver;
 
     @Column(name = "State")
     private CallState state;
 
-    public DateTime getStart() {
+    public Date getStart() {
         return start;
     }
 
-    public void setStart(DateTime start) {
+    public void setStart(Date start) {
         this.start = start;
     }
 
-    public DateTime getEnd() {
+    public Date getEnd() {
         return end;
     }
 
-    public void setEnd(DateTime end) {
+    public void setEnd(Date end) {
         this.end = end;
     }
 
@@ -69,11 +65,11 @@ public class Call extends Model{
         this.state = state;
     }
 
-    public DateTime getUpdate() {
+    public Date getUpdate() {
         return update;
     }
 
-    public void setUpdate(DateTime update) {
+    public void setUpdate(Date update) {
         this.update = update;
     }
 
@@ -93,17 +89,18 @@ public class Call extends Model{
         this.serverId = serverId;
     }
 
-    public static Call fromMap(Bundle map) {
-        Call call = new Call();
-        call.setReceiver(map.getString("to"));
-        call.setSender(map.getString("from"));
-        //TODO
-        //call.setEnd(map.get("dateEnd"));
-        //TODO
-        //call.setStart(map.get("dateStart"));
-        call.setState(CallState.valueOf(map.getString("state")));
-        call.setServerId(map.getString("serverId"));
 
-        return call;
+
+    @Override
+    public String toString() {
+        return "Call{" +
+                "serverId='" + serverId + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                ", update=" + update +
+                ", sender='" + sender + '\'' +
+                ", receiver='" + receiver + '\'' +
+                ", state=" + state +
+                '}';
     }
 }

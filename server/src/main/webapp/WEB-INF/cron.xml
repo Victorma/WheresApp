@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
     <cron>
-        <url>/_ah/api/check</url>
+        <url>/cron/checkAll</url>
         <description>Check all calls</description>
-        <schedule>every 2 minutes</schedule>
+        <schedule>every 1 minutes</schedule>
     </cron>
 </cronentries>

@@ -17,7 +17,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:id="@+id/imageView"
-            android:background="@drawable/ic_action_person"/>
+            android:src="@drawable/ic_action_person" />
 
         <LinearLayout
             android:orientation="vertical"

@@ -92,8 +92,26 @@ public class DAOContactsImp implements DAOContacts {
 
     @Override
     public Contact read(Contact contact) {
-        //TODO
-        return new Contact();
+
+        Contact contactFound = null;
+
+        Uri rawContactUri = ContactsContract.RawContacts.CONTENT_URI.buildUpon().appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, account.name).appendQueryParameter(
+                ContactsContract.RawContacts.ACCOUNT_TYPE, account.type).build();
+
+        String[] myProjection = new String[]{
+                BaseColumns._ID,
+                ContactsContract.RawContacts.CONTACT_ID,
+                ContactsContract.RawContacts.SYNC1,
+                ContactsContract.RawContacts.SYNC2
+        };
+
+        String selection = ContactsContract.RawContacts.SYNC1 + " LIKE '" + contact.getServerid()  + "'";
+
+        Cursor c1 = mContentResolver.query(rawContactUri, myProjection, selection, null, null);
+        while (c1.moveToNext())
+            contact = extractContactFromCursor(c1);
+
+        return contact;
     }
 
     @Override
@@ -125,6 +143,11 @@ public class DAOContactsImp implements DAOContacts {
     }
 
     @Override
+    public boolean deleteAll() {
+        return false;
+    }
+
+    @Override
     public List<Contact> discover(Contact contact, int limit, int page) {
         getAccount();
         List<Contact> contacts = new ArrayList<Contact>();
@@ -139,12 +162,14 @@ public class DAOContactsImp implements DAOContacts {
                 BaseColumns._ID,
                 ContactsContract.RawContacts.CONTACT_ID,
                 ContactsContract.RawContacts.SYNC1,
-                ContactsContract.RawContacts.SYNC2
+                ContactsContract.RawContacts.SYNC2,
         };
 
         String selection = null;
         if (contact.getFavourite() != null)
             selection = ContactsContract.RawContacts.SYNC2 + "='" + contact.getFavouriteNum()  + "'";
+        else if (contact.getServerid() != null)
+            selection = ContactsContract.RawContacts.SYNC1 + " LIKE '" + contact.getServerid()  + "'";
         else
             selection = null;
 
@@ -166,13 +191,18 @@ public class DAOContactsImp implements DAOContacts {
         else
             contact.setFavourite(false);
 
-        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, c.getLong(1)).buildUpon().build();
+        Uri contactUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
-        Cursor cContact = mContentResolver.query(contactUri, new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,}, null, null, null);
+        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = "+ c.getLong(1);
+
+        Cursor cContact = mContentResolver.query(contactUri, new String[]{ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,
+                ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER}, selection, null, null);
         if (cContact.moveToFirst()) {
-            contact.setName(cContact.getString(0));
-            contact.setImageURI(cContact.getString(1));
+            contact.setName(cContact.getString(1));
+            contact.setImageURI(cContact.getString(2));
+            contact.setTelephone(cContact.getString(3));
         }
         cContact.close();
         return contact;

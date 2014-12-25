@@ -2,6 +2,8 @@ package com.wheresapp.modelTEMP;
 
 import com.google.api.client.util.DateTime;
 
+import java.util.Date;
+
 /**
  * Created by Sergio on 07/12/2014.
  */
@@ -10,11 +12,11 @@ public class Message {
     private String callId;
     private String fromId;
     private String toId;
-    private DateTime date;
+    private Date dateSend;
     private String message;
 
     public Message() {
-        this.date = new DateTime(System.currentTimeMillis());
+        this.dateSend = new Date(System.currentTimeMillis());
     }
 
     public String getId() {
@@ -41,12 +43,12 @@ public class Message {
         this.toId = toId;
     }
 
-    public DateTime getDate() {
-        return date;
+    public Date getDate() {
+        return dateSend;
     }
 
-    public void setDate(DateTime date) {
-        this.date = date;
+    public void setDate(Date date) {
+        this.dateSend = date;
     }
 
     public String getMessage() {

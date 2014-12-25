@@ -46,7 +46,7 @@
             android:value="1" />
 
         <activity
-            android:name="com.wheresapp.SignUpActivity"
+            android:name=".SignUpActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,20 +55,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.wheresapp.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_main" >
         </activity>
         <activity
-            android:name="com.wheresapp.ContactDataActivity"
+            android:name=".ContactDataActivity"
             android:label="@string/title_activity_contact_data"
-            android:parentActivityName="com.wheresapp.MainActivity" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wheresapp.MainActivity" />
         </activity>
         <activity
-            android:name="com.wheresapp.MapActivity"
-            android:label="@string/title_activity_map" >
+            android:name=".MapActivity"
+            android:label="@string/title_activity_map"
+            android:launchMode="singleInstance"
+            android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
         <!--
         <activity
@@ -77,17 +79,17 @@
         </activity>
         -->
         <receiver
-            android:name="com.wheresapp.GcmBroadcastReceiver"
+            android:name=".GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
                 <category android:name="com.wheresapp" />
             </intent-filter>
         </receiver>
 
-        <service android:name="com.wheresapp.GcmIntentService" />
+        <service android:name=".GcmIntentService" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -95,33 +97,45 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
-
-        <meta-data android:name="android.provider.CONTACTS_STRUCTURE"
+        <meta-data
+            android:name="android.provider.CONTACTS_STRUCTURE"
             android:resource="@xml/contacts" />
 
-        <service android:name=".sync.AccountAuthenticatorService">
+        <service android:name=".sync.AccountAuthenticatorService" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
-            <meta-data android:name="android.accounts.AccountAuthenticator"
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-
-        <service android:name=".sync.ContactsSyncAdapterService"
-            android:exported="true" android:process=":contacts">
+        <service
+            android:name=".sync.ContactsSyncAdapterService"
+            android:exported="true"
+            android:process=":contacts" >
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
                 android:resource="@xml/sync_contacts" />
-            <meta-data android:name="android.provider.CONTACTS_STRUCTURE"
+            <meta-data
+                android:name="android.provider.CONTACTS_STRUCTURE"
                 android:resource="@xml/contacts" />
         </service>
 
         <activity
-            android:name="com.wheresapp.ActivityIncomingCall"
-            android:label="@string/title_activity_actitivity_incoming_call" >
+            android:name=".ActivityIncomingCall"
+            android:label="@string/title_activity_actitivity_incoming_call"
+            android:launchMode="singleInstance">
         </activity>
+
+        <service
+            android:name=".PositionCommunicationService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
