@@ -85,7 +85,7 @@ public class PositionCommunicationService extends Service implements LocationLis
                                 call = asCalls.getActiveCall();
                                 Call callReceive = gson.fromJson(message, Call.class);
                                 if (call.getServerId().equals(callReceive.getServerId())) {
-                                    if (callReceive.getState().equals(CallState.END) && call.getState().equals(CallState.ACCEPT)) {
+                                    if (callReceive.getState().equals(CallState.END) && (call.getState().equals(CallState.ACCEPT) || call.getState().equals(CallState.WAIT))) {
                                         Log.d(TAG, "Message receiver: "+ callReceive.toString());
                                         Log.d(TAG, "Active Call: "+ call.toString());
                                         call.setUpdate(callReceive.getUpdate());
@@ -133,7 +133,7 @@ public class PositionCommunicationService extends Service implements LocationLis
                     call = asCalls.getActiveCall();
                     if (call==null) {
                         Log.d(TAG, "Create call");
-                        if (!asCalls.call(contact)) {
+                        if (asCalls.call(contact)) {
                             Log.d(TAG, "Get active call");
                             call = asCalls.getActiveCall();
                             Log.d(TAG, "Active call " + call.toString());
@@ -205,7 +205,8 @@ public class PositionCommunicationService extends Service implements LocationLis
     private void killActivity() {
         Intent killMapActivity = new Intent(PositionCommunicationService.this,MapActivity.class);
         killMapActivity.putExtra("KILL",1);
-        killMapActivity.setFlags(Intent.FLAG_FROM_BACKGROUND);
+        killMapActivity.addFlags(Intent.FLAG_FROM_BACKGROUND);
+        killMapActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplication().startActivity(killMapActivity);
     }
 
@@ -227,7 +228,7 @@ public class PositionCommunicationService extends Service implements LocationLis
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(updateCallReceiver);
+        //unregisterReceiver(updateCallReceiver);
         Log.d(TAG, "Location service destroyed…");
         terminarLlamada();
         clearLocationData();
@@ -260,7 +261,7 @@ public class PositionCommunicationService extends Service implements LocationLis
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Calling command…");
-        if (contact==null && asCalls.getActiveCall()!=null) {
+        if (contact==null && startId==1) {
             contact = (Contact) intent.getSerializableExtra("CONTACT");
             crearLlamada();
         } else {
@@ -306,4 +307,5 @@ public class PositionCommunicationService extends Service implements LocationLis
     public void onLocationChanged(Location location) {
         actualizarPosicion(location);
     }
+
 }

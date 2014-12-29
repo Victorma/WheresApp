@@ -48,7 +48,7 @@ public class CronEndpoint extends HttpServlet {
                     call.setUpdate(call.getEnd());
                     sendCall(call);
                     continue;
-                } else if ((nowTime - messageFrom.getDate().getTime()) > 60000) {
+                } else if ((nowTime - messageFrom.getDate().getTime()) > 30000) {
                     call.setState(CallStateServer.END);
                     call.setEnd(new Date(System.currentTimeMillis()));
                     call.setUpdate(call.getEnd());
@@ -62,7 +62,7 @@ public class CronEndpoint extends HttpServlet {
                     call.setUpdate(call.getEnd());
                     sendCall(call);
                     continue;
-                } else if ((nowTime - messageTo.getDate().getTime()) > 60000) {
+                } else if ((nowTime - messageTo.getDate().getTime()) > 30000) {
                     call.setState(CallStateServer.END);
                     call.setEnd(new Date(System.currentTimeMillis()));
                     call.setUpdate(call.getEnd());
@@ -111,7 +111,7 @@ public class CronEndpoint extends HttpServlet {
             }
         }
         //Enviar llamada al emisor
-        if (resultTo.getMessageId() != null) {
+        if (resultFrom.getMessageId() != null) {
             String canonicalRegId = resultTo.getCanonicalRegistrationId();
             if (canonicalRegId != null) {
                 // if the regId changed, we have to update the datastore

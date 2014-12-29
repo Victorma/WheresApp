@@ -56,7 +56,8 @@ public class ActivityIncomingCall extends Activity {
         nombreContacto = (TextView) findViewById(R.id.textName);
         if (getIntent().getExtras().containsKey(KEY_CONTACT)) {
             contact = (Contact) getIntent().getExtras().getSerializable(KEY_CONTACT);
-            imagenContacto.setImageURI(Uri.parse(contact.getImageURI()));
+            if (contact.getImageURI()!=null)
+                imagenContacto.setImageURI(Uri.parse(contact.getImageURI()));
             nombreContacto.setText(contact.getName());
         }
         btAccept = (Button) findViewById(R.id.buttonAccept);
