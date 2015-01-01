@@ -1,19 +1,60 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/activity"
-    tools:context=".SignUpActivity">
+    android:background="@drawable/signup_background"
+    tools:context=".SignUpActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
-    <Button
-        style="@style/button"
-        android:id="@+id/buttonSignUp"
-        android:text="@string/signup"
-        android:layout_below="@+id/userName"
-        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/welcome"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="53dp"
+        android:singleLine="true"
+        android:textSize="25dp"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        style="@style/textWhite"/>
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/imageView2"
+        android:src="@drawable/logo"
+        android:scaleType="centerInside"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="30dp"
+        style="@style/textWhite"/>
 
     <EditText
-        style="@style/signUpText"
         android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:ems="10"
+        android:layout_above="@+id/buttonSignUp"
+        android:layout_centerHorizontal="true"
         android:hint="@string/username"
-        android:inputType="phone" />
+        android:textSize="30sp"
+        android:layout_marginBottom="30sp"
+        style="@style/textWhite"
+        android:textIsSelectable="false" />
+
+    <Button
+        android:id="@+id/buttonSignUp"
+        android:text="@string/signup"
+        style="@style/FlatButtonWhite"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30sp" />
 
 </RelativeLayout>

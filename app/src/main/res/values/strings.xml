@@ -39,5 +39,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_clean">Vaciar Historial</string>
     <string name="action_sugerencia">Enviar Feedback</string>
+    <string name="welcome">Bienvenido a WheresApp</string>
 
 </resources>
