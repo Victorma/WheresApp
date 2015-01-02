@@ -1,6 +1,9 @@
 package com.wheresapp.integration.calls.imp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.From;
@@ -23,7 +26,9 @@ public class DAOCallsImp implements DAOCalls {
 
     @Override
     public boolean create(Call call) {
-        return call.save() != 0;
+        Boolean result = call.save() != 0;
+        touchObserver();
+        return result;
     }
 
     @Override
@@ -35,18 +40,23 @@ public class DAOCallsImp implements DAOCalls {
 
     @Override
     public boolean update(Call call) {
-        return call.save() != 0;
+        Boolean result = call.save() != 0;
+        touchObserver();
+        return result;
     }
 
     @Override
     public boolean delete(Call call) {
         call.delete();
+        touchObserver();
         return true;
     }
 
     @Override
     public boolean deleteAll() {
-        return new Delete().from(Call.class).execute()!=null;
+        Boolean result = new Delete().from(Call.class).execute()!=null;
+        touchObserver();
+        return result;
     }
 
     @Override
@@ -79,5 +89,9 @@ public class DAOCallsImp implements DAOCalls {
     @Override
     public List<Call> discover(Call call) {
         return discover(call,-1,-1);
+    }
+
+    private void touchObserver() {
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(this.filterChange));
     }
 }

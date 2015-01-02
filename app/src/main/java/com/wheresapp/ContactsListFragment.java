@@ -63,7 +63,7 @@ public class ContactsListFragment extends ListFragment
 
         // handle fragment arguments
         Bundle arguments = getArguments();
-
+        setHasOptionsMenu(true);
         if (arguments.containsKey("TAB")) {
             Integer tab = arguments.getInt("TAB");
             if (tab == 2)
@@ -116,6 +116,8 @@ public class ContactsListFragment extends ListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (recent)
+            inflater.inflate(R.menu.menu_list_call,menu);
         // Place an action bar item for searching.
         MenuItem item = menu.add("Search");
         item.setIcon(android.R.drawable.ic_menu_search);
@@ -154,8 +156,6 @@ public class ContactsListFragment extends ListFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // When the user clicks REFRESH
-            case R.id.action_refresh:
-                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -195,4 +195,5 @@ public class ContactsListFragment extends ListFragment
         // Clear the data in the adapter.
         mAdapter.setData(null);
     }
+
 }

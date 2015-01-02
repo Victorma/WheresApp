@@ -8,12 +8,15 @@ import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.activeandroid.query.From;
@@ -84,9 +87,9 @@ public class DAOContactsImp implements DAOContacts {
         try {
             mContentResolver.applyBatch(ContactsContract.AUTHORITY, operationList);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        touchObserver();
         return true;
     }
 
@@ -110,7 +113,7 @@ public class DAOContactsImp implements DAOContacts {
         Cursor c1 = mContentResolver.query(rawContactUri, myProjection, selection, null, null);
         while (c1.moveToNext())
             contact = extractContactFromCursor(c1);
-
+        c1.close();
         return contact;
     }
 
@@ -126,6 +129,7 @@ public class DAOContactsImp implements DAOContacts {
             ContentProviderResult[] result = null;
             try {
                 result = context.getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+                touchObserver();
                 return true;
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -133,7 +137,6 @@ public class DAOContactsImp implements DAOContacts {
                 e.printStackTrace();
             }
         }
-
         return false;
     }
 
@@ -176,6 +179,7 @@ public class DAOContactsImp implements DAOContacts {
         Cursor c1 = mContentResolver.query(rawContactUri, myProjection, selection, null, null);
         while (c1.moveToNext())
             contacts.add(extractContactFromCursor(c1));
+        c1.close();
 
         Log.i(TAG, "size localContacts: " + contacts.size());
 
@@ -211,5 +215,9 @@ public class DAOContactsImp implements DAOContacts {
     @Override
     public List<Contact> discover(Contact contact) {
         return discover(contact,-1,-1);
+    }
+
+    private void touchObserver() {
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(this.filterChange));
     }
 }

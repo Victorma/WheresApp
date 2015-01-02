@@ -2,6 +2,11 @@
 <resources>
 
     <string name="app_name">WheresApp</string>
+
+    <string name="email_address">sga.vmp@gmail.com</string>
+    <string name="email_subject">Reporte de WheresApp</string>
+    <string name="email_intent">Enviar vía email…</string>
+
     <string name="logo_description">Application Logo</string>
     <string name="title_activity_main">Chats</string>
     <string name="title_activity_contacts_list">Contacts</string>
@@ -40,5 +45,8 @@
     <string name="action_clean">Vaciar Historial</string>
     <string name="action_sugerencia">Enviar Feedback</string>
     <string name="welcome">Bienvenido a WheresApp</string>
+    <string name="feedback_info">Rellena el formulario a continuación y pulsa el botón de arriba para enviar el reporte a través de tu aplicación de correo.</string>
+    <string name="title_activity_feedback">Feedback</string>
+    <string name="app_version">0.1</string>
 
 </resources>

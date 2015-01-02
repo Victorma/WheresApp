@@ -5,6 +5,7 @@ import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -78,9 +79,9 @@ public class MainActivity extends FragmentActivity implements
         switch (item.getItemId()) {
             case R.id.action_settings:
                 return true;
-            case R.id.action_refresh:
-                syncContactInBackground();
-                return true;
+            case R.id.action_feedback:
+                Intent intent = new Intent(this,FeedbackActivity.class);
+                startActivity(intent);
             case R.id.action_clean:
                 eliminarLlamadas();
                 return true;

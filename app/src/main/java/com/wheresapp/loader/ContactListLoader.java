@@ -2,8 +2,11 @@ package com.wheresapp.loader;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,9 +14,15 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.wheresapp.R;
+import com.wheresapp.broadcastreceiver.DataIntentReceiver;
 import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
+import com.wheresapp.integration.calls.DAOCalls;
+import com.wheresapp.integration.contacts.DAOContacts;
 import com.wheresapp.modelTEMP.Contact;
 
 import java.util.ArrayList;
@@ -22,12 +31,13 @@ import java.util.List;
 /**
  * Created by Sergio on 13/12/2014.
  */
-public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
+public class ContactListLoader extends AsyncTaskLoader<List<Contact>> {
 
     private List<Contact> mContacts;
 
     private Boolean favorito = false;
     private Boolean reciente = false;
+    private DataIntentReceiver mChangeObserver;
 
     public ContactListLoader(Context context, Boolean favorito, Boolean reciente) {
 
@@ -36,6 +46,7 @@ public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
         this.favorito = favorito;
 
         this.reciente = reciente;
+
     }
 
     @Override
@@ -92,6 +103,10 @@ public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
             deliverResult(mContacts);
         }
 
+        if (mChangeObserver==null) {
+            mChangeObserver = new DataIntentReceiver(this);
+        }
+
         if (mContacts == null) {
             // If the data has changed since the last time it was loaded
             // or is not currently available, start a load.
@@ -133,6 +148,14 @@ public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
             onReleaseResources(mContacts);
             mContacts = null;
         }
+
+        if (mChangeObserver!=null) {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mChangeObserver);
+        }
+    }
+
+    public Boolean isLoaderOfRecent() {
+        return reciente;
     }
 
     /**
@@ -143,4 +166,6 @@ public class ContactListLoader extends AsyncTaskLoader <List<Contact>> {
         // For a simple List<> there is nothing to do.  For something
         // like a Cursor, we would close it here.
     }
+
+
 }

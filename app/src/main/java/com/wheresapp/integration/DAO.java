@@ -1,5 +1,7 @@
 package com.wheresapp.integration;
 
+import android.content.IntentFilter;
+
 import java.util.List;
 
 /**
@@ -13,4 +15,5 @@ public interface DAO<T> {
     public boolean deleteAll();
     public List<T> discover(T t);
     public List<T> discover(T t, int limit, int page);
+    public static String filterChange = "com.wheresapp";
 }
