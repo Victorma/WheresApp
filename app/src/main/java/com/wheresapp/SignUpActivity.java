@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +20,6 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.wheresapp.bussiness.contacts.ASContacts;
 import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
 import com.wheresapp.modelTEMP.Contact;
-import com.wheresapp.util.MaskedWatcher;
 
 
 public class SignUpActivity extends AccountAuthenticatorActivity {
@@ -53,9 +54,6 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
                 gcm = GoogleCloudMessaging.getInstance(this);
                 // Puede ser que no encuentre en preferencias o que no este registrado
                 mUserName = (EditText) findViewById(R.id.userName);
-                mUserName.addTextChangedListener(
-                        new MaskedWatcher("+34 ### ### ###")
-                );
                 buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
                 buttonSignUp.setOnClickListener(new View.OnClickListener() {
                     @Override

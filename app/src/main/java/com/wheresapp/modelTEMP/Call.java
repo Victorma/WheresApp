@@ -33,6 +33,9 @@ public class Call extends Model{
     @Column(name = "State")
     private CallState state;
 
+    @Column(name = "Incoming")
+    private boolean incoming = false;
+
     public Date getStart() {
         return start;
     }
@@ -89,7 +92,13 @@ public class Call extends Model{
         this.serverId = serverId;
     }
 
+    public boolean isIncoming() {
+        return incoming;
+    }
 
+    public void setIncoming(boolean incoming) {
+        this.incoming = incoming;
+    }
 
     @Override
     public String toString() {
@@ -101,6 +110,7 @@ public class Call extends Model{
                 ", sender='" + sender + '\'' +
                 ", receiver='" + receiver + '\'' +
                 ", state=" + state +
+                ", incoming=" + incoming +
                 '}';
     }
 }

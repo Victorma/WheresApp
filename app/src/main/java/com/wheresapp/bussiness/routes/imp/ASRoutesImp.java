@@ -33,17 +33,10 @@ public class ASRoutesImp implements ASRoutes {
         lista.add(new BasicNameValuePair("outFormat", "json"));
         lista.add(new BasicNameValuePair("fullShape", "true"));
         lista.add(new BasicNameValuePair("narrativeType", "none"));
+        lista.add(new BasicNameValuePair("routeType", "multimodal"));
 
         Ruta ruta = null;
-        DescargaCoordenadas tarea = new DescargaCoordenadas();
-        tarea.execute(url,lista);
-        try {
-            ruta = tarea.get();
-            ruta.setInicio(from);
-            ruta.setFin(to);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        ruta =  descargarRuta(url,lista);
         ruta.setInicio(from);
         ruta.setFin(to);
         return ruta;
@@ -77,38 +70,29 @@ public class ASRoutesImp implements ASRoutes {
      * @author jesusmartin92
      *
      */
-    class DescargaCoordenadas extends AsyncTask<Object, Void, Ruta>{
+    public Ruta descargarRuta(String url, List<BasicNameValuePair> lista) {
+        // Creating service handler class instance
+        ServiceHandler sh = new ServiceHandler();
+        // Making a request to url and getting response
+        String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET,lista);
+        ArrayList<LatLng> puntos = new ArrayList<LatLng>();
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                jsonObj = jsonObj.getJSONObject("route");
+                jsonObj = jsonObj.getJSONObject("shape");
+                JSONArray jsonArray = jsonObj.getJSONArray("shapePoints");
 
-
-        @Override
-        protected Ruta doInBackground(Object... params) {
-
-
-            String url = (String)params[0];
-            List<BasicNameValuePair> lista = (List<BasicNameValuePair>)params[1];
-            // Creating service handler class instance
-            ServiceHandler sh = new ServiceHandler();
-            // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET,lista);
-            ArrayList<LatLng> puntos = new ArrayList<LatLng>();
-            if (jsonStr != null) {
-                try {
-                    JSONObject jsonObj = new JSONObject(jsonStr);
-                    jsonObj = jsonObj.getJSONObject("route");
-                    jsonObj = jsonObj.getJSONObject("shape");
-                    JSONArray jsonArray = jsonObj.getJSONArray("shapePoints");
-
-                    for(int i = 0; i < jsonArray.length(); i +=2){
-                        Double lat = jsonArray.getDouble(i);
-                        Double lng = jsonArray.getDouble(i+1);
-                        puntos.add(new LatLng(lat,lng));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                for(int i = 0; i < jsonArray.length(); i +=2){
+                    Double lat = jsonArray.getDouble(i);
+                    Double lng = jsonArray.getDouble(i+1);
+                    puntos.add(new LatLng(lat,lng));
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            return new Ruta(puntos);
         }
+        return new Ruta(puntos);
     }
 
 }

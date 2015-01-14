@@ -31,14 +31,14 @@
                 android:layout_marginLeft="10dip"
                 android:text="Asunto:"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#990000"
+                android:textColor="@color/blue"
                 android:textSize="18sp" />
 
             <View
                 android:id="@+id/view1"
                 android:layout_width="match_parent"
                 android:layout_height="3dip"
-                android:background="#8d545c" />
+                android:background="@color/blue" />
 
             <Spinner
                 android:id="@+id/reporte_asunto"
@@ -63,14 +63,14 @@
                 android:layout_marginLeft="10dip"
                 android:text="Cuéntame:"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#990000"
+                android:textColor="@color/blue"
                 android:textSize="18sp" />
 
             <View
                 android:id="@+id/View01"
                 android:layout_width="match_parent"
                 android:layout_height="3dip"
-                android:background="#8d545c" />
+                android:background="@color/blue" />
 
             <EditText
                 android:id="@+id/reporte_texto"

@@ -68,9 +68,9 @@
         </activity>
         <activity
             android:name=".MapActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_map"
-            android:launchMode="singleInstance"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:launchMode="singleInstance" >
         </activity>
         <!--
         <activity
@@ -82,7 +82,7 @@
             android:name=".GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
                 <category android:name="com.wheresapp" />
@@ -129,13 +129,18 @@
         <activity
             android:name=".ActivityIncomingCall"
             android:label="@string/title_activity_actitivity_incoming_call"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance" >
         </activity>
 
         <service
             android:name=".PositionCommunicationService"
             android:exported="false" >
         </service>
+
+        <activity
+            android:name=".FeedbackActivity"
+            android:label="@string/title_activity_feedback" >
+        </activity>
     </application>
 
 </manifest>

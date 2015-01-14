@@ -4,9 +4,10 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.wheresapp.broadcastreceiver.CallDataIntentReceiver;
 import com.wheresapp.broadcastreceiver.ContactDataIntentReceiver;
-import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
-import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.integration.calls.factory.DAOCallsFactory;
+import com.wheresapp.modelTEMP.Call;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,53 +15,47 @@ import java.util.List;
 /**
  * Created by Sergio on 13/12/2014.
  */
-public class ContactListLoader extends AsyncTaskLoader<List<Contact>> {
+public class CallListLoader extends AsyncTaskLoader<List<Call>> {
 
-    private List<Contact> mContacts;
+    private List<Call> mCalls;
 
-    private Boolean favorito = false;
-    private ContactDataIntentReceiver mChangeObserver;
+    private CallDataIntentReceiver mChangeObserver;
 
-    public ContactListLoader(Context context, Boolean favorito, Boolean reciente) {
+    public CallListLoader(Context context) {
 
         super(context);
-
-        this.favorito = favorito;
 
     }
 
     @Override
-    public List<Contact> loadInBackground() {
+    public List<Call> loadInBackground() {
 
-        List<Contact> listContact = new ArrayList<Contact>();
+        List<Call> listCall = new ArrayList<Call>();
 
-        if (favorito)
-            listContact = ASContactsFactory.getInstance().getInstanceASContacts(getContext()).getFavouriteContactsList();
-        else
-            listContact = ASContactsFactory.getInstance().getInstanceASContacts(getContext()).getContactList();
+        listCall = DAOCallsFactory.getInstance().getInstanceDAOCalls(getContext()).discover(new Call());
 
-        return listContact;
+        return listCall;
     }
     /**
      * Called when there is new data to deliver to the client.  The
      * super class will take care of delivering it; the implementation
      * here just adds a little more logic.
      */
-    @Override public void deliverResult(List<Contact> contacts) {
+    @Override public void deliverResult(List<Call> calls) {
         if (isReset()) {
             // An async query came in while the loader is stopped.  We
             // don't need the result.
-            if (contacts != null) {
-                onReleaseResources(contacts);
+            if (calls != null) {
+                onReleaseResources(calls);
             }
         }
-        List<Contact> oldApps = mContacts;
-        mContacts = contacts;
+        List<Call> oldApps = mCalls;
+        mCalls = calls;
 
         if (isStarted()) {
             // If the Loader is currently started, we can immediately
             // deliver its results.
-            super.deliverResult(contacts);
+            super.deliverResult(calls);
         }
 
         // At this point we can release the resources associated with
@@ -75,17 +70,17 @@ public class ContactListLoader extends AsyncTaskLoader<List<Contact>> {
      * Handles a request to start the Loader.
      */
     @Override protected void onStartLoading() {
-        if (mContacts != null) {
+        if (mCalls != null) {
             // If we currently have a result available, deliver it
             // immediately.
-            deliverResult(mContacts);
+            deliverResult(mCalls);
         }
 
         if (mChangeObserver==null) {
-            mChangeObserver = new ContactDataIntentReceiver(this);
+            mChangeObserver = new CallDataIntentReceiver(this);
         }
 
-        if (mContacts == null) {
+        if (mCalls == null) {
             // If the data has changed since the last time it was loaded
             // or is not currently available, start a load.
             forceLoad();
@@ -103,12 +98,12 @@ public class ContactListLoader extends AsyncTaskLoader<List<Contact>> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(List<Contact> contacts) {
-        super.onCanceled(contacts);
+    @Override public void onCanceled(List<Call> calls) {
+        super.onCanceled(calls);
 
         // At this point we can release the resources associated with 'apps'
         // if needed.
-        onReleaseResources(contacts);
+        onReleaseResources(calls);
     }
 
     /**
@@ -122,9 +117,9 @@ public class ContactListLoader extends AsyncTaskLoader<List<Contact>> {
 
         // At this point we can release the resources associated with 'apps'
         // if needed.
-        if (mContacts != null) {
-            onReleaseResources(mContacts);
-            mContacts = null;
+        if (mCalls != null) {
+            onReleaseResources(mCalls);
+            mCalls = null;
         }
 
         if (mChangeObserver!=null) {
@@ -136,7 +131,7 @@ public class ContactListLoader extends AsyncTaskLoader<List<Contact>> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(List<Contact> contacts) {
+    protected void onReleaseResources(List<Call> calls) {
         // For a simple List<> there is nothing to do.  For something
         // like a Cursor, we would close it here.
     }

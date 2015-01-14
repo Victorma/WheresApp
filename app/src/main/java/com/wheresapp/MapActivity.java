@@ -13,6 +13,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -21,6 +22,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -37,9 +39,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.wheresapp.bussiness.routes.ASRoutes;
+import com.wheresapp.bussiness.routes.factory.ASRoutesFactory;
 import com.wheresapp.modelTEMP.Call;
 import com.wheresapp.modelTEMP.Contact;
 import com.wheresapp.modelTEMP.Message;
+import com.wheresapp.modelTEMP.Ruta;
 import com.wheresapp.server.ServerAPI;
 
 import java.util.List;
@@ -54,6 +59,7 @@ public class MapActivity extends FragmentActivity implements
     private Call call;
     private NotificationManager mNotificationManager;
     private GoogleMap map;
+    private Ruta ruta;
     GoogleCloudMessaging gcm;
     MessageSender messageSender;
 
@@ -61,6 +67,7 @@ public class MapActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (getIntent().hasExtra("KILL")) {
             finish();
         }
@@ -125,8 +132,6 @@ public class MapActivity extends FragmentActivity implements
 
 
         addGoogleMap();
-        addMarkers();
-        //addLines();
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -135,8 +140,9 @@ public class MapActivity extends FragmentActivity implements
             Double latitude = intent.getDoubleExtra("latitude",0);
             Double longitude = intent.getDoubleExtra("longitude",0);
             toPosition = new LatLng(latitude,longitude);
+            fromPosition = new LatLng(map.getMyLocation().getLatitude(),map.getMyLocation().getLongitude());
             Log.d("MapActivity", "onReceive: LATITUDE =" + latitude.toString() + ", LONGITUDE = " + longitude.toString() );
-            addMarkers();
+            new AddRoute().execute();
         }
     };
 
@@ -172,27 +178,43 @@ public class MapActivity extends FragmentActivity implements
 
     }
 
-    private void addMarkers() {
-        if (map != null) {
-            if (toPosition!=null) {
-                map.clear();
-                //fromPosition = new LatLng(map.getMyLocation().getLatitude(),map.getMyLocation().getLongitude());
-                map.addMarker(new MarkerOptions().position(toPosition).title(getString(R.string.goal))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag))
-                        .snippet("Best Time: 6 Secs").draggable(true));
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(toPosition, 13));
-            } else {
-                Toast.makeText(getApplicationContext(), getString(R.string.waiting_location), Toast.LENGTH_LONG).show();
-            }
-        }
-    }
+    private class AddRoute extends AsyncTask<Void,Void,Ruta> {
 
-    private void addLines() {
-        if (map != null) {
-            map.addPolyline((new PolylineOptions()).add(toPosition, fromPosition)
-                    .width(5).color(Color.BLUE).geodesic(true));
-            // move camera to zoom on map
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(fromPosition, 13));
+        @Override
+        protected Ruta doInBackground(Void... params) {
+            if (map != null && (fromPosition!=null && toPosition!=null)) {
+                ASRoutes rutas = ASRoutesFactory.getInstance().getInstanceASRoutes();
+                if (ruta!=null)
+                    ruta = rutas.updateDestinoRuta(ruta,toPosition);
+                else
+                    ruta = rutas.getRuta(fromPosition, toPosition);
+                return ruta;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Ruta ruta) {
+            super.onPostExecute(ruta);
+            if (ruta!=null) {
+                map.clear();
+                if (toPosition != null) {
+                    map.clear();
+                    //fromPosition = new LatLng(map.getMyLocation().getLatitude(),map.getMyLocation().getLongitude());
+                    map.addMarker(new MarkerOptions().position(toPosition).title(getString(R.string.goal))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag))
+                            .snippet("Best Time: 6 Secs").draggable(true));
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(toPosition, 13));
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.waiting_location), Toast.LENGTH_LONG).show();
+                }
+                PolylineOptions lineas = new PolylineOptions();
+                lineas.addAll(ruta.getPuntos());
+                lineas.width(8);
+                lineas.color(Color.BLUE);
+                //Este es el mapa sobre el que tienes que añadir las lineas
+                map.addPolyline(lineas);
+            }
         }
     }
 

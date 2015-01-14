@@ -13,17 +13,18 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int index) {
-        ContactsListFragment contacts = new ContactsListFragment();
         Bundle bundle = new Bundle();
+        ContactsListFragment contacts = new ContactsListFragment();
         switch (index) {
             case 2:
                 bundle.putInt("TAB", 0);
                 contacts.setArguments(bundle);
                 return contacts;
             case 1:
+                CallListFragment calls = new CallListFragment();
                 bundle.putInt("TAB", 1);
-                contacts.setArguments(bundle);
-                return contacts;
+                calls.setArguments(bundle);
+                return calls;
             case 0:
                 bundle.putInt("TAB", 2);
                 contacts.setArguments(bundle);

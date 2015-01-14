@@ -7,4 +7,5 @@ import com.wheresapp.modelTEMP.Contact;
  * Created by Victorma on 25/11/2014.
  */
 public interface DAOContacts extends DAO<Contact> {
+    public static String filterChange = "com.wheresapp.contact.change";
 }

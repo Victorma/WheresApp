@@ -24,7 +24,7 @@ import com.wheresapp.modelTEMP.Contact;
  * release the wake lock.
  */
 
-public class GcmBroadcastReceiver extends BroadcastReceiver {
+public class GcmBroadcastReceiver extends WakefulBroadcastReceiver   {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -34,6 +34,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 
             String message = extras.getString("message");
             Call call = gson.fromJson(message,Call.class);
+            call.setIncoming(true);
             if (CallState.WAIT.equals(call.getState())) {
                 Call temp = ASCallsFactory.getInstance().getInstanceASCalls(context).getActiveCall();
                 if (temp!=null) {

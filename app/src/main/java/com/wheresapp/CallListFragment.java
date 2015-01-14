@@ -1,50 +1,39 @@
 package com.wheresapp;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.app.ActionBar.LayoutParams;
-import android.support.v4.app.ListFragment; //android.app.ListFragment;
-import android.support.v4.app.LoaderManager; //android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader; //android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.Contacts; //
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.SearchView; //android.support.v7.widget.SearchView
+import android.widget.SearchView;
 import android.widget.SearchView.OnCloseListener;
-import android.widget.SearchView.OnQueryTextListener; //android.support.v7.widget.SearchView.OnQueryTextListener
-import android.support.v4.widget.SimpleCursorAdapter; //android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+import android.widget.SearchView.OnQueryTextListener;
 
+import com.wheresapp.adapter.CallAdapter;
 import com.wheresapp.adapter.ContactAdapter;
+import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
+import com.wheresapp.loader.CallListLoader;
 import com.wheresapp.loader.ContactListLoader;
+import com.wheresapp.modelTEMP.Call;
 import com.wheresapp.modelTEMP.Contact;
 
 import java.util.List;
 
 
-public class ContactsListFragment extends ListFragment
-        implements OnQueryTextListener, OnCloseListener, LoaderManager.LoaderCallbacks<List<Contact>> {
+public class CallListFragment extends ListFragment
+        implements OnQueryTextListener, OnCloseListener, LoaderManager.LoaderCallbacks<List<Call>> {
 
     // This is the Adapter being used to display the list's data.
-    ContactAdapter mAdapter;
+    CallAdapter mAdapter;
 
     // The SearchView for doing filtering.
     SearchView mSearchView;
@@ -68,6 +57,8 @@ public class ContactsListFragment extends ListFragment
             Integer tab = arguments.getInt("TAB");
             if (tab == 2)
                 this.favourite = true;
+            else if (tab == 1)
+                this.recent = true;
         }
 
 
@@ -91,12 +82,7 @@ public class ContactsListFragment extends ListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (favourite)
-            setEmptyText("No favourite contacts");
-        else if (recent)
-            setEmptyText("No recent calls");
-        else
-            setEmptyText("No contacts");
+        setEmptyText("No recent calls");
 
         //Ahora se hace asi porque aún no hay un Fragment para cada lista
         Intent i = getActivity().getIntent();
@@ -104,7 +90,7 @@ public class ContactsListFragment extends ListFragment
         // We have a menu item to show in action bar.
         setHasOptionsMenu(true);
 
-        mAdapter =  new ContactAdapter(getActivity());
+        mAdapter =  new CallAdapter(getActivity());
         setListAdapter(mAdapter);
 
         setListShown(false);
@@ -164,18 +150,22 @@ public class ContactsListFragment extends ListFragment
         Log.i("LoaderCustom", "Item clicked: " + id);
         Intent intent = new Intent(getActivity(),ContactDataActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("USER",mAdapter.getItem(position));
+        Call call = mAdapter.getItem(position);
+        Contact contact = new Contact();
+        contact.setServerid(Long.toString(mAdapter.getItemId(position)));
+        contact = ASContactsFactory.getInstance().getInstanceASContacts(getActivity()).getContact(contact);
+        bundle.putSerializable("USER",contact);
         intent.putExtra("USER",bundle);
         startActivity(intent);
     }
 
     @Override
-    public Loader<List<Contact>> onCreateLoader(int id, Bundle args) {
-        return new ContactListLoader(getActivity(),favourite,recent);
+    public Loader<List<Call>> onCreateLoader(int id, Bundle args) {
+        return new CallListLoader(getActivity());
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Contact>> loader, List<Contact> data) {
+    public void onLoadFinished(Loader<List<Call>> loader, List<Call> data) {
         // Swap the new cursor in.  (The framework will take care of closing the
         // old cursor once we return.)
         mAdapter.setData(data);
@@ -189,7 +179,7 @@ public class ContactsListFragment extends ListFragment
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Contact>> loader) {
+    public void onLoaderReset(Loader<List<Call>> loader) {
         // Clear the data in the adapter.
         mAdapter.setData(null);
     }

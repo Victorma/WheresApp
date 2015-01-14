@@ -14,19 +14,16 @@ import com.wheresapp.loader.ContactListLoader;
 /**
  * Created by Sergio on 02/01/2015.
  */
-public class DataIntentReceiver extends BroadcastReceiver {
+public class ContactDataIntentReceiver extends BroadcastReceiver {
     private ContactListLoader mLoader;
 
-    public DataIntentReceiver(ContactListLoader mLoader) {
+    public ContactDataIntentReceiver(ContactListLoader mLoader) {
         this.mLoader = mLoader;
-        if (mLoader.isLoaderOfRecent())
-            LocalBroadcastManager.getInstance(mLoader.getContext()).registerReceiver(this,new IntentFilter(DAOCalls.filterChange));
-        else
-            LocalBroadcastManager.getInstance(mLoader.getContext()).registerReceiver(this,new IntentFilter(DAOContacts.filterChange));
+        LocalBroadcastManager.getInstance(mLoader.getContext()).registerReceiver(this,new IntentFilter(DAOContacts.filterChange));
     }
 
     public void onReceive(Context context, Intent intent) {
         mLoader.onContentChanged();
-        Log.i("Loader:", "Broadcast received");
+        Log.i("Loader:", "Broadcast contact received");
     }
 }

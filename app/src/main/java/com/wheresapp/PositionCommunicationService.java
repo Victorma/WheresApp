@@ -231,6 +231,7 @@ public class PositionCommunicationService extends Service implements LocationLis
         //unregisterReceiver(updateCallReceiver);
         Log.d(TAG, "Location service destroyed…");
         terminarLlamada();
+        unregisterReceiver(updateCallReceiver);
         clearLocationData();
 
     }
