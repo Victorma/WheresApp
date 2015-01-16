@@ -96,7 +96,10 @@ public class CallEndpoint {
             call.setEnd(new Date(System.currentTimeMillis()));
             ofy().save().entity(call).now();
             try {
-                sendCall(call,findUser(Long.parseLong(call.getSender())).getRegId());
+                if (call.getSender().equals(fromId))
+                    sendCall(call,findUser(Long.parseLong(call.getReceiver())).getRegId());
+                else
+                    sendCall(call,findUser(Long.parseLong(call.getSender())).getRegId());
             } catch (IOException e) {
                 throw new InternalServerErrorException("No se ha podido realizar la llamada");
             }
