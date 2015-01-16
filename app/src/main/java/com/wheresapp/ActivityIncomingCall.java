@@ -1,13 +1,16 @@
 package com.wheresapp;
 
 import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -45,7 +48,10 @@ public class ActivityIncomingCall extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.activity_incoming_call);
         asCalls = ASCallsFactory.getInstance().getInstanceASCalls(this);
         call = asCalls.getActiveCall();
@@ -196,4 +202,6 @@ public class ActivityIncomingCall extends Activity {
         super.onDestroy();
         unregisterReceiver(updateCallReceiver);
     }
+
+
 }

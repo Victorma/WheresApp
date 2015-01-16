@@ -56,12 +56,9 @@ public class MapActivity extends FragmentActivity implements
     private LatLng toPosition = null;
     private ImageButton btDisconnect;
     private Contact toContact;
-    private Call call;
     private NotificationManager mNotificationManager;
     private GoogleMap map;
     private Ruta ruta;
-    GoogleCloudMessaging gcm;
-    MessageSender messageSender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +137,8 @@ public class MapActivity extends FragmentActivity implements
             Double latitude = intent.getDoubleExtra("latitude",0);
             Double longitude = intent.getDoubleExtra("longitude",0);
             toPosition = new LatLng(latitude,longitude);
-            fromPosition = new LatLng(map.getMyLocation().getLatitude(),map.getMyLocation().getLongitude());
+            if (map.getMyLocation()!=null)
+                fromPosition = new LatLng(map.getMyLocation().getLatitude(),map.getMyLocation().getLongitude());
             Log.d("MapActivity", "onReceive: LATITUDE =" + latitude.toString() + ", LONGITUDE = " + longitude.toString() );
             new AddRoute().execute();
         }
@@ -183,7 +181,7 @@ public class MapActivity extends FragmentActivity implements
         @Override
         protected Ruta doInBackground(Void... params) {
             if (map != null && (fromPosition!=null && toPosition!=null)) {
-                ASRoutes rutas = ASRoutesFactory.getInstance().getInstanceASRoutes();
+                ASRoutes rutas = ASRoutesFactory.getInstance().getInstanceASRoutes(MapActivity.this);
                 if (ruta!=null)
                     ruta = rutas.updateDestinoRuta(ruta,toPosition);
                 else
@@ -279,4 +277,5 @@ public class MapActivity extends FragmentActivity implements
             finish();
         }
     }
+
 }

@@ -119,6 +119,10 @@ public class ASContactsImp implements ASContacts {
                 r.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
             }
             r.putSerializable("USER",user);
+
+            Account[] accounts = am.getAccountsByType(context.getString(R.string.ACCOUNT_TYPE));
+            context.getContentResolver().setIsSyncable(accounts[0],ContactsContract.AUTHORITY,1);
+            context.getContentResolver().setSyncAutomatically(accounts[0], ContactsContract.AUTHORITY, true);
             SyncContacts syncContacts = new SyncContacts(context);
             syncContacts.performSync();
 
@@ -236,7 +240,7 @@ public class ASContactsImp implements ASContacts {
                 contact.setTelephone(cursor.getString(cursor.getColumnIndex(projection[3])));
                 contact.setName(cursor.getString(cursor.getColumnIndex(projection[1])));
                 contact.setImageURI(cursor.getString(cursor.getColumnIndex(projection[2])));
-
+                if (!account.name.equals(contact.getTelephone()))
                 if(!localContacts.containsKey(contact.getTelephone()))
                     listTemp.add(contact);
 

@@ -78,10 +78,13 @@ public class MainActivity extends FragmentActivity implements
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
+                Intent setting = new Intent(this,SettingsActivity.class);
+                startActivity(setting);
                 return true;
             case R.id.action_feedback:
-                Intent intent = new Intent(this,FeedbackActivity.class);
-                startActivity(intent);
+                Intent feedback = new Intent(this,FeedbackActivity.class);
+                startActivity(feedback);
+                return true;
             case R.id.action_clean:
                 eliminarLlamadas();
                 return true;

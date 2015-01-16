@@ -1,5 +1,7 @@
 package com.wheresapp.bussiness.routes.factory;
 
+import android.content.Context;
+
 import com.wheresapp.bussiness.routes.ASRoutes;
 import com.wheresapp.bussiness.routes.factory.imp.ASRoutesFactoryImp;
 
@@ -15,5 +17,5 @@ public abstract class ASRoutesFactory {
         return instance;
     }
 
-    public abstract ASRoutes getInstanceASRoutes();
+    public abstract ASRoutes getInstanceASRoutes(Context context);
 }

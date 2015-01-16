@@ -1,5 +1,6 @@
 package com.wheresapp.bussiness.routes.imp;
 
+import com.wheresapp.SettingsActivity;
 import com.wheresapp.bussiness.routes.ASRoutes;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.wheresapp.modelTEMP.Ruta;
@@ -21,8 +25,15 @@ import com.wheresapp.modelTEMP.ServiceHandler;
 public class ASRoutesImp implements ASRoutes {
 
 
+    private Context context;
+
+    public ASRoutesImp (Context context) {
+        this.context = context;
+    }
+
     @Override
     public Ruta getRuta(LatLng from, LatLng to) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         //URL
         String url = "http://www.mapquestapi.com/directions/v2/route";
         //Lista de parámetros
@@ -33,7 +44,8 @@ public class ASRoutesImp implements ASRoutes {
         lista.add(new BasicNameValuePair("outFormat", "json"));
         lista.add(new BasicNameValuePair("fullShape", "true"));
         lista.add(new BasicNameValuePair("narrativeType", "none"));
-        lista.add(new BasicNameValuePair("routeType", "multimodal"));
+        lista.add(new BasicNameValuePair("locale", "es_ES"));
+        lista.add(new BasicNameValuePair("routeType",sharedPref.getString("TYPE_ROUTE", "pedestrian")));
 
         Ruta ruta = null;
         ruta =  descargarRuta(url,lista);

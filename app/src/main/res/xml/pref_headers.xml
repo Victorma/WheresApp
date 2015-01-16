@@ -1,0 +1,14 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header android:fragment="com.wheresapp.SettingsActivity$RutaPreferenceFragment"
+        android:title="@string/pref_header_ruta" />
+
+    <header android:fragment="com.wheresapp.SettingsActivity$ContactPreferenceFragment"
+        android:title="@string/pref_header_contact" />
+
+    <header android:fragment="com.wheresapp.SettingsActivity$CuentaPreferenceFragment"
+        android:title="@string/pref_header_cuenta" />
+
+</preference-headers>

@@ -81,7 +81,11 @@ public class ASCallsImp implements ASCalls {
     @Override
     public boolean end(Call call) throws IOException {
         if (getActiveCall()!=null) {
-            Call callEnd = ServerAPI.getInstance(context).finalizarLlamada(call.getServerId());
+            Call callEnd;
+            if (call.getState().equals(CallState.WAIT))
+                callEnd = ServerAPI.getInstance(context).rechazarLlamada(call.getServerId());
+            else
+                callEnd = ServerAPI.getInstance(context).finalizarLlamada(call.getServerId());
             if (callEnd!=null) {
                 Call temp = getActiveCall();
                 temp.setState(callEnd.getState());

@@ -18,10 +18,11 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.wheresapp.bussiness.calls.ASCalls;
@@ -35,7 +36,8 @@ import com.wheresapp.server.ServerAPI;
 
 import java.io.IOException;
 
-public class PositionCommunicationService extends Service implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
+public class PositionCommunicationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private Gson gson = new Gson();
 
@@ -63,8 +65,8 @@ public class PositionCommunicationService extends Service implements LocationLis
     public static final int TEMPORARILY_UNAVAILABLE = 1;
     public static final int AVAILABLE = 2;
 
-
-    private LocationClient locationClient;
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
     private Call call;
     private Contact contact;
     private ASCalls asCalls;
@@ -98,7 +100,7 @@ public class PositionCommunicationService extends Service implements LocationLis
                                         clearLocationData();
                                         killActivity();
                                     } else if (callReceive.getState().equals(CallState.ACCEPT) && call.getState().equals(CallState.WAIT)) {
-                                        locationClient.connect();
+                                        mGoogleApiClient.connect();
                                         call.setState(CallState.ACCEPT);
                                         call.setUpdate(callReceive.getUpdate());
                                         DAOCallsFactory.getInstance().getInstanceDAOCalls(PositionCommunicationService.this).update(call);
@@ -119,7 +121,11 @@ public class PositionCommunicationService extends Service implements LocationLis
         super.onCreate();
         Log.d(TAG, "Location service created…");
         asCalls = ASCallsFactory.getInstance().getInstanceASCalls(this);
-        locationClient = new LocationClient(this, this, this);
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
         IntentFilter filter = new IntentFilter("com.google.android.c2dm.intent.RECEIVE");
         registerReceiver(updateCallReceiver,filter);
     }
@@ -155,7 +161,7 @@ public class PositionCommunicationService extends Service implements LocationLis
                 } else if (call.getState().equals(CallState.WAIT)){
                     Toast.makeText(PositionCommunicationService.this, "Esperando respuesta", Toast.LENGTH_LONG).show();
                 } else {
-                    locationClient.connect();
+                    mGoogleApiClient.connect();
                 }
             }
 
@@ -217,11 +223,7 @@ public class PositionCommunicationService extends Service implements LocationLis
 
     // Unregister location listeners
     private void clearLocationData() {
-        locationClient.disconnect();
-
-        if (locationClient.isConnected()) {
-            locationClient.removeLocationUpdates(this);
-        }
+        mGoogleApiClient.disconnect();
     }
 
     // When service destroyed we need to unbind location listeners
@@ -243,16 +245,20 @@ public class PositionCommunicationService extends Service implements LocationLis
                 Bundle bundle = new Bundle();
                 try {
                     asCalls.end(call);
+                    bundle.putString("INFO","Llamada terminada");
+                    return bundle;
                 } catch (IOException e) {
                     bundle.putBoolean("ERROR",true);
+                    return bundle;
                 }
-                return new Bundle();
             }
 
             @Override
             protected void onPostExecute(Bundle bundle) {
                 if (bundle.containsKey("ERROR")) {
                     Toast.makeText(PositionCommunicationService.this,"Ha ocurrido un error",Toast.LENGTH_LONG).show();
+                } else if (bundle.containsKey("INFO")) {
+                    Toast.makeText(PositionCommunicationService.this,"Llamada terminada",Toast.LENGTH_LONG).show();
                 }
             }
         }.execute(null, null, null);
@@ -275,33 +281,24 @@ public class PositionCommunicationService extends Service implements LocationLis
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "Location Callback. onConnected");
 
-        Location currentLocation = locationClient.getLastLocation();
-
-        // Create the LocationRequest object
-        LocationRequest locationRequest = LocationRequest.create();
-
-        // Use high accuracy
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        // Set the update interval to 30 seconds
-        locationRequest.setInterval(UPDATE_INTERVAL);
-
-        // Set the fastest update interval to 20 second
-        locationRequest.setFastestInterval(FASTEST_INTERVAL);
-
-        locationClient.requestLocationUpdates(locationRequest, this);
-
-        actualizarPosicion(currentLocation);
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(UPDATE_INTERVAL); // Update location every second
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+        actualizarPosicion(LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient));
     }
 
     @Override
-    public void onDisconnected() {
-        Log.d(TAG, "Location Callback. onDisconnected");
+    public void onConnectionSuspended(int i) {
+        stopSelf();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "Location Callback. onConnectionFailed");
+        stopSelf();
     }
 
     @Override
