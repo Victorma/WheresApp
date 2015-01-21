@@ -65,7 +65,10 @@ public class DAOCallsImp implements DAOCalls {
         From f = new Select().from(Call.class);
 
         if(call.getReceiver()!=null)
-            f.where("Receiver LIKE '"+call.getReceiver()+"'");
+            f.where("ReceiverDate LIKE '"+call.getReceiver()+"'");
+
+        if(call.getSender()!=null)
+            f.where("SenderDate LIKE '"+call.getSender()+"'");
 
         if(call.getState()!=null)
             f.where("State LIKE '"+call.getState().toString()+"'");

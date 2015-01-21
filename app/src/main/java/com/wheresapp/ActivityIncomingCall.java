@@ -6,11 +6,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -44,6 +47,8 @@ public class ActivityIncomingCall extends Activity {
     private Call call;
     private ASCalls asCalls;
     private Gson gson = new Gson();
+    private Vibrator vibrator;
+    private Ringtone r;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,16 +77,31 @@ public class ActivityIncomingCall extends Activity {
         btAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                vibrator.cancel();
                 aceptarLlamada();
+                r.stop();
             }
         });
         btDeny = (Button) findViewById(R.id.buttonDeny);
         btDeny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                vibrator.cancel();
                 rechazarLlamada();
+                r.stop();
             }
         });
+        Uri ringTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        r = RingtoneManager.getRingtone(getApplicationContext(), ringTone);
+        r.play();
+        vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+        //Set the pattern, like vibrate for 300 milliseconds and then stop for 200 ms, then
+        //vibrate for 300 milliseconds and then stop for 500 ms and repeat the same style. You can change the pattern and
+        // test the result for better clarity.
+        long pattern[]={0,300,200,300,500};
+        //start vibration with repeated count, use -1 if you don't want to repeat the vibration
+        vibrator.vibrate(pattern, 0);
+
     }
 
 

@@ -124,4 +124,20 @@ public class ASCallsImp implements ASCalls {
         call = listCall.size()>0?listCall.get(0):null;
         return call;
     }
+
+    @Override
+    public List<Call> getAllRecentCall() {
+        return DAOCallsFactory.getInstance().getInstanceDAOCalls(context).discover(new Call());
+    }
+
+    @Override
+    public List<Call> getRecentCallFromContact(String contactId) {
+        Call filter = new Call();
+        filter.setSender(contactId);
+        List<Call> todasLlamadas = DAOCallsFactory.getInstance().getInstanceDAOCalls(context).discover(filter);
+        filter = new Call();
+        filter.setReceiver(contactId);
+        todasLlamadas.addAll(DAOCallsFactory.getInstance().getInstanceDAOCalls(context).discover(filter));
+        return todasLlamadas;
+    }
 }

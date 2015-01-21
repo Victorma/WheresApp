@@ -6,6 +6,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.wheresapp.broadcastreceiver.CallDataIntentReceiver;
 import com.wheresapp.broadcastreceiver.ContactDataIntentReceiver;
+import com.wheresapp.bussiness.calls.factory.ASCallsFactory;
 import com.wheresapp.integration.calls.factory.DAOCallsFactory;
 import com.wheresapp.modelTEMP.Call;
 
@@ -18,13 +19,17 @@ import java.util.List;
 public class CallListLoader extends AsyncTaskLoader<List<Call>> {
 
     private List<Call> mCalls;
+    private String contactId = null;
 
     private CallDataIntentReceiver mChangeObserver;
 
     public CallListLoader(Context context) {
-
         super(context);
+    }
 
+    public CallListLoader(Context context, String contactId) {
+        super(context);
+        this.contactId = contactId;
     }
 
     @Override
@@ -32,7 +37,10 @@ public class CallListLoader extends AsyncTaskLoader<List<Call>> {
 
         List<Call> listCall = new ArrayList<Call>();
 
-        listCall = DAOCallsFactory.getInstance().getInstanceDAOCalls(getContext()).discover(new Call());
+        if (contactId==null)
+            listCall = ASCallsFactory.getInstance().getInstanceASCalls(getContext()).getAllRecentCall();
+        else
+            listCall = ASCallsFactory.getInstance().getInstanceASCalls(getContext()).getRecentCallFromContact(contactId);
 
         return listCall;
     }

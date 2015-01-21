@@ -104,6 +104,7 @@ public class MapActivity extends FragmentActivity implements
         service.putExtra("CONTACT", toContact);
         if (i.hasExtra("INCOMING")) {
             service.putExtra("INCOMING", true);
+            this.setTitle("Llamada de " + toContact.getName());
         }
         startService(service);
 

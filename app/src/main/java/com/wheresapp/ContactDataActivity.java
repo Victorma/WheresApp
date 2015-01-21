@@ -4,23 +4,35 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.wheresapp.adapter.CallAdapter;
 import com.wheresapp.integration.contacts.factory.DAOContactsFactory;
+import com.wheresapp.loader.CallListLoader;
+import com.wheresapp.modelTEMP.Call;
 import com.wheresapp.modelTEMP.Contact;
 
+import java.util.List;
 
-public class ContactDataActivity extends Activity {
+
+public class ContactDataActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<List<Call>> {
 
     boolean favourite = false;
     private ImageView imagenContacto;
     private TextView textoNombre;
     private MenuItem itemFavorito;
+    private ListView listView;
     private Contact contact;
+    // This is the Adapter being used to display the list's data.
+    CallAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +43,10 @@ public class ContactDataActivity extends Activity {
         Bundle bundle = i.getBundleExtra("USER");
         contact = (Contact) bundle.getSerializable("USER");
         imagenContacto = (ImageView) findViewById(R.id.imageView);
+        listView = (ListView) findViewById(R.id.listView);
+
+        mAdapter =  new CallAdapter(this);
+        listView.setAdapter(mAdapter);
 
         if (contact.getImageURI()!=null)
             imagenContacto.setImageURI(Uri.parse(contact.getImageURI()));
@@ -41,7 +57,7 @@ public class ContactDataActivity extends Activity {
         else
             this.favourite = false;
 
-
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
 
@@ -97,5 +113,23 @@ public class ContactDataActivity extends Activity {
         contact.setFavourite(favourite);
         DAOContactsFactory.getInstance().getInstanceDAOContacts(this).update(contact);
         Toast.makeText(this,"Se ha eliminado de favorito",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public Loader<List<Call>> onCreateLoader(int id, Bundle args) {
+        return new CallListLoader(this,contact.getServerid());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Call>> loader, List<Call> data) {
+        // Swap the new cursor in.  (The framework will take care of closing the
+        // old cursor once we return.)
+        mAdapter.setData(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Call>> loader) {
+        // Clear the data in the adapter.
+        mAdapter.setData(null);
     }
 }
