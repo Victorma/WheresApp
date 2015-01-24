@@ -20,6 +20,17 @@ android {
     lintOptions {
         abortOnError false
     }
+    signingConfigs {
+        release {
+            File securePropertiesFile = file('secure.properties')
+            Properties p = new Properties()
+            p.load(new FileInputStream(securePropertiesFile))
+            storeFile file(p.storeFile)
+            storePassword p.storePassword
+            keyAlias p.keyAlias
+            keyPassword p.keyPassword
+        }
+    }
 }
 
 dependencies {

@@ -1,36 +1,39 @@
 language: android
 jdk:
-  - oraclejdk7
-
-#before_install:
-# - chmod +x gradlew
-
+- oraclejdk7
 branches:
   only:
-    - domain
-
+  - master
+  - develop
 android:
   components:
-    - platform-tools
-    # - tools
+  - platform-tools
+  - build-tools-20.0.0
+  - android-21
+  - extra-google-google_play_services
+  - extra-google-m2repository
+  - extra-google-gcm
+  - extra-android-m2repository
+  - addon-google_apis-google-19
 
-    # The BuildTools version used by your project
-    - build-tools-20.0.0
+env:
+  global:
+  - secure: JDQkUi8sg5+gEpG8wW6UmRaDwAHg+MWicoAb5+7oL265BYJWCtPVGFve2XJojorf67Fjx4LFWI6sD/C8x7GLv+syDg4hTcqmmX9teASinfKHCbmoy69MJ8c8V2/ak8i6Ya6UfOb/1X5xTS7lqlhY8Q0EhiUPDj10PLbdxS6p5b0=
+  - secure: hrqavtx8YmuUBYiq2ZuhJu4hXGV16F5w17bYpY5+DrRPHN/m7fipiOZoLolLJ2mgGPTPwzh02Onf7DR3RDK7GvEjE1zirgEYPltoQCht9dYIg5YB9ikRNaKnmPf2P5Fp6YtobOCq8763JiLZ7uLI1cPy+viV0buFkwlKjk0gf8k=
+  - secure: WVgZXEAcdqJ8TRbOawmGCOIJzL7dBQ7ixdzQ6tO95X5wGpcg0d5EgIMZikVVvdOBnfFYOAt9ct2624AdUD7b/WvwFRPNk8DgLKHcQYFQvaDlt3LX3PaAmrKDgro1PXgZA/wEMhXMY1jYlgWUJT+UyA3rhvBFGPI56QBTC6fmIPA=
+  - secure: DX4wfzyhBX3yNCHs/81U9yaVCt6VO7KLFD0tWgL7QsM7vzKiAs8H8ZAO5/D0JeRXQtHRpOc0b3DyEw+yhB5Nu39B0OIOIzpXF9GriWT0rB8V4ITfhb1CCE5kn5b5ljG9SNL3CLWJVspRYT6Jk5dL0A9VFjUSiPYk4Y1kzxOmLbQ=
+before_script:
+- echo "storeFile=${BUILD_RELEASE_STORE_FILE}" >> app/secure.properties
+- echo "storePassword=${BUILD_RELEASE_STORE_PASSWORD}" >> app/secure.properties
+- echo "keyAlias=${BUILD_RELEASE_KEY_ALIAS}" >> app/secure.properties
+- echo "keyPassword=${BUILD_RELEASE_KEY_PASSWORD}" >> app/secure.properties
+deploy:
+  provider: releases
+  api_key:
+    secure: Q3wBKtZpWwsrtgJyRGzXNrtPNg8vjoeg5CEOSOnzhz8ESsvXskWWZXTi99zwPV4eM4hB7hC2V8JVJPbVgsIcze3I/NTo0NwYwYimiGyibfX6UIa82sZnuA3ubSKFjGEXCP5SPElqV1r7B/r+rh5dC/jJ3PICsy28wCuU/vCGXEw=
+  file: app/app-release.apk
+  skip_cleanup: true
+  on:
+    repo: WhereSoft/WheresApp
 
-    # The SDK version used to compile your project
-    - android-21
-
-    # Additional components
-    - extra-google-google_play_services
-    - extra-google-m2repository
-    - extra-google-gcm
-    - extra-android-m2repository
-    - addon-google_apis-google-19
-
-    # Specify at least one system image,
-    # if you need to run emulator(s) during your tests
-    # - sys-img-armeabi-v7a-android-19
-    # - sys-img-x86-android-17
-
-script:
-  ./gradlew app:build
+script: ./gradlew app:assembleRelease
