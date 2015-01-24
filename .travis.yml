@@ -23,10 +23,10 @@ env:
   - secure: WVgZXEAcdqJ8TRbOawmGCOIJzL7dBQ7ixdzQ6tO95X5wGpcg0d5EgIMZikVVvdOBnfFYOAt9ct2624AdUD7b/WvwFRPNk8DgLKHcQYFQvaDlt3LX3PaAmrKDgro1PXgZA/wEMhXMY1jYlgWUJT+UyA3rhvBFGPI56QBTC6fmIPA=
   - secure: DX4wfzyhBX3yNCHs/81U9yaVCt6VO7KLFD0tWgL7QsM7vzKiAs8H8ZAO5/D0JeRXQtHRpOc0b3DyEw+yhB5Nu39B0OIOIzpXF9GriWT0rB8V4ITfhb1CCE5kn5b5ljG9SNL3CLWJVspRYT6Jk5dL0A9VFjUSiPYk4Y1kzxOmLbQ=
 before_script:
-- echo "storeFile=${BUILD_RELEASE_STORE_FILE}" >> secure.properties
-- echo "storePassword=${BUILD_RELEASE_STORE_PASSWORD}" >> secure.properties
-- echo "keyAlias=${BUILD_RELEASE_KEY_ALIAS}" >> secure.properties
-- echo "keyPassword=${BUILD_RELEASE_KEY_PASSWORD}" >> secure.properties
+- echo "storeFile=${BUILD_RELEASE_STORE_FILE}" >> app/secure.properties
+- echo "storePassword=${BUILD_RELEASE_STORE_PASSWORD}" >> app/secure.properties
+- echo "keyAlias=${BUILD_RELEASE_KEY_ALIAS}" >> app/secure.properties
+- echo "keyPassword=${BUILD_RELEASE_KEY_PASSWORD}" >> app/secure.properties
 deploy:
   provider: releases
   api_key:
