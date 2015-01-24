@@ -9,3 +9,5 @@ app/build
 *.jar
 *.iml
 *.class
+*.apk
+app/manifest-merger-release-report.txt
