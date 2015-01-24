@@ -33,6 +33,5 @@ deploy:
   on:
     tags: true
     all_branches: true
-    repo: WhereSoft/WheresApp
 
 script: ./gradlew app:assembleRelease
