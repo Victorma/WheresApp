@@ -31,7 +31,6 @@ deploy:
   file: app/app-release.apk
   skip_cleanup: true
   on:
-    tags: true
-    all_branches: true
+    branch: master
 
 script: ./gradlew app:assembleRelease
