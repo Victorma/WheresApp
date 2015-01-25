@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.wheresapp.ContactDataActivity">
+    tools:context="com.wheresapp.activity.ContactDataActivity">
     <item android:id="@+id/action_call"
         android:title="@string/action_call"
         android:icon="@drawable/ic_action_call"

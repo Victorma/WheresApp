@@ -1,7 +1,5 @@
 package com.wheresapp.sync;
 
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.app.Service;
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -16,7 +14,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import com.wheresapp.SignUpActivity;
+import com.wheresapp.activity.SignUpActivity;
 
 /**
  * Created by Sergio on 03/12/2014.

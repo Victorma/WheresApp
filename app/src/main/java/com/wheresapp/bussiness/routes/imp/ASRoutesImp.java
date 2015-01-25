@@ -1,6 +1,5 @@
 package com.wheresapp.bussiness.routes.imp;
 
-import com.wheresapp.SettingsActivity;
 import com.wheresapp.bussiness.routes.ASRoutes;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +12,11 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.wheresapp.modelTEMP.Ruta;
-import com.wheresapp.modelTEMP.ServiceHandler;
+import com.wheresapp.model.Ruta;
+import com.wheresapp.model.ServiceHandler;
 /**
  * Created by Victorma on 26/11/2014.
  */

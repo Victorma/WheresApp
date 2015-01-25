@@ -1,16 +1,13 @@
 package com.wheresapp.bussiness.calls.imp;
 
 import android.content.Context;
-import android.content.Intent;
 
-import com.wheresapp.ActivityIncomingCall;
 import com.wheresapp.bussiness.calls.ASCalls;
 import com.wheresapp.integration.calls.DAOCalls;
 import com.wheresapp.integration.calls.factory.DAOCallsFactory;
-import com.wheresapp.integration.contacts.factory.DAOContactsFactory;
-import com.wheresapp.modelTEMP.Call;
-import com.wheresapp.modelTEMP.CallState;
-import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.model.Call;
+import com.wheresapp.model.CallState;
+import com.wheresapp.model.Contact;
 import com.wheresapp.server.ServerAPI;
 
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package com.wheresapp.bussiness.routes;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.wheresapp.modelTEMP.Ruta;
+import com.wheresapp.model.Ruta;
 
 /**
  * Created by Victorma on 26/11/2014.

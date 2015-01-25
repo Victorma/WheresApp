@@ -5,10 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.wheresapp.broadcastreceiver.CallDataIntentReceiver;
-import com.wheresapp.broadcastreceiver.ContactDataIntentReceiver;
 import com.wheresapp.bussiness.calls.factory.ASCallsFactory;
-import com.wheresapp.integration.calls.factory.DAOCallsFactory;
-import com.wheresapp.modelTEMP.Call;
+import com.wheresapp.model.Call;
 
 import java.util.ArrayList;
 import java.util.List;

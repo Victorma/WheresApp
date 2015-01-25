@@ -2,7 +2,7 @@ package com.wheresapp.bussiness.contacts;
 
 import android.os.Bundle;
 
-import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.model.Contact;
 
 import java.util.List;
 

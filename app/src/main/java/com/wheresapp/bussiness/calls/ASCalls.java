@@ -1,7 +1,7 @@
 package com.wheresapp.bussiness.calls;
 
-import com.wheresapp.modelTEMP.Call;
-import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.model.Call;
+import com.wheresapp.model.Contact;
 
 import java.io.IOException;
 import java.util.List;

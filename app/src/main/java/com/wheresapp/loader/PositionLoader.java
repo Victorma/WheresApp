@@ -3,7 +3,7 @@ package com.wheresapp.loader;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.wheresapp.modelTEMP.Message;
+import com.wheresapp.model.Message;
 
 import java.util.ArrayList;
 import java.util.List;

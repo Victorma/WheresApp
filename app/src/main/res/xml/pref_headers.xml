@@ -2,13 +2,13 @@
 
     <!-- These settings headers are only used on tablets. -->
 
-    <header android:fragment="com.wheresapp.SettingsActivity$RutaPreferenceFragment"
+    <header android:fragment="com.wheresapp.activity.SettingsActivity$RutaPreferenceFragment"
         android:title="@string/pref_header_ruta" />
 
-    <header android:fragment="com.wheresapp.SettingsActivity$ContactPreferenceFragment"
+    <header android:fragment="com.wheresapp.activity.SettingsActivity$ContactPreferenceFragment"
         android:title="@string/pref_header_contact" />
 
-    <header android:fragment="com.wheresapp.SettingsActivity$CuentaPreferenceFragment"
+    <header android:fragment="com.wheresapp.activity.SettingsActivity$CuentaPreferenceFragment"
         android:title="@string/pref_header_cuenta" />
 
 </preference-headers>

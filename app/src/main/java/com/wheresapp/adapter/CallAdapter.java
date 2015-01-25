@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.wheresapp.R;
 import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
-import com.wheresapp.modelTEMP.Call;
-import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.model.Call;
+import com.wheresapp.model.Contact;
 
 import java.util.List;
 

@@ -47,9 +47,10 @@
             android:value="1" />
 
         <activity
-            android:name=".SignUpActivity"
+            android:name=".activity.SignUpActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,21 +58,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".ContactDataActivity"
+            android:name=".activity.ContactDataActivity"
             android:label="@string/title_activity_contact_data"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.wheresapp.MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
-            android:name=".MapActivity"
+            android:name=".activity.MapActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_map"
             android:launchMode="singleInstance"
@@ -84,7 +85,7 @@
         </activity>
         -->
         <receiver
-            android:name=".GcmBroadcastReceiver"
+            android:name=".service.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -94,7 +95,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".GcmIntentService" />
+        <service android:name=".service.GcmIntentService" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -132,31 +133,32 @@
         </service>
 
         <activity
-            android:name=".ActivityIncomingCall"
+            android:name=".activity.ActivityIncomingCall"
             android:label="@string/title_activity_actitivity_incoming_call"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
         </activity>
 
         <service
-            android:name=".PositionCommunicationService"
+            android:name=".service.PositionCommunicationService"
             android:exported="false" >
         </service>
 
         <activity
-            android:name=".FeedbackActivity"
+            android:name=".activity.FeedbackActivity"
             android:label="@string/title_activity_feedback"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.wheresapp.MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
     </application>
 

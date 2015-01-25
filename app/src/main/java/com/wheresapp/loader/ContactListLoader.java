@@ -6,7 +6,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.wheresapp.broadcastreceiver.ContactDataIntentReceiver;
 import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
-import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.model.Contact;
 
 import java.util.ArrayList;
 import java.util.List;

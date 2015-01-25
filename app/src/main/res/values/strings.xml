@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">WheresApp</string>
+    <string name="app_name" translatable="false">WheresApp</string>
 
-    <string name="email_address">sga.vmp@gmail.com</string>
-    <string name="email_subject">Reporte de WheresApp</string>
-    <string name="email_intent">Enviar vía email…</string>
+    <string name="email_address" translatable="false">sga.vmp@gmail.com</string>
+    <string name="email_subject">Report of WheresApp</string>
+    <string name="email_intent">Send a email…</string>
 
-    <string name="logo_description">Application Logo</string>
+    <string name="logo_description" translatable="false">Application Logo</string>
     <string name="title_activity_main">Chats</string>
     <string name="title_activity_contacts_list">Contacts</string>
     <string name="title_activity_contact_data">Contact</string>
@@ -17,6 +17,8 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_call">Call</string>
     <string name="action_important">Favourite</string>
+    <string name="action_clean">Clean Historial</string>
+    <string name="action_sugerencia">Send Feedback</string>
     <string name="username">Enter phone number</string>
     <string name="login">Login</string>
     <string name="signup">Sign up</string>
@@ -32,7 +34,7 @@
 
     <!-- Messages -->
     <string name="no_gp_services">Google Play Services not available.</string>
-    <string name="ACCOUNT_TYPE">com.wheresapp.ACCOUNT</string>
+    <string name="ACCOUNT_TYPE" translatable="false">com.wheresapp.ACCOUNT</string>
 
     <array name="tab_names">
         <item>Favourites</item>
@@ -40,13 +42,12 @@
         <item>Contacts</item>
     </array>
 
-    <string name="title_activity_actitivity_incoming_call">Llamada Recibida</string>
+    <string name="title_activity_actitivity_incoming_call">Received Call</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_clean">Vaciar Historial</string>
-    <string name="action_sugerencia">Enviar Feedback</string>
-    <string name="welcome">Bienvenido a WheresApp</string>
-    <string name="feedback_info">Rellena el formulario a continuación y pulsa el botón de arriba para enviar el reporte a través de tu aplicación de correo.</string>
+    <string name="welcome">Welcome to WheresApp</string>
     <string name="title_activity_feedback">Feedback</string>
-    <string name="app_version">0.1</string>
+    <string name="app_version" translatable="false">0.9</string>
+    <string name="feedback_info">Complete the form below and click the button above to send the report via your mail application.</string>
+    <string name="pref_title_update_contact_auto">Automatically update contact list</string>
 
 </resources>

@@ -2,14 +2,12 @@ package com.wheresapp.integration.contacts.imp;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,11 +17,9 @@ import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.activeandroid.query.From;
-import com.activeandroid.query.Select;
 import com.wheresapp.R;
 import com.wheresapp.integration.contacts.DAOContacts;
-import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.model.Contact;
 
 import java.util.ArrayList;
 import java.util.List;

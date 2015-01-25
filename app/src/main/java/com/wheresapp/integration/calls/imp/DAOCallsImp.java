@@ -2,14 +2,13 @@ package com.wheresapp.integration.calls.imp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.From;
 import com.activeandroid.query.Select;
 import com.wheresapp.integration.calls.DAOCalls;
-import com.wheresapp.modelTEMP.Call;
+import com.wheresapp.model.Call;
 
 import java.util.List;
 

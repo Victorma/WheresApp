@@ -1,7 +1,7 @@
 package com.wheresapp.integration.contacts;
 
 import com.wheresapp.integration.DAO;
-import com.wheresapp.modelTEMP.Contact;
+import com.wheresapp.model.Contact;
 
 /**
  * Created by Victorma on 25/11/2014.

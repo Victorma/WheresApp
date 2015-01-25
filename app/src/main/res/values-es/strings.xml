@@ -33,5 +33,15 @@
         <item>Recientes</item>
         <item>Contactos</item>
     </array>
+    <string name="email_intent">Enviar vía email...</string>
+    <string name="email_subject">Reporte de WheresApp</string>
+    <string name="feedback_info">Rellena el formulario a continuación y pulsa el botón de arriba para enviar el reporte a través de tu aplicación de correo.</string>
+    <string name="hello_world">Hola mundo!</string>
+    <string name="pref_title_type_route">Tipo de ruta</string>
+    <string name="pref_title_update_contact_auto">Actualizar lista de contactos automaticamente</string>
+    <string name="title_activity_actitivity_incoming_call">Llamada Recibida</string>
+    <string name="title_activity_feedback">Feedback</string>
+    <string name="title_activity_settings">Configuración</string>
+    <string name="welcome">Bienvenido a WheresApp</string>
 
 </resources>
