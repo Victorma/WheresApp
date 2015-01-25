@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="ring">
-    <solid android:color="#FFFFFF"/>
+    <solid android:color="@color/common_signin_btn_default_background"/>
     <stroke android:width="2sp" android:color="#fff" />
 </shape>
