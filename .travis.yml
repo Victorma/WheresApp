@@ -28,7 +28,7 @@ deploy:
   provider: releases
   api_key:
     secure: Q3wBKtZpWwsrtgJyRGzXNrtPNg8vjoeg5CEOSOnzhz8ESsvXskWWZXTi99zwPV4eM4hB7hC2V8JVJPbVgsIcze3I/NTo0NwYwYimiGyibfX6UIa82sZnuA3ubSKFjGEXCP5SPElqV1r7B/r+rh5dC/jJ3PICsy28wCuU/vCGXEw=
-  file: app/app-release.apk
+  file: app/build/outputs/apk-release-signed.apk
   skip_cleanup: true
   on:
     tags: true
