@@ -49,5 +49,6 @@
     <string name="app_version" translatable="false">0.9</string>
     <string name="feedback_info">Complete the form below and click the button above to send the report via your mail application.</string>
     <string name="pref_title_update_contact_auto">Automatically update contact list</string>
+    <string name="testCall">Test call</string>
 
 </resources>

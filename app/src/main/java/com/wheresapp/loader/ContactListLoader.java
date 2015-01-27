@@ -36,9 +36,13 @@ public class ContactListLoader extends AsyncTaskLoader<List<Contact>> {
 
         if (favorito)
             listContact = ASContactsFactory.getInstance().getInstanceASContacts(getContext()).getFavouriteContactsList();
-        else
+        else{
             listContact = ASContactsFactory.getInstance().getInstanceASContacts(getContext()).getContactList();
-
+            Contact test = new Contact();
+            test.setName("Test call");
+            test.setServerid("0");
+            listContact.add(0,test);
+        }
         return listContact;
     }
     /**

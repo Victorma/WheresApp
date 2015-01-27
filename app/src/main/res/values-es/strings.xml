@@ -43,5 +43,6 @@
     <string name="title_activity_feedback">Feedback</string>
     <string name="title_activity_settings">Configuración</string>
     <string name="welcome">Bienvenido a WheresApp</string>
+    <string name="testCall">Test call</string>
 
 </resources>

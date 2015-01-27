@@ -41,6 +41,20 @@ public class ASCallsImp implements ASCalls {
     }
 
     @Override
+    public boolean testCall() throws IOException {
+        if (getActiveCall()==null) {
+            Call call = ServerAPI.getInstance(context).crearLlamadaPrueba();
+            if (call!=null) {
+                dao.create(call);
+                return true;
+            }
+            else
+                return false;
+        }
+        return false;
+    }
+
+    @Override
     public boolean accept(Call call) throws IOException {
         if (getActiveCall()!=null) {
             Call callAccept = ServerAPI.getInstance(context).aceptarLlamada(call.getServerId());
@@ -79,20 +93,25 @@ public class ASCallsImp implements ASCalls {
     public boolean end(Call call) throws IOException {
         if (getActiveCall()!=null) {
             Call callEnd;
-            if (call.getState().equals(CallState.WAIT))
-                callEnd = ServerAPI.getInstance(context).rechazarLlamada(call.getServerId());
-            else
-                callEnd = ServerAPI.getInstance(context).finalizarLlamada(call.getServerId());
-            if (callEnd!=null) {
-                Call temp = getActiveCall();
-                temp.setState(callEnd.getState());
-                temp.setEnd(callEnd.getEnd());
-                temp.setUpdate(callEnd.getUpdate());
-                dao.update(temp);
-                return true;
+            if (call!=null) {
+                if (call.getState().equals(CallState.WAIT))
+                    callEnd = ServerAPI.getInstance(context).rechazarLlamada(call.getServerId());
+                else
+                    callEnd = ServerAPI.getInstance(context).finalizarLlamada(call.getServerId());
+                if (callEnd != null) {
+                    Call temp = getActiveCall();
+                    if (temp.getReceiver().equals("test")) {
+                        dao.delete(temp);
+                        return true;
+                    }
+                    temp.setState(callEnd.getState());
+                    temp.setEnd(callEnd.getEnd());
+                    temp.setUpdate(callEnd.getUpdate());
+                    dao.update(temp);
+                    return true;
+                } else
+                    return false;
             }
-            else
-                return false;
         }
         return false;
     }

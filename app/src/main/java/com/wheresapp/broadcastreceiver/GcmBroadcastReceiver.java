@@ -1,6 +1,7 @@
-package com.wheresapp.service;
+package com.wheresapp.broadcastreceiver;
 
 import android.app.Activity;
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,9 @@ import com.wheresapp.integration.contacts.factory.DAOContactsFactory;
 import com.wheresapp.model.Call;
 import com.wheresapp.model.CallState;
 import com.wheresapp.model.Contact;
+import com.wheresapp.service.GcmContactUpdateService;
+
+import java.io.IOException;
 
 /**
  * This {@code WakefulBroadcastReceiver} takes care of creating and managing a
@@ -36,21 +40,36 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver   {
             call.setIncoming(true);
             if (CallState.WAIT.equals(call.getState())) {
                 Call temp = ASCallsFactory.getInstance().getInstanceASCalls(context).getActiveCall();
-                if (temp!=null) {
-                    temp.setState(CallState.END);
-                    temp.save();
-                }
-                if (ASCallsFactory.getInstance().getInstanceASCalls(context).receiveCall(call)) {
+                if (temp==null) {
                     Contact contact = new Contact();
                     contact.setServerid(call.getSender());
                     contact = DAOContactsFactory.getInstance().getInstanceDAOContacts(context).read(contact);
-                    Intent newIntent = new Intent(context, ActivityIncomingCall.class);
-                    newIntent.putExtra(ActivityIncomingCall.KEY_CONTACT,contact);
-                    newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(newIntent);
+                    if (contact!=null) {
+                        if (ASCallsFactory.getInstance().getInstanceASCalls(context).receiveCall(call)) {
+                            Intent newIntent = new Intent(context, ActivityIncomingCall.class);
+                            newIntent.putExtra(ActivityIncomingCall.KEY_CONTACT, contact);
+                            newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(newIntent);
+                        }
+                    } else {
+                        try {
+                            ASCallsFactory.getInstance().getInstanceASCalls(context).reject(call);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    try {
+                        ASCallsFactory.getInstance().getInstanceASCalls(context).reject(call);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             setResultCode(Activity.RESULT_OK);
+        } else if (extras.containsKey("contact"))  {
+            Intent service = new Intent(context, GcmContactUpdateService.class);
+            startWakefulService(context,service);
         }
     }
 }

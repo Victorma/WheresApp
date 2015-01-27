@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fima.glowpadview.GlowPadView;
 import com.google.gson.Gson;
 import com.wheresapp.R;
 import com.wheresapp.bussiness.calls.ASCalls;
@@ -36,10 +37,9 @@ import com.wheresapp.model.Contact;
 import java.io.IOException;
 
 
-public class ActivityIncomingCall extends Activity {
+public class ActivityIncomingCall extends Activity implements GlowPadView.OnTriggerListener {
 
     public static final String KEY_CONTACT = "CONTACT";
-    private Button btAccept, btDeny;
     private ImageView imagenContacto;
     private TextView nombreContacto;
     private Contact contact;
@@ -48,7 +48,7 @@ public class ActivityIncomingCall extends Activity {
     private Gson gson = new Gson();
     private Vibrator vibrator;
     private Ringtone r;
-    private ImageView dragButton;
+    private GlowPadView mGlowPadView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +58,15 @@ public class ActivityIncomingCall extends Activity {
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.activity_incoming_call);
+        mGlowPadView = (GlowPadView) findViewById(R.id.glow_pad_view);
+
+        mGlowPadView.setOnTriggerListener(this);
+
+        // uncomment this to make sure the glowpad doesn't vibrate on touch
+        // mGlowPadView.setVibrateEnabled(false);
+
+        // uncomment this to hide targets
+        mGlowPadView.setShowTargetsOnIdle(true);
         asCalls = ASCallsFactory.getInstance().getInstanceASCalls(this);
         call = asCalls.getActiveCall();
         if (call == null ) {
@@ -67,92 +76,12 @@ public class ActivityIncomingCall extends Activity {
         registerReceiver(updateCallReceiver,filter);
         imagenContacto = (ImageView) findViewById(R.id.imageContact);
         nombreContacto = (TextView) findViewById(R.id.textName);
-        dragButton = (ImageView) findViewById(R.id.buttonDrag);
-        dragButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent arg1) {
-                ClipData data = ClipData.newPlainText("", "");
-                View.DragShadowBuilder shadow = new View.DragShadowBuilder(dragButton);
-                v.startDrag(data, shadow, null, 0);
-                return false;
-            }
-        });
         if (getIntent().getExtras().containsKey(KEY_CONTACT)) {
             contact = (Contact) getIntent().getExtras().getSerializable(KEY_CONTACT);
             if (contact.getImageURI()!=null)
                 imagenContacto.setImageURI(Uri.parse(contact.getImageURI()));
             nombreContacto.setText(contact.getName());
         }
-        btAccept = (Button) findViewById(R.id.buttonAccept);
-        btAccept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                vibrator.cancel();
-                aceptarLlamada();
-                r.stop();
-            }
-        });
-        btAccept.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                final int action = event.getAction();
-                switch(action) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        break;
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        break;
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        break;
-                    case DragEvent.ACTION_DROP:{
-                        break;
-                    }
-                    case DragEvent.ACTION_DRAG_ENDED:{
-                        vibrator.cancel();
-                        aceptarLlamada();
-                        r.stop();
-                        return(true);
-                    }
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
-        btDeny = (Button) findViewById(R.id.buttonDeny);
-        btDeny.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                vibrator.cancel();
-                rechazarLlamada();
-                r.stop();
-            }
-        });
-        btDeny.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                final int action = event.getAction();
-                switch(action) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        break;
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        break;
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        break;
-                    case DragEvent.ACTION_DROP:{
-                        break;
-                    }
-                    case DragEvent.ACTION_DRAG_ENDED:{
-                        vibrator.cancel();
-                        rechazarLlamada();
-                        r.stop();
-                        return(true);
-                    }
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
         Uri ringTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         r = RingtoneManager.getRingtone(getApplicationContext(), ringTone);
         r.play();
@@ -190,8 +119,6 @@ public class ActivityIncomingCall extends Activity {
     }
 
     private void rechazarLlamada() {
-        btAccept.setEnabled(false);
-        btDeny.setEnabled(false);
         new AsyncTask<Void, Void, Bundle>() {
             @Override
             protected Bundle doInBackground(Void... params) {
@@ -247,8 +174,6 @@ public class ActivityIncomingCall extends Activity {
     };
 
     private void aceptarLlamada() {
-        btAccept.setEnabled(false);
-        btDeny.setEnabled(false);
         new AsyncTask<Void, Void, Bundle>() {
             @Override
             protected Bundle doInBackground(Void... params) {
@@ -286,4 +211,44 @@ public class ActivityIncomingCall extends Activity {
     }
 
 
+    @Override
+    public void onGrabbed(View view, int i) {
+
+    }
+
+    @Override
+    public void onReleased(View view, int i) {
+        mGlowPadView.ping();
+    }
+
+    @Override
+    public void onTrigger(View view, int i) {
+        final int resId = mGlowPadView.getResourceIdForTarget(i);
+        switch (resId) {
+            case R.drawable.ic_item_camera:
+                mGlowPadView.setEnabled(false);
+                vibrator.cancel();
+                rechazarLlamada();
+                r.stop();
+                break;
+            case R.drawable.ic_item_google:
+                mGlowPadView.setEnabled(false);
+                vibrator.cancel();
+                aceptarLlamada();
+                r.stop();
+                break;
+            default:
+                // Code should never reach here.
+        }
+    }
+
+    @Override
+    public void onGrabbedStateChange(View view, int i) {
+
+    }
+
+    @Override
+    public void onFinishFinalAnimation() {
+
+    }
 }

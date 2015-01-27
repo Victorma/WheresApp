@@ -12,7 +12,9 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 import com.wheresapp.R;
+import com.wheresapp.activity.MainActivity;
 import com.wheresapp.activity.SignUpActivity;
+import com.wheresapp.bussiness.contacts.factory.ASContactsFactory;
 
 /**
  * This {@code IntentService} does the actual handling of the GCM message.
@@ -21,41 +23,24 @@ import com.wheresapp.activity.SignUpActivity;
  * service is finished, it calls {@code completeWakefulIntent()} to release the
  * wake lock.
  */
-public class GcmIntentService extends IntentService {
+public class GcmContactUpdateService extends IntentService {
     private Gson gson = new Gson();
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
 
-    public GcmIntentService() {
-        super("GcmIntentService");
+    public GcmContactUpdateService() {
+        super("GcmContactUpdateService");
     }
 
-    public static final String TAG = "GCMIntentService";
+    public static final String TAG = "GcmContactUpdateService";
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "onHandleIntent "+intent.getDataString());
         Bundle extras = intent.getExtras();
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-        // The getMessageType() intent parameter must be the intent you received
-        // in your BroadcastReceiver.
-        String messageType = "call";
-
-        if (extras != null && !extras.isEmpty()) {  // has effect of unparcelling Bundle
-            if (extras.containsKey("type")) {
-                String type = extras.getString("type");
-                switch(type) {
-                    case "call": {
-
-                    }break;
-                    default: {
-
-                    }break;
-                }
-            }
-        }
-        // Release the wake lock provided by the WakefulBroadcastReceiver.
+        ASContactsFactory.getInstance().getInstanceASContacts(this).updateContactList();
+        sendNotification("Contactos actualizados, pulse aquí.");
     }
 
     // Put the message into a notification and post it.
@@ -67,12 +52,12 @@ public class GcmIntentService extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, SignUpActivity.class), 0);
+                new Intent(this, MainActivity.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-        .setSmallIcon(R.drawable.ic_stat_gcm)
-        .setContentTitle("GCM Notification")
+        .setSmallIcon(R.drawable.ic_launcher)
+        .setContentTitle("Lista de contactos")
         .setStyle(new NotificationCompat.BigTextStyle()
         .bigText(msg))
         .setContentText(msg);

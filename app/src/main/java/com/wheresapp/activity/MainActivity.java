@@ -2,9 +2,12 @@ package com.wheresapp.activity;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.accounts.OperationCanceledException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;

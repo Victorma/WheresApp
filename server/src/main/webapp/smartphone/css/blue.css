@@ -1,0 +1,15 @@
+body{
+	font-family: 'open_sansregular';
+}
+.header {
+	background: url(../images/bg.jpg) repeat-x 100%;
+	min-height: 343px;
+}
+.header-left label{
+	width: 101px;
+	min-height: 191px;
+	display: inline-block;
+	padding-top: 0;
+	margin: 0px;
+	background: url(../images/iphones.png) no-repeat;
+}

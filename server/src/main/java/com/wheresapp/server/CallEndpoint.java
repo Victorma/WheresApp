@@ -38,16 +38,12 @@ public class CallEndpoint {
     @ApiMethod(name = "testCall", path = "{fromId}/testcall")
     public CallServer test(@Named("fromId") String fromId) throws BadRequestException, InternalServerErrorException {
         CallServer newCall = new CallServer();
-        newCall.setSender("5732568548769792");
-        newCall.setReceiver("5732568548769792");
-        newCall.setState(CallStateServer.WAIT);
+        newCall.setSender(fromId);
+        newCall.setReceiver("test");
+        newCall.setState(CallStateServer.ACCEPT);
         newCall.setStart(new Date(System.currentTimeMillis()));
+        newCall.setUpdate(newCall.getStart());
         ofy().save().entity(newCall).now();
-        try {
-            sendCall(newCall,fromId);
-        } catch (IOException e) {
-            throw new InternalServerErrorException("No se ha podido realizar la llamada");
-        }
         return newCall;
     }
 
@@ -117,9 +113,9 @@ public class CallEndpoint {
             call.setEnd(new Date(System.currentTimeMillis()));
             ofy().save().entity(call).now();
             try {
-                if (call.getSender().equals(fromId))
+                if (call.getSender().equals(fromId) && !call.getReceiver().equals("test"))
                     sendCall(call,findUser(Long.parseLong(call.getReceiver())).getRegId());
-                else
+                else if (!call.getReceiver().equals("test"))
                     sendCall(call,findUser(Long.parseLong(call.getSender())).getRegId());
             } catch (IOException e) {
                 throw new InternalServerErrorException("No se ha podido realizar la llamada");
@@ -142,6 +138,17 @@ public class CallEndpoint {
             else
                 message.setToId(call.getSender());
             ofy().save().entity(message).now();
+            if (call.getReceiver().equals("test")) {
+                Double lat = Double.parseDouble(message.getMessage().split(",")[0]) + 0.01;
+                Double longitud = Double.parseDouble(message.getMessage().split(",")[1]) + 0.01;
+                String newpos = lat + "," + longitud;
+                MessageServer messageServer = new MessageServer();
+                messageServer.setCallId(callId);
+                messageServer.setFromId("test");
+                messageServer.setToId(fromId);
+                messageServer.setMessage(newpos);
+                ofy().save().entity(messageServer).now();
+            }
             MessageServer messageServer = ofy().load().type(MessageServer.class).filter("callId",call.getServerId()).filter("toId", fromId).order("-dateSend").first().now();
             if (messageServer==null) {
                 messageServer = new MessageServer();

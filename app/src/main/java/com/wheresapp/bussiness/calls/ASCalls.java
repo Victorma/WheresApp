@@ -12,6 +12,7 @@ import java.util.List;
 public interface ASCalls {
 
     public boolean call(Contact contact) throws IOException;
+    public boolean testCall() throws IOException;
     public boolean accept(Call call) throws IOException;
     public boolean reject(Call call) throws IOException;
     public boolean end(Call call) throws IOException;

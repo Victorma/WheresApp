@@ -1,5 +1,6 @@
 package com.wheresapp.activity;
 
+import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -9,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
@@ -28,6 +30,7 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -49,6 +52,7 @@ public class MapActivity extends FragmentActivity implements
     private GoogleMap map;
     private Ruta ruta;
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,42 +80,57 @@ public class MapActivity extends FragmentActivity implements
                 finish();
             }
         });
-        Intent i = getIntent();
-        if (toContact==null) {
-            toContact = (Contact) i.getSerializableExtra("TOUSER");
-            this.setTitle("Llamando a " + toContact.getName());
-        }
-
-
         if (map == null) {
             map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
         }
         map.setMyLocationEnabled(true);
-
-        //Iniciamos el servicio que inicia y mantiene la llamada
-        Intent service = new Intent(getApplicationContext(),PositionCommunicationService.class);
-        service.putExtra("CONTACT", toContact);
-        if (i.hasExtra("INCOMING")) {
-            service.putExtra("INCOMING", true);
-            this.setTitle("Llamada de " + toContact.getName());
+        Intent i = getIntent();
+        if (i.hasExtra("TESTCALL")) {
+            //Iniciamos el servicio que inicia y mantiene la llamada
+            Intent service = new Intent(getApplicationContext(), PositionCommunicationService.class);
+            service.putExtra("TESTCALL", "TESTCALL");
+            this.setTitle("Llamada de prueba");
+            startService(service);
+        } else if (i.hasExtra("TOUSER")) {
+            if (toContact == null) {
+                toContact = (Contact) i.getSerializableExtra("TOUSER");
+                this.setTitle("Llamando a " + toContact.getName());
+            }
+            //Iniciamos el servicio que inicia y mantiene la llamada
+            Intent service = new Intent(getApplicationContext(), PositionCommunicationService.class);
+            service.putExtra("CONTACT", toContact);
+            if (i.hasExtra("INCOMING")) {
+                service.putExtra("INCOMING", true);
+                this.setTitle("Llamada de " + toContact.getName());
+            }
+            startService(service);
+        } else {
+            Intent main = new Intent(this,MainActivity.class);
+            startActivity(main);
+            finish();
         }
-        startService(service);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle("Llamada activa")
                         .setContentText(this.getTitle());
+        Intent stopIntent = new Intent(this, MapActivity.class);
+        stopIntent.putExtra("KILL", "KILL");
+        PendingIntent stopPendingIntent = PendingIntent.getActivity(this, 0,
+                stopIntent, PendingIntent.FLAG_CANCEL_CURRENT, null);
+        mBuilder.addAction(R.drawable.ic_action_call,"Colgar",stopPendingIntent);
 
         Intent resultIntent = new Intent(this, MapActivity.class);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        resultIntent.putExtra("OPEN","OPEN");
 
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         this,
                         0,
                         resultIntent,
-                        0
+                        0,
+                        null
                 );
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setOngoing(true);
@@ -137,8 +156,18 @@ public class MapActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        if (getIntent().getFlags() == PendingIntent.FLAG_CANCEL_CURRENT) {
+            Intent service = new Intent(getApplicationContext(),PositionCommunicationService.class);
+            stopService(service);
+            mNotificationManager.cancelAll();
+            finish();
+        }
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter(PositionCommunicationService.BROADCAST_ACTION));
     }
+
+
+
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -173,7 +202,7 @@ public class MapActivity extends FragmentActivity implements
             if (map != null && (fromPosition!=null && toPosition!=null)) {
                 ASRoutes rutas = ASRoutesFactory.getInstance().getInstanceASRoutes(MapActivity.this);
                 if (ruta!=null)
-                    ruta = rutas.updateDestinoRuta(ruta,toPosition);
+                    ruta = rutas.updateDestinoRuta(ruta,fromPosition,toPosition);
                 else
                     ruta = rutas.getRuta(fromPosition, toPosition);
                 return ruta;
@@ -192,9 +221,12 @@ public class MapActivity extends FragmentActivity implements
                     map.addMarker(new MarkerOptions().position(toPosition).title(getString(R.string.goal))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag))
                             .snippet("Best Time: 6 Secs").draggable(true));
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(toPosition, 13));
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.waiting_location), Toast.LENGTH_LONG).show();
+                }
+                LatLngBounds.Builder bc = new LatLngBounds.Builder();
+                for (LatLng item : ruta.getPuntos()) {
+                    bc.include(item);
                 }
                 PolylineOptions lineas = new PolylineOptions();
                 lineas.addAll(ruta.getPuntos());
@@ -202,6 +234,7 @@ public class MapActivity extends FragmentActivity implements
                 lineas.color(Color.BLUE);
                 //Este es el mapa sobre el que tienes que añadir las lineas
                 map.addPolyline(lineas);
+                map.moveCamera(CameraUpdateFactory.newLatLngBounds(bc.build(),50));
             }
         }
     }
@@ -263,7 +296,7 @@ public class MapActivity extends FragmentActivity implements
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent.hasExtra("KILL")) {
+        if (intent.hasExtra("KILL") && intent.getFlags()!=0 && intent.getFlags()!=4194304) {
             finish();
         }
     }

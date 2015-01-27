@@ -7,6 +7,7 @@ import com.google.api.server.spi.config.Named;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.wheresapp.server.domain.ContactListServer;
+import com.wheresapp.server.domain.ContactNotFound;
 import com.wheresapp.server.domain.ContactServer;
 import com.wheresapp.server.domain.UserRegistrationServer;
 
@@ -30,6 +31,16 @@ public class UserEndpoint {
                 reg = getRecord(c.getPhone());
                 c.setId(reg.getId());
                 exist.addContact(c);
+            } else {
+                ContactNotFound contactNotFound = findRecordNew(c.getPhone());
+                if (contactNotFound==null){
+                    contactNotFound = new ContactNotFound();
+                    contactNotFound.setPhone(c.getPhone());
+                    contactNotFound.getContactKnows().add(from);
+                } else {
+                    contactNotFound.getContactKnows().add(from);
+                }
+                ofy().save().entity(contactNotFound).now();
             }
         }
         return exist;
@@ -41,6 +52,10 @@ public class UserEndpoint {
 
     private UserRegistrationServer getRecord(String phone) {
         return ofy().load().type(UserRegistrationServer.class).filter("phone", phone).first().now();
+    }
+
+    private ContactNotFound findRecordNew(String phone) {
+        return ofy().load().type(ContactNotFound.class).filter("phone", phone).first().now();
     }
 
 }

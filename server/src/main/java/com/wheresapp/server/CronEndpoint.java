@@ -37,6 +37,8 @@ public class CronEndpoint extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<CallServer> queryTransmit = ofy().load().type(CallServer.class).filter("state", CallStateServer.ACCEPT).list();
         for (CallServer call : queryTransmit) {
+            if (call.getReceiver().equals("test"))
+                continue;
             Long nowTime = System.currentTimeMillis();
             Long initTime = call.getStart().getTime();
             if ((nowTime - initTime) > 60000 ) {
@@ -75,6 +77,8 @@ public class CronEndpoint extends HttpServlet {
 
         List<CallServer> queryWait = ofy().load().type(CallServer.class).filter("state", CallStateServer.WAIT).list();
         for (CallServer call : queryWait) {
+            if (call.getReceiver().equals("test"))
+                continue;
             Long init = System.currentTimeMillis();
             Long end = call.getStart().getTime();
             if ((init - end) > 60000 ) {

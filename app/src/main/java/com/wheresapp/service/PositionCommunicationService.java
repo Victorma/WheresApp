@@ -1,6 +1,7 @@
 package com.wheresapp.service;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -165,51 +166,90 @@ public class PositionCommunicationService extends Service implements LocationLis
         }.execute(null, null, null);
     }
 
-    private void actualizarPosicion(Location position) {
-        Log.d(TAG, "onLocationChanged");
-        Log.d(TAG, "MY NEW LOCATION: " + position.getLatitude() + " , " + position.getLongitude());
-
-        Double lat = position.getLatitude();
-        Double lon  = position.getLongitude();
-        String positionString = lat.toString()+ "," + lon.toString();
-        new AsyncTask<String, Void, Message>() {
+    private void crearLlamadaPrueba() {
+        new AsyncTask<Void, Void, Bundle>() {
             @Override
-            protected Message doInBackground(String... params) {
-                String position = params[0];
-                Message message = null;
+            protected Bundle doInBackground(Void... params) {
+                Bundle bundle = new Bundle();
                 try {
-                    message = ServerAPI.getInstance(PositionCommunicationService.this).enviarPosicion(call.getServerId(),position);
+                    call = asCalls.getActiveCall();
+                    if (call==null) {
+                        Log.d(TAG, "Create call");
+                        if (asCalls.testCall()) {
+                            Log.d(TAG, "Get active call");
+                            call = asCalls.getActiveCall();
+                            Log.d(TAG, "Active call " + call.toString());
+                        } else {
+                            bundle.putBoolean("ERROR",true);
+                        }
+                    }
                 } catch (IOException e) {
-                    return null;
+                    bundle.putBoolean("ERROR",true);
                 }
-                return message;
+                return bundle;
             }
 
             @Override
-            protected void onPostExecute(Message message) {
-                if (message!=null) {
-                    Log.d(TAG, "LOCATION RECEIVE: " + message.getMessage());
-                    // Since location information updated, broadcast it
-                    Intent broadcast = new Intent();
+            protected void onPostExecute(Bundle bundle) {
+                if (bundle.containsKey("ERROR")) {
+                    Toast.makeText(PositionCommunicationService.this,"Ha ocurrido un error",Toast.LENGTH_LONG).show();
+                    killActivity();
+                } else if (call.getState().equals(CallState.WAIT)){
+                    Toast.makeText(PositionCommunicationService.this, "Esperando respuesta", Toast.LENGTH_LONG).show();
+                } else {
+                    mGoogleApiClient.connect();
+                }
+            }
 
-                    // Set action so other parts of application can distinguish and use this information if needed
-                    broadcast.setAction(BROADCAST_ACTION);
-                    if (!message.getMessage().equals("WAIT")) {
-                        broadcast.putExtra("latitude", Double.parseDouble(message.getMessage().split(",")[0]));
-                        broadcast.putExtra("longitude", Double.parseDouble(message.getMessage().split(",")[1]));
+        }.execute(null, null, null);
+    }
 
-                        LocalBroadcastManager.getInstance(PositionCommunicationService.this).sendBroadcast(broadcast);
+    private void actualizarPosicion(Location position) {
+        if (position!=null) {
+            Log.d(TAG, "onLocationChanged");
+            Log.d(TAG, "MY NEW LOCATION: " + position.getLatitude() + " , " + position.getLongitude());
+
+            Double lat = position.getLatitude();
+            Double lon = position.getLongitude();
+            String positionString = lat.toString() + "," + lon.toString();
+            new AsyncTask<String, Void, Message>() {
+                @Override
+                protected Message doInBackground(String... params) {
+                    String position = params[0];
+                    Message message = null;
+                    try {
+                        message = ServerAPI.getInstance(PositionCommunicationService.this).enviarPosicion(call.getServerId(), position);
+                    } catch (IOException e) {
+                        return null;
+                    }
+                    return message;
+                }
+
+                @Override
+                protected void onPostExecute(Message message) {
+                    if (message != null) {
+                        Log.d(TAG, "LOCATION RECEIVE: " + message.getMessage());
+                        // Since location information updated, broadcast it
+                        Intent broadcast = new Intent();
+
+                        // Set action so other parts of application can distinguish and use this information if needed
+                        broadcast.setAction(BROADCAST_ACTION);
+                        if (!message.getMessage().equals("WAIT")) {
+                            broadcast.putExtra("latitude", Double.parseDouble(message.getMessage().split(",")[0]));
+                            broadcast.putExtra("longitude", Double.parseDouble(message.getMessage().split(",")[1]));
+
+                            LocalBroadcastManager.getInstance(PositionCommunicationService.this).sendBroadcast(broadcast);
+                        }
                     }
                 }
-            }
-        }.execute(positionString, null, null);
+            }.execute(positionString, null, null);
+        }
     }
 
     private void killActivity() {
         Intent killMapActivity = new Intent(PositionCommunicationService.this,MapActivity.class);
         killMapActivity.putExtra("KILL",1);
-        killMapActivity.addFlags(Intent.FLAG_FROM_BACKGROUND);
-        killMapActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        killMapActivity.addFlags(PendingIntent.FLAG_CANCEL_CURRENT);
         getApplication().startActivity(killMapActivity);
     }
 
@@ -265,9 +305,17 @@ public class PositionCommunicationService extends Service implements LocationLis
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Calling command…");
-        if (contact==null && startId==1) {
-            contact = (Contact) intent.getSerializableExtra("CONTACT");
-            crearLlamada();
+        if (intent!=null) {
+            if (intent.hasExtra("TESTCALL")) {
+                crearLlamadaPrueba();
+            } else {
+                if (contact == null && startId == 1) {
+                    contact = (Contact) intent.getSerializableExtra("CONTACT");
+                    crearLlamada();
+                } else {
+                    killActivity();
+                }
+            }
         } else {
             killActivity();
         }

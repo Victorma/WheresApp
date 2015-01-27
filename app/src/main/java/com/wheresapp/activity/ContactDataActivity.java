@@ -1,6 +1,9 @@
 package com.wheresapp.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -13,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationRequest;
 import com.wheresapp.R;
 import com.wheresapp.adapter.CallAdapter;
 import com.wheresapp.integration.contacts.factory.DAOContactsFactory;
@@ -80,10 +84,13 @@ public class ContactDataActivity extends FragmentActivity implements LoaderManag
         switch (item.getItemId()) {
             // When the user clicks REFRESH
             case R.id.action_call:
-                Intent intent = new Intent(this, MapActivity.class);
-                intent.putExtra("TOUSER", contact);
-                startActivity(intent);
-                return true;
+                if(checkGPS()) {
+                    Intent intent = new Intent(this, MapActivity.class);
+                    intent.putExtra("TOUSER", contact);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
             // When the user clicks REFRESH
             case R.id.action_important:
                 if (favourite){
@@ -98,6 +105,35 @@ public class ContactDataActivity extends FragmentActivity implements LoaderManag
 
         return super.onOptionsItemSelected(item);
     }
+
+    private boolean checkGPS() {
+        LocationManager mlocManager = (LocationManager) getApplicationContext().getSystemService(getApplicationContext().LOCATION_SERVICE);
+        boolean enabled = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (enabled) {
+            return enabled;
+        } else {
+            showGPSDisabledAlertToUser();
+            return false;
+        }
+    }
+
+    private void showGPSDisabledAlertToUser(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Tienes que activar el GPS para poder realizar la llamada.").setCancelable(false).setPositiveButton("Ir a configuración para activar el GPS", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int id){
+                Intent callGPSSettingIntent = new Intent( android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(callGPSSettingIntent);
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int id){
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+
 
     private void anadirFavorito() {
         itemFavorito.setIcon(R.drawable.ic_action_important);

@@ -53,25 +53,26 @@ public class ASRoutesImp implements ASRoutes {
     }
 
     @Override
-    public Ruta updateDestinoRuta(Ruta ruta, LatLng to) {
+    public Ruta updateDestinoRuta(Ruta ruta, LatLng from, LatLng to) {
         Ruta newRuta = null;
         // Si el destino no se ha movido más de 30 metros no actualizamos la ruta
-        float [] distancias = new float[1];
+        float [] distanciasDestino = new float[1];
+        float [] distanciasOrigen = new float[1];
         try{
             Location.distanceBetween(ruta.getFin().latitude, ruta.getFin().longitude,
-                    to.latitude, to.longitude, distancias );
+                    to.latitude, to.longitude, distanciasDestino );
+            Location.distanceBetween(ruta.getInicio().latitude, ruta.getInicio().longitude,
+                    from.latitude, from.longitude, distanciasOrigen );
         }catch (Exception e){
             e.printStackTrace();
         }
-        if (distancias[0] < 30){
+        if (distanciasDestino[0] < 30 && distanciasOrigen[0]<30){
             //Misma ruta
             newRuta = ruta;
         }else{
             //Calculamos nueva ruta
-            newRuta = getRuta(ruta.getInicio(),to);
+            newRuta = getRuta(from,to);
         }
-
-
 
         return newRuta;
     }

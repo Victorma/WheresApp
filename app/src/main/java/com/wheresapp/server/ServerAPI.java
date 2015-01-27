@@ -107,6 +107,18 @@ public class ServerAPI {
         return llamadaCreada;
     }
 
+    public Call crearLlamadaPrueba() throws IOException {
+        CallServer llamadaCreadaServidor = getCallUserServiceHandle().testCall(getContact().getServerid()).execute();
+        Call llamadaCreada = new Call();
+        llamadaCreada.setServerId(llamadaCreadaServidor.getServerId());
+        llamadaCreada.setReceiver(llamadaCreadaServidor.getReceiver());
+        llamadaCreada.setSender(llamadaCreadaServidor.getSender());
+        llamadaCreada.setState(CallState.valueOf(llamadaCreadaServidor.getState()));
+        llamadaCreada.setStart(new Date(llamadaCreadaServidor.getStart().getValue()));
+        llamadaCreada.setUpdate(new Date(llamadaCreadaServidor.getStart().getValue()));
+        return llamadaCreada;
+    }
+
     public Call aceptarLlamada(String callId) throws IOException {
         CallServer llamadaCreadaServidor = getCallUserServiceHandle().accept(getContact().getServerid(), callId).execute();
         Call llamadaCreada = new Call();

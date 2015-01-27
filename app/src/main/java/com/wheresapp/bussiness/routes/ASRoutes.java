@@ -24,6 +24,6 @@ public interface ASRoutes {
      * @param to: fin
      * @return La ruta actualizada
      */
-    public Ruta updateDestinoRuta(Ruta ruta, LatLng to);
+    public Ruta updateDestinoRuta(Ruta ruta, LatLng from, LatLng to);
 
 }

@@ -1,5 +1,8 @@
 package com.wheresapp.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.location.LocationManager;
 import android.support.v4.app.ListFragment; //android.app.ListFragment;
 import android.support.v4.app.LoaderManager; //android.app.LoaderManager;
 import android.content.Context;
@@ -20,6 +23,7 @@ import android.widget.SearchView.OnQueryTextListener; //android.support.v7.widge
 
 import com.wheresapp.R;
 import com.wheresapp.activity.ContactDataActivity;
+import com.wheresapp.activity.MapActivity;
 import com.wheresapp.adapter.ContactAdapter;
 import com.wheresapp.loader.ContactListLoader;
 import com.wheresapp.model.Contact;
@@ -149,11 +153,48 @@ public class ContactsListFragment extends ListFragment
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Insert desired behavior here.
         Log.i("LoaderCustom", "Item clicked: " + id);
-        Intent intent = new Intent(getActivity(),ContactDataActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("USER",mAdapter.getItem(position));
-        intent.putExtra("USER",bundle);
-        startActivity(intent);
+        Contact contact = mAdapter.getItem(position);
+        if (contact.getServerid().equals("0")) {
+            if (checkGPS()) {
+                Intent intent = new Intent(getActivity(), MapActivity.class);
+                intent.putExtra("TESTCALL", "TEST");
+                startActivity(intent);
+            }
+        } else {
+            Intent intent = new Intent(getActivity(),ContactDataActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("USER",contact);
+            intent.putExtra("USER",bundle);
+            startActivity(intent);
+        }
+    }
+
+    private boolean checkGPS() {
+        LocationManager mlocManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+        boolean enabled = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (enabled) {
+            return enabled;
+        } else {
+            showGPSDisabledAlertToUser();
+            return false;
+        }
+    }
+
+    private void showGPSDisabledAlertToUser(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setMessage("Tienes que activar el GPS para poder realizar la llamada.").setCancelable(false).setPositiveButton("Ir a configuración para activar el GPS", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int id){
+                Intent callGPSSettingIntent = new Intent( android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(callGPSSettingIntent);
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int id){
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 
     @Override
