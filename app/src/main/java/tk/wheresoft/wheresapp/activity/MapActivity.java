@@ -158,7 +158,7 @@ public class MapActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        if (getIntent().getFlags() == PendingIntent.FLAG_CANCEL_CURRENT) {
+        if (getIntent().hasExtra("KILL") && getIntent().getFlags() == PendingIntent.FLAG_CANCEL_CURRENT) {
             Intent service = new Intent(getApplicationContext(), PositionCommunicationService.class);
             stopService(service);
             mNotificationManager.cancelAll();
