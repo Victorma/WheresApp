@@ -4,12 +4,12 @@
     android:layout_height="?android:attr/listPreferredItemHeight">
 
     <QuickContactBadge
-        style="@style/itemIcon"
-        android:id="@android:id/icon" />
+        android:id="@android:id/icon"
+        style="@style/itemIcon" />
 
     <TextView
-        style="@style/itemText"
         android:id="@android:id/text1"
+        style="@style/itemText"
         android:layout_above="@android:id/text2"
         android:layout_toRightOf="@android:id/icon" />
 

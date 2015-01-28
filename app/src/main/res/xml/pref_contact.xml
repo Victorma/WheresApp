@@ -3,8 +3,8 @@
     <!-- A 'parent' preference, which enables/disables child preferences (below)
          when checked/unchecked. -->
     <CheckBoxPreference
+        android:defaultValue="true"
         android:key="AUTO_SYNC"
-        android:title="@string/pref_title_update_contact_auto"
-        android:defaultValue="true" />
+        android:title="@string/pref_title_update_contact_auto" />
 
 </PreferenceScreen>

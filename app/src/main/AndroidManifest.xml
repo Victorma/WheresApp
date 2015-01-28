@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wheresapp" >
+    package="tk.wheresoft.wheresapp">
 
     <permission
-        android:name="com.wheresapp.permission.MAPS_RECEIVE"
+        android:name="tk.wheresoft.wheresapp.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
     <permission
-        android:name="com.wheresapp.permission.C2D_MESSAGE"
+        android:name="tk.wheresoft.wheresapp.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -18,8 +18,8 @@
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="com.wheresapp.permission.C2D_MESSAGE" />
-    <uses-permission android:name="com.wheresapp.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="tk.wheresoft.wheresapp.permission.C2D_MESSAGE" />
+    <uses-permission android:name="tk.wheresoft.wheresapp.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -38,7 +38,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="AA_DB_NAME"
             android:value="data.db" />
@@ -47,10 +47,10 @@
             android:value="1" />
 
         <activity
-            android:name=".activity.SignUpActivity"
+            android:name="tk.wheresoft.wheresapp.activity.SignUpActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,44 +58,42 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name="tk.wheresoft.wheresapp.activity.MainActivity"
             android:label="@string/title_activity_main"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".activity.ContactDataActivity"
+            android:name="tk.wheresoft.wheresapp.activity.ContactDataActivity"
             android:label="@string/title_activity_contact_data"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName="tk.wheresoft.wheresapp.activity.MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
+                android:value="tk.wheresoft.wheresapp.activity.MainActivity" />
         </activity>
         <activity
-            android:name=".activity.MapActivity"
+            android:name="tk.wheresoft.wheresapp.activity.MapActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_map"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <!--
         <activity
-        android:name="com.wheresapp.SendPositionActivity"
+        android:name="tk.wheresoft.wheresapp.SendPositionActivity"
         android:label="@string/app_name" >
         </activity>
         -->
         <receiver
-            android:name=".broadcastreceiver.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:name="tk.wheresoft.wheresapp.broadcastreceiver.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="com.wheresapp" />
+                <category android:name="tk.wheresoft.wheresapp" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.GcmContactUpdateService" />
+        <service android:name="tk.wheresoft.wheresapp.service.GcmContactUpdateService" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -107,7 +105,7 @@
             android:name="android.provider.CONTACTS_STRUCTURE"
             android:resource="@xml/contacts" />
 
-        <service android:name=".sync.AccountAuthenticatorService" >
+        <service android:name="tk.wheresoft.wheresapp.sync.AccountAuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -117,9 +115,9 @@
                 android:resource="@xml/authenticator" />
         </service>
         <service
-            android:name=".sync.ContactsSyncAdapterService"
-            android:exported="true"
-            android:process=":contacts" >
+            android:name="tk.wheresoft.wheresapp.sync.ContactsSyncAdapterService"
+            android:exported="false"
+            android:process=":contacts">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -133,32 +131,29 @@
         </service>
 
         <activity
-            android:name=".activity.ActivityIncomingCall"
+            android:name="tk.wheresoft.wheresapp.activity.ActivityIncomingCall"
             android:label="@string/title_activity_actitivity_incoming_call"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
-        </activity>
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"></activity>
 
         <service
-            android:name=".service.PositionCommunicationService"
-            android:exported="false" >
-        </service>
+            android:name="tk.wheresoft.wheresapp.service.PositionCommunicationService"
+            android:exported="false"></service>
 
         <activity
-            android:name=".activity.FeedbackActivity"
+            android:name="tk.wheresoft.wheresapp.activity.FeedbackActivity"
             android:label="@string/title_activity_feedback"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:parentActivityName="tk.wheresoft.wheresapp.activity.MainActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".activity.SettingsActivity"
+            android:name="tk.wheresoft.wheresapp.activity.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".activity.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName="tk.wheresoft.wheresapp.activity.MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
+                android:value="tk.wheresoft.wheresapp.activity.MainActivity" />
         </activity>
     </application>
 

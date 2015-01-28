@@ -14,9 +14,8 @@
   limitations under the License.
 -->
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="tk.wheresoft.wheresapp.ACCOUNT"
     android:contentAuthority="com.android.contacts"
-    android:accountType="com.wheresapp.ACCOUNT"
-    android:supportsUploading="true"
     android:isAlwaysSyncable="false"
-    android:userVisible="true"
-    />
+    android:supportsUploading="true"
+    android:userVisible="true" />

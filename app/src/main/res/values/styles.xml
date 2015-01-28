@@ -15,6 +15,7 @@
         <item name="android:backgroundStacked">@color/bright_blue</item>
         <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
     </style>
+
     <style name="MyActionBarTab" parent="android:Widget.Holo.Light.ActionBar.TabView">
         <item name="android:background">@drawable/actionbar_tab_background</item>
         <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
@@ -28,12 +29,14 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
     </style>
+
     <style name="activity" parent="@style/screen">
         <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
         <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
     </style>
+
     <style name="button">
         <item name="android:layout_width">@dimen/signup_button_width</item>
         <item name="android:layout_height">@dimen/signup_button_height</item>
@@ -41,6 +44,7 @@
         <item name="android:background">@color/bright_blue</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="textView">
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
         <item name="android:layout_width">match_parent</item>
@@ -48,10 +52,12 @@
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@color/black</item>
     </style>
+
     <style name="signUpText" parent="@style/textView">
         <item name="android:layout_centerInParent">true</item>
         <item name="android:layout_marginBottom">@dimen/signup_margin</item>
     </style>
+
     <style name="itemText" parent="@style/textView">
         <item name="android:ellipsize">marquee</item>
         <item name="android:gravity">center_vertical</item>
@@ -61,6 +67,7 @@
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
     </style>
+
     <style name="itemIcon">
         <item name="android:layout_width">?android:attr/listPreferredItemHeight</item>
         <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>

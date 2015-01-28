@@ -1,12 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context="com.wheresapp.activity.FeedbackActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="tk.wheresoft.wheresapp.activity.FeedbackActivity">
 
     <item
         android:id="@+id/menu_enviar"
         android:icon="@android:drawable/ic_menu_send"
-        android:title="Enviar"
-        android:showAsAction="always">
-    </item>
+        android:showAsAction="always"
+        android:title="Enviar"></item>
 
 </menu>

@@ -13,13 +13,13 @@
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
             <param-name>services</param-name>
-            <param-value>com.wheresapp.server.RegistrationEndpoint,
-                com.wheresapp.server.CallEndpoint, com.wheresapp.server.UserEndpoint</param-value>
+            <param-value>tk.wheresoft.wheresapp.server.RegistrationEndpoint,
+                tk.wheresoft.wheresapp.server.CallEndpoint, tk.wheresoft.wheresapp.server.UserEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet>
         <servlet-name>CronEndpoint</servlet-name>
-        <servlet-class>com.wheresapp.server.CronEndpoint</servlet-class>
+        <servlet-class>tk.wheresoft.wheresapp.server.CronEndpoint</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CronEndpoint</servlet-name>

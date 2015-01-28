@@ -14,9 +14,13 @@
   limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-    <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="" android:id="@+id/profiletext"/>
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/profiletext"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
 </LinearLayout>

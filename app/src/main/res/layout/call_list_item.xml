@@ -4,23 +4,23 @@
     android:layout_height="?android:attr/listPreferredItemHeight">
 
     <QuickContactBadge
-        style="@style/itemIcon"
-        android:id="@android:id/icon" />
+        android:id="@android:id/icon"
+        style="@style/itemIcon" />
 
     <TextView
-        style="@style/itemText"
         android:id="@android:id/text1"
+        style="@style/itemText"
         android:layout_above="@android:id/text2"
         android:layout_toRightOf="@android:id/icon" />
 
     <ImageView
+        android:id="@+id/typeCallIcon"
         android:layout_width="?android:attr/listPreferredItemHeight"
         android:layout_height="?android:attr/listPreferredItemHeight"
-        android:scaleType="centerCrop"
-        android:id="@+id/typeCallIcon"
-        android:src="@android:drawable/sym_call_outgoing"
-        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/sym_call_outgoing" />
 
 </RelativeLayout>

@@ -6,7 +6,7 @@
 https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=D7:C9:A7:88:87:22:B7:37:C3:CC:41:25:2E:94:7C:00:97:1E:02:B2%3Bcom.wheresapp
 
     You can also add your credentials to an existing key, using this line:
-    D7:C9:A7:88:87:22:B7:37:C3:CC:41:25:2E:94:7C:00:97:1E:02:B2;com.wheresapp
+    D7:C9:A7:88:87:22:B7:37:C3:CC:41:25:2E:94:7C:00:97:1E:02:B2;tk.wheresoft.wheresapp
 
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.

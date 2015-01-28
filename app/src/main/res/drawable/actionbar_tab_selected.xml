@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:top="-6dp" android:left="-6dp" android:right="-6dp">
+    <item
+        android:left="-6dp"
+        android:right="-6dp"
+        android:top="-6dp">
         <shape android:shape="rectangle">
-            <stroke android:color="@color/white" android:width="5dp"/>
-            <solid android:color="@color/bright_blue"/>
+            <stroke
+                android:width="5dp"
+                android:color="@color/white" />
+            <solid android:color="@color/bright_blue" />
             <padding
+                android:bottom="0dp"
                 android:left="0dp"
-                android:top="0dp"
                 android:right="0dp"
-                android:bottom="0dp" />
+                android:top="0dp" />
         </shape>
     </item>
 </layer-list>

@@ -17,10 +17,12 @@
   -->
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-       android:shape="oval"
-    >
-    <size android:height="@dimen/glowpadview_outerring_diameter"
-          android:width="@dimen/glowpadview_outerring_diameter"/>
-    <solid android:color="#00000000"/>
-    <stroke android:color="#1affffff" android:width="2dp"/>
+    android:shape="oval">
+    <size
+        android:width="@dimen/glowpadview_outerring_diameter"
+        android:height="@dimen/glowpadview_outerring_diameter" />
+    <solid android:color="#00000000" />
+    <stroke
+        android:width="2dp"
+        android:color="#1affffff" />
 </shape>

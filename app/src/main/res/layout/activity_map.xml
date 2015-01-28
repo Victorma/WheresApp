@@ -1,25 +1,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.wheresapp.activity.MapActivity"
-    android:weightSum="1">
-
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    android:layout_marginBottom="70dp" />
+    android:orientation="vertical"
+    android:weightSum="1"
+    tools:context="tk.wheresoft.wheresapp.activity.MapActivity">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="70dp" />
 
     <ImageButton
+        android:id="@+id/btDisconnect"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:id="@+id/btDisconnect"
         android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginTop="-70dp"
         android:background="#ffff0005"
-        android:src="@android:drawable/ic_menu_call"
-        android:layout_marginTop="-70dp" />
+        android:src="@android:drawable/ic_menu_call" />
 
 </LinearLayout>

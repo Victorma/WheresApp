@@ -2,12 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/reporte_scroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
             android:orientation="vertical"
             android:paddingLeft="10dip"
             android:paddingRight="10dip"
-            android:paddingTop="10dip" >
+            android:paddingTop="10dip">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dip" >
+            android:padding="10dip">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -79,13 +79,16 @@
                 android:ems="10"
                 android:hint="Escribe aquí lo que quieras..."
                 android:inputType="textMultiLine"
-                android:minLines="3" >
+                android:minLines="3">
 
                 <requestFocus />
             </EditText>
 
             <CheckBox
-                android:id="@+id/reporte_device_info" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Incluir información sobre el teléfono"/>
+                android:id="@+id/reporte_device_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Incluir información sobre el teléfono" />
 
         </LinearLayout>
     </LinearLayout>

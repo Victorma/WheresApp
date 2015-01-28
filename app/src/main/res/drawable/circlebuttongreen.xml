@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="ring">
-    <solid android:color="@color/highlighted_text_material_light"/>
-    <stroke android:width="2sp" android:color="#fff" />
+    <solid android:color="@color/highlighted_text_material_light" />
+    <stroke
+        android:width="2sp"
+        android:color="#fff" />
 </shape>

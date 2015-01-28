@@ -15,9 +15,9 @@
 -->
 <ContactsSource xmlns:android="http://schemas.android.com/apk/res/android">
     <ContactsDataKind
-        android:icon="@drawable/ic_launcher"
-        android:mimeType="vnd.android.cursor.item/vnd.com.wheresapp.profile"
-        android:summaryColumn="data1"
         android:detailColumn="data2"
-        android:detailSocialSummary="true" />
+        android:detailSocialSummary="true"
+        android:icon="@drawable/ic_launcher"
+        android:mimeType="vnd.android.cursor.item/vnd.tk.wheresoft.wheresapp.profile"
+        android:summaryColumn="data1" />
 </ContactsSource> 
