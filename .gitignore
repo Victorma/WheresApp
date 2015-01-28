@@ -11,3 +11,4 @@ app/build
 *.class
 *.apk
 app/manifest-merger-release-report.txt
+app/secure.properties
