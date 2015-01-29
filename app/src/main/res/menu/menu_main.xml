@@ -6,15 +6,10 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:showAsAction="never" />
     <item
         android:id="@+id/action_feedback"
         android:orderInCategory="100"
         android:title="@string/action_sugerencia"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_sync"
-        android:orderInCategory="100"
-        android:title="@string/action_refresh"
-        app:showAsAction="never" />
+        android:showAsAction="never" />
 </menu>

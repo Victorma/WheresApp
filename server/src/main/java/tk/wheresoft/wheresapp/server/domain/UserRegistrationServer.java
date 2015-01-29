@@ -5,9 +5,11 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.io.Serializable;
+
 /** The Objectify object model for device registrations we are persisting */
 @Entity
-public class UserRegistrationServer {
+public class UserRegistrationServer implements Serializable {
 
     @Id
     Long id;

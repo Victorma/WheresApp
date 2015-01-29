@@ -7,6 +7,16 @@ import com.google.api.server.spi.config.Named;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.NotFoundException;
 
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheFactory;
+import javax.cache.CacheManager;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import tk.wheresoft.wheresapp.server.domain.ContactListServer;
 import tk.wheresoft.wheresapp.server.domain.ContactNotFound;
 import tk.wheresoft.wheresapp.server.domain.ContactServer;
@@ -20,6 +30,16 @@ public class UserEndpoint {
 
     @ApiMethod(name = "contactList", path = "{fromId}/contactList")
     public ContactListServer contacList(@Named("fromId")String from, ContactListServer contactListServer) throws NotFoundException, BadRequestException {
+        Cache cache = null;
+        try {
+            CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
+            cache = cacheFactory.createCache(Collections.emptyMap());
+        } catch (CacheException e) {
+            e.printStackTrace();
+        }
+        if (cache.isEmpty()) {
+            loadCache(cache);
+        }
         ContactListServer exist = new ContactListServer();
         UserRegistrationServer reg;
         if (contactListServer == null || contactListServer.getContactServerList().size()==0) {
@@ -27,23 +47,26 @@ public class UserEndpoint {
         }
 
         for (ContactServer c : contactListServer.getContactServerList()) {
-            reg = getRecord(c.getPhone());
+            reg = (UserRegistrationServer) cache.get(c.getPhone());
             if (reg!=null) {
                 c.setId(reg.getId());
                 exist.addContact(c);
-            } else {
-                ContactNotFound contactNotFound = findRecordNew(c.getPhone());
-                if (contactNotFound==null){
-                    contactNotFound = new ContactNotFound();
-                    contactNotFound.setPhone(c.getPhone());
-                    contactNotFound.getContactKnows().add(from);
-                } else {
-                    contactNotFound.getContactKnows().add(from);
-                }
-                OfyService.ofy().save().entity(contactNotFound).now();
             }
         }
         return exist;
+    }
+
+    public void loadCache(Cache cache) {
+        List<UserRegistrationServer> allUser = getAll();
+        Map<String,UserRegistrationServer> mapa = new HashMap<String,UserRegistrationServer>();
+        for (UserRegistrationServer user : allUser) {
+            mapa.put(user.getPhone(),user);
+        }
+        cache.putAll(mapa);
+    }
+
+    private List<UserRegistrationServer> getAll() {
+        return OfyService.ofy().load().type(UserRegistrationServer.class).list();
     }
 
     private UserRegistrationServer getRecord(String phone) {

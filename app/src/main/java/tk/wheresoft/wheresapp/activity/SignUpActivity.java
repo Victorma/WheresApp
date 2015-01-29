@@ -1,11 +1,14 @@
 package tk.wheresoft.wheresapp.activity;
 
 import android.accounts.AccountAuthenticatorActivity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +38,8 @@ public class SignUpActivity extends AccountAuthenticatorActivity {
     GoogleCloudMessaging gcm;
     private ProgressDialog progressBar;
     private ASContacts asContacts;
+    private NotificationManager mNotificationManager;
+    public static final int NOTIFICATION_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

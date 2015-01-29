@@ -88,6 +88,8 @@ public class ContactsListFragment extends ListFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (recent)
             inflater.inflate(R.menu.menu_list_call, menu);
+        if (!recent && !favourite)
+            inflater.inflate(R.menu.menu_list_contact, menu);
         // Place an action bar item for searching.
         MenuItem item = menu.add("Search");
         item.setIcon(android.R.drawable.ic_menu_search);
