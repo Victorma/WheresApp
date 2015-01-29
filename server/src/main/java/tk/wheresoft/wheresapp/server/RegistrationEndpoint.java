@@ -10,10 +10,16 @@ import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.NotFoundException;
 
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheFactory;
+import javax.cache.CacheManager;
+
 import tk.wheresoft.wheresapp.server.domain.ContactNotFound;
 import tk.wheresoft.wheresapp.server.domain.UserRegistrationServer;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Named;
@@ -42,6 +48,13 @@ public class RegistrationEndpoint {
      */
     @ApiMethod(name = "register")
     public UserRegistrationServer registerDevice(UserRegistrationServer me) throws ConflictException, IOException {
+        Cache cache = null;
+        try {
+            CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
+            cache = cacheFactory.createCache(Collections.emptyMap());
+        } catch (CacheException e) {
+            e.printStackTrace();
+        }
         UserRegistrationServer record = findRecord(me.getPhone());
         if(record == null) {
             record = new UserRegistrationServer();
@@ -50,13 +63,14 @@ public class RegistrationEndpoint {
         }
         record.setRegId(me.getRegId());
         OfyService.ofy().save().entity(record).now();
-        ContactNotFound listOfContact = findRecordNew(me.getPhone());
-        if (listOfContact!=null) {
-            for (String id : listOfContact.getContactKnows()) {
-                sendUpdate(id);
-            }
-        }
+        //ContactNotFound listOfContact = findRecordNew(me.getPhone());
+        //if (listOfContact!=null) {
+        //    for (String id : listOfContact.getContactKnows()) {
+        //        sendUpdate(id);
+        //    }
+        //}
         me.setId(record.getId());
+        cache.put(record.getPhone(),record);
         return me;
     }
 
@@ -107,6 +121,10 @@ public class RegistrationEndpoint {
     public CollectionResponse<UserRegistrationServer> listDevices(@Named("count") int count) {
         List<UserRegistrationServer> records = OfyService.ofy().load().type(UserRegistrationServer.class).limit(count).list();
         return CollectionResponse.<UserRegistrationServer>builder().setItems(records).build();
+    }
+
+    private List<UserRegistrationServer> getAll() {
+        return OfyService.ofy().load().type(UserRegistrationServer.class).list();
     }
 
     private UserRegistrationServer findRecord(String phone) {
