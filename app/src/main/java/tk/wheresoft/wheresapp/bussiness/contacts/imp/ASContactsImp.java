@@ -44,6 +44,12 @@ public class ASContactsImp implements ASContacts {
     private static final String TAG = "ASContacts";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String PROPERTY_USER_NUMBER = "userNumber";
+    // Sync interval constants
+    public static final long SECONDS_PER_MINUTE = 60L;
+    public static final long SYNC_INTERVAL_IN_MINUTES = 60L;
+    public static final long SYNC_INTERVAL =
+            SYNC_INTERVAL_IN_MINUTES *
+                    SECONDS_PER_MINUTE * 24;
     private Context context;
     private Account account;
 
@@ -122,6 +128,9 @@ public class ASContactsImp implements ASContacts {
             Account[] accounts = am.getAccountsByType(context.getString(R.string.ACCOUNT_TYPE));
             context.getContentResolver().setIsSyncable(accounts[0], ContactsContract.AUTHORITY, 1);
             context.getContentResolver().setSyncAutomatically(accounts[0], ContactsContract.AUTHORITY, true);
+            context.getContentResolver().addPeriodicSync(accounts[0], ContactsContract.AUTHORITY, Bundle.EMPTY,SYNC_INTERVAL);
+
+
 
         } catch (IOException ex) {
             msg = "Error :" + ex.getMessage();

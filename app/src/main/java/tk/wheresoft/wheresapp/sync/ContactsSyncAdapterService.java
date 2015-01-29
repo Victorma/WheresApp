@@ -28,6 +28,7 @@ public class ContactsSyncAdapterService extends Service {
         if (syncContacts == null)
             syncContacts = new SyncContacts(context);
         syncContacts.performSync();
+        syncResult = new SyncResult();
     }
 
     @Override

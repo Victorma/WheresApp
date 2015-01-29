@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -92,6 +93,8 @@ public class MainActivity extends FragmentActivity implements
             case R.id.action_clean:
                 eliminarLlamadas();
                 return true;
+            case R.id.action_sync:
+                syncContactInBackground();
         }
 
         return super.onOptionsItemSelected(item);
