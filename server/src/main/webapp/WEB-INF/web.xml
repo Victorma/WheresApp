@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+    <filter>
+        <filter-name>ObjectifyFilter</filter-name>
+        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ObjectifyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <servlet>
+        <servlet-name>SystemServiceServlet</servlet-name>
+        <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
+        <init-param>
+            <param-name>services</param-name>
+            <param-value>tk.wheresoft.wheresapp.server.RegistrationEndpoint,
+                tk.wheresoft.wheresapp.server.CallEndpoint, tk.wheresoft.wheresapp.server.UserEndpoint</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>CronEndpoint</servlet-name>
+        <servlet-class>tk.wheresoft.wheresapp.server.CronEndpoint</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CronEndpoint</servlet-name>
+        <url-pattern>/cron/checkAll</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SystemServiceServlet</servlet-name>
+        <url-pattern>/_ah/spi/*</url-pattern>
+    </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>cron</web-resource-name>
+            <url-pattern>/cron/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+</web-app>

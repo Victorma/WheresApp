@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glowpad="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/activity"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ff000000"
+    tools:context=".Acti">
+
+
+    <ImageView
+        android:id="@+id/imageContact"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/ic_action_person" />
+
+    <TextView
+        android:id="@+id/textName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageContact"
+        android:layout_centerHorizontal="true"
+        android:text="Desconocido"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffffff" />
+
+    <com.fima.glowpadview.GlowPadView
+        android:id="@+id/glow_pad_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="@dimen/glowpadview_margin_bottom"
+        android:focusable="true"
+        android:gravity="center"
+        glowpad:directionDescriptions="@array/snooze_dismiss_direction_descriptions"
+        glowpad:feedbackCount="1"
+        glowpad:glowRadius="@dimen/glowpadview_glow_radius"
+        glowpad:handleDrawable="@drawable/ic_launcher"
+        glowpad:innerRadius="@dimen/glowpadview_inner_radius"
+        glowpad:outerRadius="@dimen/glowpadview_target_placement_radius"
+        glowpad:outerRingDrawable="@drawable/ic_alarm_alert_outerring"
+        glowpad:pointDrawable="@drawable/ic_lockscreen_glowdot"
+        glowpad:snapMargin="@dimen/glowpadview_snap_margin"
+        glowpad:targetDescriptions="@array/snooze_dismiss_descriptions"
+        glowpad:targetDrawables="@array/snooze_dismiss_drawables"
+        glowpad:vibrationDuration="20" />
+</RelativeLayout>

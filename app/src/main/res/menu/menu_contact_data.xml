@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="tk.wheresoft.wheresapp.activity.ContactDataActivity">
+    <item
+        android:id="@+id/action_call"
+        android:icon="@drawable/ic_action_call"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_call" />
+    <item
+        android:id="@+id/action_important"
+        android:icon="@drawable/ic_action_not_important"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_important" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings" />
+
+</menu>

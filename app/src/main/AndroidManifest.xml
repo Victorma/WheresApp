@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="tk.wheresoft.wheresapp">
+
+    <permission
+        android:name="tk.wheresoft.wheresapp.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+    <permission
+        android:name="tk.wheresoft.wheresapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="tk.wheresoft.wheresapp.permission.C2D_MESSAGE" />
+    <uses-permission android:name="tk.wheresoft.wheresapp.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <application
+        android:name="com.activeandroid.app.Application"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="data.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="1" />
+
+        <activity
+            android:name="tk.wheresoft.wheresapp.activity.SignUpActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="tk.wheresoft.wheresapp.activity.MainActivity"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="tk.wheresoft.wheresapp.activity.ContactDataActivity"
+            android:label="@string/title_activity_contact_data"
+            android:parentActivityName="tk.wheresoft.wheresapp.activity.MainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="tk.wheresoft.wheresapp.activity.MainActivity" />
+        </activity>
+        <activity
+            android:name="tk.wheresoft.wheresapp.activity.MapActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_map"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"></activity>
+        <!--
+        <activity
+        android:name="tk.wheresoft.wheresapp.SendPositionActivity"
+        android:label="@string/app_name" >
+        </activity>
+        -->
+        <receiver
+            android:name="tk.wheresoft.wheresapp.broadcastreceiver.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="tk.wheresoft.wheresapp" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="tk.wheresoft.wheresapp.service.GcmContactUpdateService" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="android.provider.CONTACTS_STRUCTURE"
+            android:resource="@xml/contacts" />
+
+        <service android:name="tk.wheresoft.wheresapp.sync.AccountAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <service
+            android:name="tk.wheresoft.wheresapp.sync.ContactsSyncAdapterService"
+            android:exported="false"
+            android:process=":contacts">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/sync_contacts" />
+            <meta-data
+                android:name="android.provider.CONTACTS_STRUCTURE"
+                android:resource="@xml/contacts" />
+        </service>
+
+        <activity
+            android:name="tk.wheresoft.wheresapp.activity.ActivityIncomingCall"
+            android:label="@string/title_activity_actitivity_incoming_call"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"></activity>
+
+        <service
+            android:name="tk.wheresoft.wheresapp.service.PositionCommunicationService"
+            android:exported="false"></service>
+
+        <activity
+            android:name="tk.wheresoft.wheresapp.activity.FeedbackActivity"
+            android:label="@string/title_activity_feedback"
+            android:parentActivityName="tk.wheresoft.wheresapp.activity.MainActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="tk.wheresoft.wheresapp.activity.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="tk.wheresoft.wheresapp.activity.MainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="tk.wheresoft.wheresapp.activity.MainActivity" />
+        </activity>
+    </application>
+
+</manifest>

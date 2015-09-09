@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_activity_main">Chats</string>
+    <string name="title_activity_contacts_list">Contactos</string>
+    <string name="title_activity_contact_data">Contacto</string>
+    <string name="title_activity_map">Mapa</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_search">Buscar</string>
+    <string name="action_refresh">Refrescar</string>
+    <string name="action_call">Llamar</string>
+    <string name="action_important">Favorito</string>
+    <string name="username">Introduzca número de teléfono</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="signup">Registrar</string>
+    <string name="map">Mapa</string>
+    <string name="waiting_location">Esperando localización</string>
+    <string name="my_location">Mi ubicación</string>
+    <string name="goal">Meta</string>
+    <string name="loading">Cargando...</string>
+    <string name="request">¿Desea enviar su posición al siguiente contacto?</string>
+    <string name="granted">Se está emitiendo su posición al contacto </string>
+    <string name="denied">Solicitud de localización denegada</string>
+    <string name="send">Solicitud enviada</string>
+
+    <!-- Messages -->
+    <string name="no_gp_services">Google Play Services no disponible.</string>
+    <string name="action_clean">Vaciar Historial</string>
+    <string name="action_sugerencia">Enviar Feedback</string>
+
+    <array name="tab_names">
+        <item>Favoritos</item>
+        <item>Recientes</item>
+        <item>Contactos</item>
+    </array>
+    <string name="email_intent">Enviar vía email...</string>
+    <string name="email_subject">Reporte de WheresApp</string>
+    <string name="feedback_info">Rellena el formulario a continuación y pulsa el botón de arriba para enviar el reporte a través de tu aplicación de correo.</string>
+    <string name="hello_world">Hola mundo!</string>
+    <string name="pref_title_type_route">Tipo de ruta</string>
+    <string name="pref_title_update_contact_auto">Actualizar lista de contactos automaticamente</string>
+    <string name="title_activity_actitivity_incoming_call">Llamada Recibida</string>
+    <string name="title_activity_feedback">Feedback</string>
+    <string name="title_activity_settings">Configuración</string>
+    <string name="welcome">Bienvenido a WheresApp</string>
+    <string name="testCall">Test call</string>
+
+</resources>

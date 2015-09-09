@@ -1,0 +1,97 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:actionBarTabStyle">@style/MyActionBarTab</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/actionbar_background</item>
+        <item name="android:backgroundStacked">@color/bright_blue</item>
+        <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
+    </style>
+
+    <style name="MyActionBarTab" parent="android:Widget.Holo.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/actionbar_tab_background</item>
+        <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
+    </style>
+    <!-- ActionBar title text -->
+    <style name="MyActionBarTitleText">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="screen">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="activity" parent="@style/screen">
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
+        <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
+    </style>
+
+    <style name="button">
+        <item name="android:layout_width">@dimen/signup_button_width</item>
+        <item name="android:layout_height">@dimen/signup_button_height</item>
+        <item name="android:layout_margin">@dimen/signup_margin</item>
+        <item name="android:background">@color/bright_blue</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="textView">
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="signUpText" parent="@style/textView">
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_marginBottom">@dimen/signup_margin</item>
+    </style>
+
+    <style name="itemText" parent="@style/textView">
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignWithParentIfMissing">true</item>
+        <item name="android:paddingLeft">@dimen/padding</item>
+        <item name="android:paddingRight">@dimen/padding</item>
+    </style>
+
+    <style name="itemIcon">
+        <item name="android:layout_width">?android:attr/listPreferredItemHeight</item>
+        <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
+    <style name="textWhite">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:color">@color/white</item>
+    </style>
+
+    <style name="FlatButton">
+        <item name="android:minWidth">64dp</item>
+        <item name="android:paddingLeft">12sp</item>
+        <item name="android:paddingRight">12sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">25dp</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="FlatButtonWhite" parent="FlatButton">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+</resources>

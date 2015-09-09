@@ -1,0 +1,39 @@
+language: android
+jdk:
+- oraclejdk7
+
+android:
+  components:
+  - platform-tools
+  - build-tools-20.0.0
+  - android-21
+  - extra-google-google_play_services
+  - extra-google-m2repository
+  - extra-google-gcm
+  - extra-android-m2repository
+  - addon-google_apis-google-19
+
+env:
+  global:
+  - secure: l2FQcMZonL7gGNVKLBb1t6IIZ9IqLkn8/KYu8SkcEPLyf61BSUOWMlyerR2wW2mD2YZm5Wr2Z57saUI6kpTLJWIlv9lNiIMhbV8KkcccajIkv0HzHPtiQ9hdiKtuqHx6UBKFiebBIi77p77hBHi7Wj7K+W46+VWHu38CBQ1iCdI=
+  - secure: IIqDj681+5PdcqFccubLNI2vv5c/33xiQTjLT6I+pLE4LxZmcWpCwvRqjrSJAdAHjqzbiUc+mTT8z0LXEyESt8MHjdgHc7xzLLnC6NVIjMHSo4Xnr07yduGLw1HhKJ0+EmijyWQn5tKlOe63UtoKoZpgaregPc5TsGeH9vfD15s=
+  - secure: OInZREqW6ii5L3sNakydJMN4SpvIwov7pkjRGNw7rSquLoeZNccijUFDeO/IhkVrxUqsMfmCYd+7kuoBwM30a2r38fF2J9sXyvuEpxMDl8NKWAVBf9H9yVFaip6CYhazY/7xeDyG7WmP7S3PkjyWz685nmtI2OG0s+2VpDOQYWw=
+  - secure: FeI1CQGo1i6saLnXs9d550Y8k8jfKHP57pmIpQX2yoW7mfVJq39AJpREuvZLeJb/omotGdLyfPkLXD1rnRPtMVlBtzYTgsxxuEO8owwa5sVK4UgNxMI6alSfBsqT/2TMLbxpPwW3eH0+bcZr2PTRW57vCGdyLubWm2K1L/QykGk=
+
+before_script:
+- echo "storeFile=${BUILD_RELEASE_STORE_FILE}" >> app/secure.properties
+- echo "storePassword=${BUILD_RELEASE_STORE_PASSWORD}" >> app/secure.properties
+- echo "keyAlias=${BUILD_RELEASE_KEY_ALIAS}" >> app/secure.properties
+- echo "keyPassword=${BUILD_RELEASE_KEY_PASSWORD}" >> app/secure.properties
+
+deploy:
+  provider: releases
+  api_key:
+    secure: Q3wBKtZpWwsrtgJyRGzXNrtPNg8vjoeg5CEOSOnzhz8ESsvXskWWZXTi99zwPV4eM4hB7hC2V8JVJPbVgsIcze3I/NTo0NwYwYimiGyibfX6UIa82sZnuA3ubSKFjGEXCP5SPElqV1r7B/r+rh5dC/jJ3PICsy28wCuU/vCGXEw=
+  file: app/build/outputs/apk/app-release.apk
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+
+script: ./gradlew app:assembleRelease

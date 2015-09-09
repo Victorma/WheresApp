@@ -1,0 +1,206 @@
+body{
+	font-family: 'open_sansregular';
+}
+.header {
+	background: url(../images/bgo.jpg);
+	min-height: 600px;
+}
+.header-right {
+	background: url(../images/handpico.png) no-repeat 100% 101%;
+	height: 600px;
+}
+.pricing-grid ul li a:hover,.footer ul li a:hover, .copy-right a:hover {
+		color:#DB7734;
+}
+/*----*/
+.apple{
+	background: url(../images/osprits.png) no-repeat -1px 0px;
+}
+.and{
+	background: url(../images/osprits.png) no-repeat -69px 0px;
+}
+.win{
+	background: url(../images/osprits.png) no-repeat -136px 0px;
+}
+/*----*/
+.monitor{
+	background: url(../images/osprits.png) no-repeat 3px -54px;
+}
+.target{
+	background: url(../images/osprits.png) no-repeat -49px -54px;
+}
+.photo{
+	background: url(../images/osprits.png) no-repeat -98px -54px;
+}
+.colors{
+	background: url(../images/osprits.png) no-repeat -151px -54px;
+}
+.man{
+	background: url(../images/osprits.png) no-repeat -203px -54px;
+}
+.spare{
+	background: url(../images/osprits.png) no-repeat -255px -54px;
+}
+/*----*/
+#selector a {
+	background: url(../images/osprits.png) no-repeat -27px -172px;
+}
+#selector a.current {
+	background: url(../images/osprits.png) no-repeat -7px -172px;
+}
+/*----*/
+.twitter{
+	background: url(../images/osprits.png) no-repeat 5px -131px #D6D6D6;
+}
+.twitter:hover{
+	background: url(../images/osprits.png) no-repeat 5px -131px #DB7734;
+}
+.facebook{
+	background: url(../images/osprits.png) no-repeat -39px -130px #D6D6D6;
+}
+.facebook:hover{
+	background: url(../images/osprits.png) no-repeat -39px -130px #DB7734;
+}
+.pin{
+	background: url(../images/osprits.png) no-repeat -83px -130px #D6D6D6;
+}
+.pin:hover{
+	background: url(../images/osprits.png) no-repeat -83px -130px #DB7734;
+}
+.googlepluse{
+	background: url(../images/social-icons.png) no-repeat -120px 3px #D6D6D6;
+}
+.googlepluse:hover{
+	background: url(../images/social-icons.png) no-repeat -120px 3px #DB7734;
+}
+.in{
+	background: url(../images/osprits.png) no-repeat -171px -130px #D6D6D6;
+}
+.in:hover{
+	background: url(../images/osprits.png) no-repeat -171px -130px #DB7734;
+}
+.youtube{
+	background: url(../images/osprits.png) no-repeat -214px -130px #D6D6D6;
+}
+.youtube:hover{
+	background: url(../images/osprits.png) no-repeat -214px -130px #DB7734;
+}
+/*----*/
+.shipping{
+	background: url(../images/osprits.png) no-repeat -121px -198px;
+}
+.payment{
+	background: url(../images/osprits.png) no-repeat -162px -198px;
+}
+.payment-date-section{
+	background: url(../images/calender.png) no-repeat #fff 50%;
+}
+/*----*/
+input[type=checkbox].css-checkbox1 + label.css-label1 {
+	background: url(../images/osprits.png) no-repeat -204px -203px;
+}
+input[type=checkbox].css-checkbox1:checked + label.css-label1 {
+	background: url(../images/osprits.png) no-repeat -224px -203px;
+}
+input[type=checkbox].css-checkbox2 + label.css-label2 {
+	background: url(../images/osprits.png) no-repeat -224px -203px;
+}
+input[type=checkbox].css-checkbox2:checked + label.css-label2 {
+	background: url(../images/osprits.png) no-repeat -204px -203px;
+}
+/*----*/
+.mfp-close {
+  background: url(../images/osprits.png) no-repeat -7px -231px;
+ }
+  .mfp-close:hover, .mfp-close:focus {
+	  background: url(../images/osprits.png) no-repeat -44px -231px;
+  }
+/*----*/
+.pricing-grid h3,.cart{
+	background:#DB7734;
+}
+.cart a {
+	background: #BA662D;
+}
+.payment-online-form-left input[type="text"]:active, .payment-online-form-left input[type="text"]:hover {
+	color:#DB7734;
+}
+.payment-sendbtns input[type="reset"],.payment-sendbtns input[type="submit"]:hover{
+	background: #DB7734;
+}
+/*----start-responsive-design----*/
+@media only screen and (max-width: 1024px) and (min-width: 768px){
+	.header-right {
+		background: url(../images/handpico.png) no-repeat 100% 101%;
+		height: 600px;
+		background-size: 100%;
+	}
+}
+@media only screen and (max-width: 768px) and (min-width: 640px){
+	.header {
+		background: url(../images/bgo.jpg);
+		min-height: 523px;
+	}
+	.header-right {
+		display:none;
+	}
+	.header-left label{
+		width: 149px;
+		min-height: 303px;
+		display: inline-block;
+		padding-top: 0;
+		margin: 0px;
+		background: url(../images/iphoneo.png) no-repeat;
+	}
+}
+@media only screen and (max-width: 640px) and (min-width: 480px){
+	.header {
+		background: url(../images/bgo.jpg);
+		min-height: 523px;
+	}
+	.header-right {
+		display:none;
+	}
+	.header-left label{
+		width: 149px;
+		min-height: 303px;
+		display: inline-block;
+		padding-top: 0;
+		margin: 0px;
+		background: url(../images/iphoneo.png) no-repeat;
+	}
+}
+@media only screen and (max-width: 480px) and (min-width:320px){
+	.header {
+		background: url(../images/bgo.jpg);
+		min-height: 499px;
+	}
+	.header-right {
+		display:none;
+	}
+	.header-left label{
+		width: 149px;
+		min-height: 303px;
+		display: inline-block;
+		padding-top: 0;
+		margin: 0px;
+		background: url(../images/iphoneo.png) no-repeat;
+	}
+}
+@media only screen and (max-width: 320px) and (min-width:240px){
+	.header {
+		background: url(../images/bgo.jpg);
+		min-height: 355px;
+	}
+	.header-right {
+		display:none;
+	}
+	.header-left label{
+		width: 101px;
+		min-height: 191px;
+		display: inline-block;
+		padding-top: 0;
+		margin: 0px;
+		background: url(../images/iphoneos.png) no-repeat;
+	}
+}

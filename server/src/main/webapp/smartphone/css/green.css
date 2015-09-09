@@ -1,0 +1,138 @@
+body{
+	font-family: 'open_sansregular';
+}
+.header {
+	background: url(../images/bgg.jpg) repeat-x 100%;
+	min-height: 343px;
+}
+.header-left label{
+	width: 101px;
+	min-height: 191px;
+	display: inline-block;
+	padding-top: 0;
+	margin: 0px;
+	background: url(../images/iphonegs.png) no-repeat;
+}
+/*-----*/
+.pricing-grid ul li a:hover,.footer ul li a:hover, .copy-right a:hover {
+		color:#34DB5A;
+}
+/*----*/
+.apple{
+	background: url(../images/gsprits.png) no-repeat -1px 0px;
+}
+.and{
+	background: url(../images/gsprits.png) no-repeat -69px 0px;
+}
+.win{
+	background: url(../images/gsprits.png) no-repeat -136px 0px;
+}
+/*----*/
+.monitor{
+	background: url(../images/gsprits.png) no-repeat 3px -54px;
+}
+.target{
+	background: url(../images/gsprits.png) no-repeat -49px -54px;
+}
+.photo{
+	background: url(../images/gsprits.png) no-repeat -98px -54px;
+}
+.colors{
+	background: url(../images/gsprits.png) no-repeat -151px -54px;
+}
+.man{
+	background: url(../images/gsprits.png) no-repeat -203px -54px;
+}
+.spare{
+	background: url(../images/gsprits.png) no-repeat -255px -54px;
+}
+/*----*/
+#selector a {
+	background: url(../images/gsprits.png) no-repeat -27px -172px;
+}
+#selector a.current {
+	background: url(../images/gsprits.png) no-repeat -7px -172px;
+}
+/*----*/
+.twitter{
+	background: url(../images/gsprits.png) no-repeat 5px -131px #D6D6D6;
+}
+.twitter:hover{
+	background: url(../images/gsprits.png) no-repeat 5px -131px #34DB5A;
+}
+.facebook{
+	background: url(../images/gsprits.png) no-repeat -39px -130px #D6D6D6;
+}
+.facebook:hover{
+	background: url(../images/gsprits.png) no-repeat -39px -130px #34DB5A;
+}
+.pin{
+	background: url(../images/gsprits.png) no-repeat -83px -130px #D6D6D6;
+}
+.pin:hover{
+	background: url(../images/gsprits.png) no-repeat -83px -130px #34DB5A;
+}
+.googlepluse{
+	background: url(../images/social-icons.png) no-repeat -120px 3px #D6D6D6;
+}
+.googlepluse:hover{
+	background: url(../images/social-icons.png) no-repeat -120px 3px #34DB5A;
+}
+.in{
+	background: url(../images/gsprits.png) no-repeat -171px -130px #D6D6D6;
+}
+.in:hover{
+	background: url(../images/gsprits.png) no-repeat -171px -130px #34DB5A;
+}
+.youtube{
+	background: url(../images/gsprits.png) no-repeat -214px -130px #D6D6D6;
+}
+.youtube:hover{
+	background: url(../images/gsprits.png) no-repeat -214px -130px #34DB5A;
+}
+/*----*/
+.shipping{
+	background: url(../images/gsprits.png) no-repeat -121px -198px;
+}
+.payment{
+	background: url(../images/gsprits.png) no-repeat -162px -198px;
+}
+.payment-date-section{
+	background: url(../images/calender.png) no-repeat #fff 50%;
+}
+/*----*/
+input[type=checkbox].css-checkbox1 + label.css-label1 {
+	background: url(../images/gsprits.png) no-repeat -204px -203px;
+}
+input[type=checkbox].css-checkbox1:checked + label.css-label1 {
+	background: url(../images/gsprits.png) no-repeat -224px -203px;
+}
+input[type=checkbox].css-checkbox2 + label.css-label2 {
+	background: url(../images/gsprits.png) no-repeat -224px -203px;
+}
+input[type=checkbox].css-checkbox2:checked + label.css-label2 {
+	background: url(../images/gsprits.png) no-repeat -204px -203px;
+}
+/*----*/
+.mfp-close {
+  background: url(../images/gsprits.png) no-repeat -7px -231px;
+ }
+  .mfp-close:hover, .mfp-close:focus {
+	  background: url(../images/gsprits.png) no-repeat -44px -231px;
+  }
+  .payment-online-form-left input[type="text"]:active, .payment-online-form-left input[type="text"]:hover {
+	color: #34DB5A;
+	}
+	.payment-sendbtns input[type="reset"] {
+	background: #34DB5A;
+	}
+	.payment-sendbtns input[type="submit"]:hover {
+		background: #34DB5A;
+	}
+/*----*/
+.pricing-grid h3,.cart{
+	background:#34DB5A;
+}
+.cart a {
+	background: #2AC64D;
+}

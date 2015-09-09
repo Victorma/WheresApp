@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="transparent">#00000000</color>
+    <color name="transp_blue">#4D4099FF</color>
+    <color name="light_blue">#B5D8FF</color>
+    <color name="tab_selected">#E64099FF</color>
+    <color name="bright_blue">#4099FF</color>
+    <color name="dark_blue">#0051AA</color>
+    <color name="blue_black">#001F40</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transp_black">#D9000000</color>
+    <color name="black">#000000</color>
+    <color name="blue">#5B86E6</color>
+    <color name="transp_grey">#D9C0C0DC</color>
+    <color name="dark_grey">#696969</color>
+    <color name="light_grey">#C0C0DC</color>
+</resources>
